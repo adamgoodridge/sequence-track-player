@@ -1,0 +1,51 @@
+package net.adamgoodridge.sequencetrackplayer;
+
+import net.adamgoodridge.sequencetrackplayer.feeder.AudioFeeder;
+import net.adamgoodridge.sequencetrackplayer.feeder.repository.AudioFeederRepository;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.commons.lang3.Validate.notNull;
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest
+class AudioFeederRepositoryTests {
+    @Autowired
+    private AudioFeederRepository audioFeederRepository;
+
+    @Test
+    void getRandom(){
+        List<AudioFeeder> audioFeeders = new ArrayList<>();
+        for (int i = 0; i < 50; i++) {
+            AudioFeeder audioFeeder = audioFeederRepository.getRandomAudioFileNotNull();
+            if(audioFeeder != null) {
+                audioFeeders.add(audioFeeder);
+            }
+        }
+        assertEquals(50, audioFeeders.size());
+    }
+
+    @Test
+    void getRandomBySessionId(){
+        String sessionId = audioFeederRepository.getRandomAudioFileNotNull().getSessionId();
+        AudioFeeder audioFeeder = audioFeederRepository.getRandomBySessionId(sessionId);
+        notNull(audioFeeder);
+    }
+
+    @Test
+    void getRandomByFeedName(){
+        String feedName = "***REMOVED***-South";
+        AudioFeeder audioFeeder = audioFeederRepository.getAudioFeederByFeedName(feedName);
+        assertEquals(feedName, audioFeeder.getFeedName());
+    }
+    @Test
+    void countAllByFeedNameAndAndAudioInfoNotNull() {
+        String feedName = "***REMOVED***-South";
+        int count = audioFeederRepository.countAllByFeedNameAndAndAudioInfoNotNull(feedName);
+        assertNotEquals(0, count);
+    }
+}

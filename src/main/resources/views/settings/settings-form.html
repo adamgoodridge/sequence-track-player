@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+	<meta charset="UTF-8">
+	<title th:text="'Shuffle - Settings'"></title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<div th:insert="~{fragments/menu :: nav}"></div>
+
+<div th:if="${settingRestored == true}">
+	<div class="alert alert-success" role="alert">All the setting has been restored to defaults</div>
+</div>
+<form action="#"  th:action="@{/setting/processForm}" method="post" class="form" th:object="${settingsForm}">
+	<fieldset class="row mb-3">
+		<legend class="col-form-label col-sm-2 pt-0">Select Silence Length*</legend>
+		<div class="col-sm-10">
+				<th:block th:each="number : ${T(com.example.shuffleplayer.ConstantText).SETTINGS_CHOICES_SILENCE_NUMBERS}">
+					<div class="form-check">
+						<input class="form-check-input" type="radio" name="silenceLengthRadios" th:id="${'silenceRadios' + number}" th:field="*{silenceLength}" th:value="${number}" th:checked="${settingsForm.silenceLength == number} ? 'checked' : ''">
+						<label class="form-check-label" th:for="${'silenceRadios' + number}" th:text="${number + ' second(s)'}"></label>
+					</div>
+				</th:block>
+		</div>
+	</fieldset>
+<fieldset class="row mb-3">
+	<legend class="col-form-label col-sm-2 pt-0">Turn Scanning on *</legend>
+	<div class="col-sm-10">
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="isScanningRadios" id="scanningYes" th:value="true" th:field="*{scanning}" th:checked="${settingsForm.isScanning == true} ? 'checked' : ''">
+				<label class="form-check-label" for="scanningYes" th:text="Yes"></label>
+			</div>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="isScanningRadios" id="scanningNo" th:value="false" th:field="*{scanning}" th:checked="${settingsForm.isScanning == false} ? 'checked' : ''">
+				<label class="form-check-label" for="scanningNo" th:text="No"></label>
+			</div>
+		</th:block>
+	</div>
+</fieldset>
+<fieldset class="row mb-3">
+	<legend class="col-form-label col-sm-2 pt-0">Select Weekday *</legend>
+		<div class="col-sm-10">
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="dayOfWeekRadios" id="dayAny" value="*" th:field="*{dayOfWeek}" th:checked="${settingsForm.getDayOfWeek() == '*'} ? 'checked' : ''">
+				<label class="form-check-label" for="dayAny">Any day of week</label>
+			</div>
+			<th:block th:each="day : ${T(com.example.shuffleplayer.ConstantText).SETTINGS_CHOICES_DAYS_OF_WEEK}">
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="dayOfWeekRadios" th:id="${'day' + dayOfWeek}" th:value="${day}" th:field="${settingsForm.dayOfWeek}" th:checked="${settingsForm.getDayOfWeek() == day} ? 'checked' : ''">
+					<label class="form-check-label" th:for="${'day' + day}" th:text="${day}"></label>
+				</div>
+			</th:block>
+		</div>
+</fieldset>
+
+	<fieldset class="row mb-3">
+		<legend class="col-form-label col-sm-2 pt-0">Time of day *</legend>
+		<div class="col-sm-10">
+			<div class="form-check">
+		<select id="timesSelector" th:field="*{hourOfDay}" th:selected="false">
+			<option th:value="${'*'}">Any time of the day</option>
+			<option th:value="${T(com.example.shuffleplayer.ConstantText).SETTINGS_VALUE_TIME_OF_DAY_THIS_HOUR}">The current hour</option>
+			<option th:each="hourChoice : ${T(com.example.shuffleplayer.ConstantText).SETTINGS_CHOICES_TIMES_OF_DAY}" th:text="${hourChoice}" th:value="${hourChoice}"
+			></option>
+
+		</select>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset class="row mb-3">
+		<legend class="col-form-label col-sm-2 pt-0">Turn Calendar View on *</legend>
+		<div class="col-sm-10">
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="isCalendarViewRadios" id="calendarViewYes" th:value="true" th:field="*{calendarView}" th:checked="${settingsForm.getCalendarView == true} ? 'checked' : ''">
+				<label class="form-check-label" for="calendarViewYes" th:text="Yes"></label>
+			</div>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="isCalendarViewRadios" id="calendarViewNo" th:value="false" th:field="*{calendarView}" th:checked="${settingsForm.getCalendarView == false} ? 'checked' : ''">
+				<label class="form-check-label" for="calendarViewNo" th:text="No"></label>
+			</div>
+			</th:block>
+		</div>
+	</fieldset>
+
+	<fieldset class="row mb-3">
+		<legend class="col-form-label col-sm-2 pt-0">Turn Logo View on *</legend>
+		<div class="col-sm-10">
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="isLogoViewRadios" id="logoViewYes" th:value="true" th:field="*{logoView}" th:checked="${settingsForm.getLogoView == true} ? 'checked' : ''">
+				<label class="form-check-label" for="logoViewYes" th:text="Yes"></label>
+			</div>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="isLogoViewRadios" id="logoViewNo" th:value="false" th:field="*{logoView}" th:checked="${settingsForm.getLogoView == false} ? 'checked' : ''">
+				<label class="form-check-label" for="logoViewNo" th:text="No"></label>
+			</div>
+			</th:block>
+		</div>
+	</fieldset>
+	<fieldset class="row mb-3">
+		<legend class="col-form-label col-sm-2 pt-0">Get current feed and not get another random (if one exists)*</legend>
+		<div class="col-sm-10">
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="randomFromCurrentRadios" id="randomFromCurrentYes" th:value="true" th:field="*{randomFromCurrent}" th:checked="${settingsForm.getRandomFromCurrent() == true} ? 'checked' : ''">
+				<label class="form-check-label" for="randomFromCurrentYes" th:text="Yes"></label>
+			</div>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="randomFromCurrentRadios" id="randomFromCurrentNo" th:value="false" th:field="*{randomFromCurrent}" th:checked="${settingsForm.getRandomFromCurrent() == false} ? 'checked' : ''">
+				<label class="form-check-label" for="randomFromCurrentNo" th:text="No"></label>
+			</div>
+			</th:block>
+		</div>
+	</fieldset>
+    <fieldset class="row mb-3">
+        <legend class="col-form-label col-sm-2 pt-0">Override the current feed when file is changed from the browser*</legend>
+        <div class="col-sm-10">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="overwriteFeedRadios" id="overwriteFeedYes" th:value="true" th:field="*{overwriteFeed}" th:checked="${settingsForm.getOverwriteFeed() == true} ? 'checked' : ''">
+                <label class="form-check-label" for="overwriteFeedYes" th:text="Yes"></label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="overwriteFeedRadios" id="overwriteFeedNo" th:value="false" th:field="*{overwriteFeed}" th:checked="${settingsForm.getOverwriteFeed() == false} ? 'checked' : ''">
+                <label class="form-check-label" for="overwriteFeedNo" th:text="No"></label>
+            </div>
+            </th:block>
+        </div>
+    </fieldset>
+	<fieldset class="row mb-3">
+		<legend class="col-form-label col-sm-2 pt-0">Change to random track after x number of tracks*</legend>
+		<div class="col-sm-10">
+			<div class="form-check">
+		<select id="timesSelector" th:field="*{trackCurrentCount}" th:selected="false">
+			<option th:each="trackCurrentCount: ${T(com.example.shuffleplayer.ConstantText).TRACK_CURRENT_COUNT}" th:text="${trackCurrentCount}" th:value="${trackCurrentCount}"></option>
+			</option>
+
+		</select>
+			</div>
+		</div>
+	</fieldset>
+</fieldset>
+<fieldset class="row mb-3">
+	<legend class="col-form-label col-sm-2 pt-0">Change to random track after x number of tracks*</legend>
+	<div class="col-sm-10">
+		<div class="form-check">
+			<input class="form-check-input" type="radio" name="regularlyChangeToRandomRadios" id="regularlyChangeToRandomYes" th:value="true" th:field="*{regularlyChangeToRandom}" th:checked="${settingsForm.getRegularlyChangeToRandom() == true} ? 'checked' : ''">
+			<label class="form-check-label" for="overwriteFeedYes" th:text="Yes"></label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input" type="radio" name="regularlyChangeToRandomRadios" id="regularlyChangeToRandomNo" th:value="false" th:field="*{regularlyChangeToRandom}" th:checked="${settingsForm.getRegularlyChangeToRandom() == false} ? 'checked' : ''">
+			<label class="form-check-label" for="overwriteFeedNo" th:text="No"></label>
+		</div>
+		</th:block>
+	</div>
+</fieldset>
+    </fieldset>
+		<button type="submit" class="btn btn-primary mb-3">Submit</button>
+	<a th:href="@{/setting/defaults}">
+		<button type="button" class="btn btn-danger">Restore to the defaults</button>
+	</a>
+	</form>
+</body>
+</html>

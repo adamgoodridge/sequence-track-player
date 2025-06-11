@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title th:text="'Shuffle - ' + ${feedCurrentPlayingInfo.feedName}"></title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<div th:insert="~{fragments/menu :: nav}"></div>
+<div style="text-align: center;">
+	<a th:href="${feedCurrentPlayingInfo.trackUrl}" th:id="titleLink + ${feedCurrentPlayingInfo.feedId}">
+		<h1 th:id="title+ ${feedCurrentPlayingInfo.feedId}"></h1>
+	</a>
+	<h1 th:text="${feedCurrentPlayingInfo.feedName} + '- Loading'" th:id="statusTitle+ ${feedCurrentPlayingInfo.feedId}"></h1>
+	<h1 th:id="timer+ ${feedCurrentPlayingInfo.feedId}">0 seconds escaped</h1>
+    
+	<p th:id="trackCount+ ${feedCurrentPlayingInfo.feedId}">Loading</p>
+	<audio id="myAudio">
+		<source type="audio/mpeg">
+		Your browser does not support the audio element
+	</audio>
+	<br>
+	<button type="button" class="btn btn-primary btn-lg btn-block" th:id="playControlButton + ${feedCurrentPlayingInfo.feedId}" onclick="playerStatusChangeAndClearSilenceTimer()">Play</button>
+	<br>
+	<br>
+	<br>
+	<button type="button" class="btn btn-primary btn-lg btn-block" th:id="previousButton+ ${feedCurrentPlayingInfo.feedId}" onclick="changeTrack(previous_url)">Prev</button>
+	<button type="button" class="btn btn-primary btn-lg btn-block" th:id="nextButton + ${feedCurrentPlayingInfo.feedId}" onclick="changeTrack(next_url)">Next</button>
+	<br>
+	<br>
+	<br>
+	<button type="button" th:id="bookmarkButton + ${feedCurrentPlayingInfo.feedId}" onclick="bookmarkButtonClick()"></button>
+	<a th:href="'/browser/feed/' + ${feedCurrentPlayingInfo.feedId}" id="browserLink"><button type="button" class="btn btn-primary btn-lg btn-block" th:id="browserButton">Browser</button></a>
+	<button type="button" th:id="turnShuffleButton" name="shuffle" onclick="changeSetting('shuffle',this.id)"></button>
+    <button type="button" th:id="turnIsRandomChangeButton" name="regular change track" onclick="changeSetting('regularly_change_to_random',this.id)"></button>
+	<a th:href="'/feed/clear/' + ${feedCurrentPlayingInfo.feedId}"><button type="button" class="btn btn-danger btn-lg btn-block" id="currentButton">Clear from list</button></a>
+
+</div>
+<script :src="/static/playerControls.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript">
+	var playControlButton;
+	var previousButton;
+	var nextButton;
+	var bookmarkButton;
+    var timerText;
+    var titleText;
+    var statusText;
+    var trackCountText;
+    var trackCount;
+	const player = document.getElementById("myAudio");
+    let titleLink;
+	var bookmarkId = "[[${feedCurrentPlayingInfo.bookmarkId}]]";
+</script>
+<script src="../../content/playerControls.js" type="text/javascript"></script>
+<script type="text/javascript">
+	//changes in case , it is updates current duration gets bookmarked or browsed
+	let feedId = "[[${feedCurrentPlayingInfo.feedId}]]";
+    const firstFeedId = "[[${feedCurrentPlayingInfo.feedId}]]";
+	const sessionId = "[[${sessionId}]]";
+    const next_url = "/feed/json/get/next/" + feedId + "?sessionId=" + sessionId;
+    const previous_url = "/feed/json/get/previous/" + feedId + "?sessionId=" + sessionId;
+    let max_number = "[[${silence_length}]]";
+    let settings = new Map();
+    let isScanning = '[[${isScanning}]]' === 'true';
+    settings.set("isScanning", isScanning);
+    updateSettingButton("turnShuffleButton", isScanning);
+    let isRandomChange = '[[${isRandomChange}]]' === 'true';
+    settings.set("isRandomChange", isRandomChange);
+    let timer = document.getElementById("timer" + feedId);
+    updateSettingButton("turnIsRandomChangeButton",isRandomChange);
+	let updateLengthTimeInterval;
+    let secondEscapedWaiting = 0;
+    let checkedIfLoaded = setInterval(function () {
+            let url = "/feed/json/status/" + feedId;
+            $.getJSON(url, function (data) {
+                if(data.hasOwnProperty("error")) {
+                    showError(data["error"]);
+                    clearInterval(checkedIfLoaded);
+                } else {
+                    let isLoaded = JSON.parse(data["isLoaded"]);
+                    //hasOw is working
+                    if (isLoaded === true) {
+                        clearInterval(checkedIfLoaded);
+                        url = "/feed/json/get/current/" + feedId + "?sessionId=" + sessionId;
+                        $.getJSON(url, function (data) {
+                            feedId = data["feedId"];
+                            loadDataIntoPlayer(data, false);
+                            updateLengthTimeInterval = setInterval(function () {
+                                if(player.paused === false || timer.innerHTML.endsWith("NaN")) {
+                                    updateLengthTimeText();
+                                }
+                            },1000);
+                        });
+                    } else {
+                document.getElementById("timer" + firstFeedId).innerHTML = secondEscapedWaiting.toString() + " seconds escaped";
+                //todo put something which it run once and not everytime
+                document.getElementById("timer" + firstFeedId).hidden = false;
+                secondEscapedWaiting++;
+            }
+            }
+        });
+
+    }, 1000);
+    let gapInterval;
+    setAllElements(firstFeedId);
+    updatePlayerControlsHidden(true);
+    //in-case changeTrack() got a blank audio file
+	//let lastUrl;
+
+    window.onload = function () {
+        player.addEventListener("ended", function () {
+        console.log("next track")
+            playControlButton.textContent = "Play";
+            let randomNumber = Math.random() * max_number;
+            randomNumber = Math.ceil(randomNumber);
+            if (max_number != 0) {
+                let timeCurrently = 0;
+                gapInterval = setInterval(function () {
+                    //timer runs out
+                    if (timeCurrently === randomNumber) {
+                        clearInterval(gapInterval);
+                        changeTrack(next_url, true);
+                    } else {
+                        timeCurrently++;
+                    }
+                    // Output the result in the heading with the id of timer
+                    timerText.innerHTML = timeCurrently.toString();
+
+                }, 1000);
+            } else {
+                changeTrack(next_url, true);
+            }
+        }, false);
+        //for first audio file
+        updateBookmarksButton();
+        //check if it has no errors
+        if(document.getElementById("myAudio").hidden === true) {
+            startTrackTimeInterval();
+        }
+    }
+    function startTrackTimeInterval() {
+        updateLengthTimeInterval = setInterval(function () {
+            if(player.paused === false || timer.innerHTML.endsWith("NaN")) {
+                updateLengthTimeText(firstFeedId);
+            }
+        },1000);
+	}
+
+    function changeTrack(url, isPlaying) {
+        //needed when clicked next or previous
+        clearInterval(updateLengthTimeInterval);
+        if (isPlaying == null) {
+            isPlaying = !player.paused;
+        }
+
+        //lastUrl = url;
+        clearInterval(gapInterval);
+        gapInterval = null;
+        $.getJSON(url, function (data) {
+            timer.innerHTML = "";
+            //http://www.java2s.com/example/javascript/dom-html-element/change-to-the-next-song-after-ended-using-audio.html
+            feedId = data["feedId"];
+            loadDataIntoPlayer(data, isPlaying);
+        });
+	    startTrackTimeInterval();
+    }
+	function playerStatusChangeAndClearSilenceTimer() {
+	    startTrackTimeInterval();
+	    //if stmt happen in playerStatusChange()
+    if(player.paused === false) {
+        clearInterval(updateLengthTimeInterval);
+    } else {
+        startTrackTimeInterval();
+    }
+		clearInterval(updateLengthTimeInterval);
+		playerStatusChange();
+	}
+</script>
+</body>
+</html>

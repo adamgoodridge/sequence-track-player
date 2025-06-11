@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Shuffle - Settings'"></title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<div th:insert="~{fragments/menu :: nav}"></div>
+<div style="text-align: center;">
+    <form action="#" th:action="@{/setting/shortcut/processForm}" method="post" class="form">
+        <div class="mb-3">
+            <label class="form-label">Select Shortcuts *</label>
+            <th:block th:each="feedName : ${feedNames}">
+                <div class="form-check">
+                    <label>
+                        <input type="checkbox" name="shortcuts" th:id="${feedName}" th:value="${feedName}"
+                               th:checked="${#arrays.contains(alreadyInShortCuts, feedName)}">
+                    </label>
+                    <label th:for="${feedName}" th:text="${feedName}"></label>
+                    <br>
+                </div>
+            </th:block>
+        </div>
+        <button type="submit" class="btn btn-primary mb-3">Submit</button>
+    </form>
+    <button class="btn btn-primary mb-3" id="checked">Select all</button>
+    <button class="btn btn-danger mb-3" id="unchecked">Deselect all</button>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+
+$(document).ready(function(){
+  $("#checked").click(function(){
+    $('input:checkbox').not(this).prop('checked', 'checked');
+  });
+  $("#unchecked").click(function(){
+    $('input:checkbox').not(this).prop('checked', '');
+  });
+});
+</script>
+</body>
+</html>

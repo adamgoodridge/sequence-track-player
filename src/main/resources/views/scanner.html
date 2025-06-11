@@ -1,0 +1,263 @@
+<!-- saved from url=(0029)http://localhost:8080/shuffle -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .cust-grid {
+            text-align: center;
+            display: grid;
+            background-color: #fff;
+            color: #444;
+            grid-column-gap: .5em;
+            grid-row-gap: 1em;
+            align-items: self-end;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .cust-cell {
+            cursor: pointer;
+        }
+        .cust-cell:hover {
+            color:blue;
+            background-color:#D3D3D3;
+        }
+        .left {
+            float: left;
+        }
+        .right {
+            float: right;
+        }
+        .linkDisabled {
+            pointer-events: none;
+            cursor: default;
+            text-decoration: none;
+            color: black;
+        }
+	
+    
+    </style>
+    <script src="../static/playerControls.js"></script>
+</head>
+<body data-new-gr-c-s-check-loaded="14.1089.0" data-gr-ext-installed="">
+
+<div th:insert="~{fragments/menu :: nav}"></div>
+<audio id="myAudio">
+    <source type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+<div class="cust-grid" id="Feeds">
+
+</div>
+<div style="text-align: center;">
+    <button type="button" id="turnShuffleButton" name="shuffle" onclick="changeSetting('shuffle',this.id)"></button>
+    <a id="browserLink">
+        <button type="button" class="btn btn-primary btn-lg btn-block" th:id="browserButton" disabled>Browser</button>
+    </a>
+    <a th:href="@{/shuffle/select}">
+        <button type="button" class="btn btn-primary btn-lg btn-block" th:id="browserButton">Pick feeds to scan</button>
+    </a>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="../content/playerControls.js"></script>
+<script type="text/javascript">
+    let playControlButton;
+    let previousButton;
+    let nextButton;
+    let bookmarkButton;
+    let timerText;
+    let titleText;
+    let statusText;
+    let titleLink;
+    const player = document.getElementById("myAudio");
+    //feeds list
+    let feeds;
+    let feedId = -1;
+    const sessionId = "[[${sessionId}]]";
+    let max_number = "[[${currentSilenceNumber}]]";
+    let settings = new Map();
+    let isScanning = '[[${isScanning}]]' === 'true';
+    settings.set("isScanning", isScanning);
+    updateSettingButton("turnShuffleButton", isScanning);
+
+
+</script>
+<script>
+    //goes into a interval ;
+    var timerUpdater = function () {
+        if (player.paused === false && !document.getElementById("timer" + feedId).innerHTML.endsWith("NaN")) {
+            updateLengthTimeText(feedId);
+            //update the item in feed
+            feeds[feedId]["currentPosition"] = Math.floor(player.currentTime);
+        }
+    }
+
+    function showFeeds() {
+        $.getJSON("/feed/json/shuffle", function(data) {
+            console.log("hi");
+            let str = '';
+            if(data.length === 0) {
+                str = '<h1>There\'s no feed currently loaded</h1>';
+            } else {
+                feeds = data;
+                let i = 0;
+                data.forEach(function(item) {
+                    str += '<div class ="cust-cell" onclick="changeFeedByClicked(this.id)" id="'+ item["feedId"] +'">';
+                    str += '	<h4>'+ item["feedName"] + '</h4>';
+                    str += '	<h4 id="statusTitle'+ item["feedId"]+'"></h4>';
+                    str += '	<a href="'+data["trackUrl"]+'"id="titleLink'+ item["feedId"]+'" class="linkDisabled"><p id="title'+ item["feedId"]+'">'+ item["trackName"].replace(item["feedName"],"") + '</p> </a>';
+                    console.log(item["feedName"]);
+                    str += '	<h5 id="timer'+item["feedId"]+'"></h5>';
+                    str += '	<div>';
+                    str += '		<div class="left">';
+                    //pre
+	                str += '			<button type="button" style="visibility:hidden" class="btn btn-primary btn-lg btn-block" id="previousButton'+item["feedId"]+'" onClick="changeTrackOnShufflePage('+item["feedId"]+', false)">Prev</button>';
+                    //next
+                    str += '			<button type="button" style="visibility:hidden" class="btn btn-primary btn-lg btn-block" id="nextButton'+item["feedId"]+'" onClick="changeTrackOnShufflePage('+item["feedId"]+', true)">Next</button> ';
+                    str += '		</div>';
+                    str += '	<button type="button" style="visibility:hidden" class="btn btn-primary btn-lg btn-block" id="playControlButton'+ item["feedId"]+'" onclick="playerStatusChange()" >Play</button>';
+                    str += '		<div class="right">';
+                    str += '			<button type="button" style="visibility:hidden"  id="bookmarkButton'+ item["feedId"]+'" onclick="bookmarkButtonClick()"></button>';
+                    str += '		</div>';
+                    str += '	</div>';
+                    str += '</div>';
+                    i++;
+                });
+            }
+            document.getElementById("Feeds").innerHTML = str;
+        });
+    }
+
+    showFeeds();
+    let currentCell;
+	//loads the feeds based what it already is in the list
+    function changeFeed(id, isPlay) {
+        //ignores the first feed
+        if(feedId != -1) {
+            updatePlayerButtonsVisibility(false);
+        }
+        clearInterval(timerUpdater);
+        feedId = parseInt(id);
+        setAllElements(feedId);
+        //track has finished on paused is false
+	    if(isPlay === undefined) {
+            isPlay = player.duration === player.currentTime;
+        }
+        //method needed if feed changes excluding getting next track
+        if(currentCell != null) {
+            titleLink.classList.add("linkDisabled");
+            currentCell.style.backgroundColor = '';
+            currentCell.setAttribute('onclick', 'changeFeed(this.id, true)');
+            updatePlayerButtonsVisibility(false);
+        }
+        const cell = document.getElementById(feedId);
+        cell.setAttribute('onclick', '');
+        cell.style.backgroundColor = 'green';
+        currentCell = cell;
+        updatePlayerButtonsVisibility(true);
+        titleLink.classList.remove("linkDisabled");
+        //id might be different from actual array as some might be loading therefore not in the array
+        const arrayIndex = feeds.map(item => item.feedId).indexOf(feedId);
+        loadDataIntoPlayer(feeds[arrayIndex], isPlay);
+        setInterval(timerUpdater,1000);
+    }
+    function changeFeedByClicked(id, isNext) {
+        if(feedId != -1){
+            //there is a track current playing
+            let currentLength = Math.floor(player.currentTime);
+            const oldIndex = feeds.map(item => item.feedId).indexOf(feedId);
+            feeds[oldIndex].currentPosition = currentLength;
+            updatePlayerButtonsVisibility(false);
+        }
+        changeFeed(id, isNext);
+    }
+    function updatePlayerButtonsVisibility(isVisibility) {
+        let value;
+        if(isVisibility === true) {
+            value = "visible";
+        } else {
+            value = "hidden";
+        }
+        playControlButton.style.visibility = value;
+        previousButton.style.visibility = value;
+        nextButton.style.visibility = value;
+        bookmarkButton.style.visibility = value;
+    }
+        //goes to next track automatically after waiting for silence OR manual click feed
+    function changeTrackOnShufflePage(id, isNext) {
+        let action;
+        if(isNext) {
+            action = "next"
+        } else {
+           action = "previous";
+        }
+        const url = "/feed/json/get/" + action + "/" + feedId + "?sessionId=" + sessionId + "&isScannerPage=true";
+        if(typeof gapInterval !== 'undefined') {
+            // the gapInterval is defined
+            clearInterval(gapInterval);
+            gapInterval = null;
+        }
+	    $.getJSON(url, function (data) {
+            var arrayIndex;
+            if (data.hasOwnProperty("error")) {
+                document.getElementById("Feeds").innerHTML = '<h1>'+data["error"]+'</h1>';
+            } else if(parseInt(data['feedId']) === feedId) {
+                //saves the next track so for next time goes back TODO
+                arrayIndex = feeds.map(item => item.feedId).indexOf(feedId);
+                feeds[arrayIndex] = data;
+                if(typeof gapInterval !== 'undefined') {
+                    clearInterval(gapInterval);
+                }
+		    } else {
+                //changed track so hide the old one
+                var buttons = document.getElementsByClassName('btn btn-primary btn-lg btn-block');
+                //hiding all buttons relating with the player
+                for (var i = 0; i < buttons.length; ++i) {
+                    var item = buttons[i];
+                    //all buttons relating with the player will end in a number
+                    if(!item.id.endsWith("Button")) {
+                        item.hidden = true;
+                    }
+                }
+                feedId = parseInt(data['feedId']);
+                feedId = data['feedId'];
+                arrayIndex = feeds.map(item => item.feedId).indexOf(feedId);
+			    feeds[arrayIndex] = data;
+                //if random, the json has next current track
+		    }
+            changeFeed(feedId, true);
+        })
+    }
+
+    window.onload = function () {
+        player.addEventListener("ended", function () {
+
+            playControlButton.textContent = "Play";
+            let randomNumber = Math.random() * max_number;
+            randomNumber = Math.ceil(randomNumber);
+            if (parseInt(max_number) !== 0) {
+                let timeCurrently = 0;
+                gapInterval = setInterval(function () {
+                    //timer runs out
+                    if (timeCurrently === randomNumber) {
+                        clearInterval(gapInterval);
+                        changeTrackOnShufflePage(feedId , true);
+                    } else {
+                        timeCurrently++;
+                    }
+                    // Output the result in the heading with the id of timer
+                    timerText.innerHTML = timeCurrently.toString();
+
+                }, 1000);
+            }
+            changeTrackOnShufflePage(feedId, true);
+        });
+    }
+
+
+</script>
+</body>
+</html>
