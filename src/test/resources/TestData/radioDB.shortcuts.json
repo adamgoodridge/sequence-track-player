@@ -1,0 +1,17 @@
+[
+{
+  "_id": {
+    "$oid": "65d08efa8587a455cc8e57ce"
+  },
+  "feedName": "Shortcut1",
+  "logoPath": "***REMOVED***.png",
+  "_class": "net.adamgoodridge.sequencetrackplayer.shortcut.Shortcut"
+},
+{
+  "_id": {
+    "$oid": "65d08efa8587a455cc8e57cf"
+  },
+  "feedName": "Shortcut2",
+  "logoPath": "",
+  "_class": "net.adamgoodridge.sequencetrackplayer.shortcut.Shortcut"
+}]

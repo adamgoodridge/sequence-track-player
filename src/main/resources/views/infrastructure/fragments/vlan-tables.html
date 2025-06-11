@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="display-tables">
+<span th:each="vlan : ${vlans}">
+        <h1 th:text="${vlan.title}">demo</h1>
+    <table class="table">
+        <tr class="thead-dark">
+            <th>Host</th>
+            <th>IP</th>
+            <th>Address</th>
+            <th>Type</th>
+        </tr>
+        <tr th:each="host : ${vlan.getHosts()}">
+                <td th:text="${host.getName()}" style="width:15%">demo</td>
+                <td th:class="${{host.getIp.cssClass}}" style="width:35%"><a th:text="${host.getIp.getTitle()}" th:href="${host.getIp().getUrl()}">demo</a></td>
+                <td th:class="${{host.getFqdn.cssClass}}" style="width:35%"><a th:text="${host.getFqdn.getTitle()}" th:href="${host.getFqdn().getUrl()}">demo</a></td>
+                <td style="width:15%"><a th:text="${host.getType()}" th:href="'/infrastructure/type/' + ${host.getType()}">demo</a></td>
+            </tr>
+    </table>
+</span>
+
+</div>
+</body>
+</html>

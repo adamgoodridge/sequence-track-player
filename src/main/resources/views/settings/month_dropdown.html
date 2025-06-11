@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+
+<div class="form-check">
+	<label for="anyTime"> </label>
+	<br>
+	<input type="radio" id="thisHour" th:value="${T(com.example.shuffleplayer.ConstantText).SETTINGS_VALUE_TIME_OF_DAY_THIS_HOUR}" th:checked="${settingsForm.getDayOfWeek() == '*'} ? 'checked' : ''" name="dayOfWeek">
+	<label for="thisHour"> The current day</label>
+	<br>
+	<th:block th:each="">
+		<div class="form-check">
+			<input type="radio" th:field="${settingsForm.timeOfDay}" th:value="${timeOfDay}" th:checked="${settingsForm.dayOfWeek == timeOfDay} ? 'checked' : ''">
+			<label th:for="${timeOfDay}" th:text="${timeOfDay}"></label>
+			<br>
+		</div>
+	</th:block>
+</body>
+</html>

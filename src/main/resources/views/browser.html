@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+	<style type="text/css">
+		/* https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_breadcrumbs */
+        ul.breadcrumb {
+            list-style: none;
+        }
+        ul.breadcrumb li {
+            display: inline;
+        }
+        ul.breadcrumb li+li:before {
+            padding: 2px;
+            color: black;
+            /* greater than*/
+            content: "\003e";
+        }
+	</style>
+</head>
+
+<body>
+<div th:insert="~{fragments/menu :: nav}"></div>
+	<!---START OF breadcrumbs--->
+    <div th:if="${breadcrumbs == null}">
+		<p>You are at the home directory</p>
+	</div>
+ 
+	<ul th:if="${breadcrumbs != null}" class="breadcrumb" >
+        <a th:href="@{{baseRandomUrl}{path}(path=${lastPath}, baseRandomUrl='/feed/get/random/')}">
+            <button type="button" class="btn btn-primary btn-lg btn-block" th:id="browserButton">Random track from here</button>
+        </a>
+
+		   <li class="spanParagraph" th:each="breadcrumb : *{breadcrumbs}">
+               <a th:href="@{{baseUrl}{path}(baseUrl=${baseUrl}, path=${breadcrumb.path()})}" th:text="${breadcrumb.name()}"> </a>
+               
+		   </li>
+	</ul>
+    <!-- display the current feed path -->
+    <div th:if="${breadcrumbs == null}">
+    </div>
+    <!-- list of files -->
+	<div class="list-group">
+		<span th:each="subFile : ${subFiles}">
+			<!-- current file getting highlight if there is one -->
+			<span th:if="${subFile == currentFile}">
+				<a  th:href="@{{baseUrl}{rootPath}{file}(baseUrl = ${baseUrl}, rootPath=${rootPath}, file=${subFile})}" id="activeItem" class="list-group-item active" th:text="${subFile}"></a>
+			</span>
+			<span th:if="${subFile != currentFile}">
+	            <a  th:href="@{{baseUrl}{rootPath}{file}(baseUrl = ${baseUrl},rootPath=${rootPath}, file=${subFile})}" class="list-group-item list-group-item-action" th:text="${subFile}"></a>
+			</span>
+
+		</span>
+	</div>
+	<span th:if="${yearView == true}">
+		<!-- CURRENT VIEWING YEAR IN A LIST FORMAT -->
+		<a th:href="${'/browser/path/' + fullPath + '?calenderViewChange=true&calenderView=true'}"><button style="padding-top: 5px" type="button" class="btn btn-primary">Turn calendar on</button></a>
+	</span>
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script>
+    $( document ).ready(function() {
+        //scroll to current item if exists
+
+	    const activeItem = document.getElementById("activeItem");
+	    if(activeItem != null) {
+            activeItem.scrollIntoView();
+	    }
+    });
+</script>
+</body>
+</html>
