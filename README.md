@@ -1,5 +1,5 @@
-# Media Player Scanner
-This is a pet project that allowed me to learn more about the Spring framework. Current refactoring it to apply clean prinpies.
+# Media Player
+This is a pet project that allowed me to learn more about the Spring framework. Current refactoring it to apply clean principles.
 
 In this public repo, it has modifitted to be a podcast player.
 
