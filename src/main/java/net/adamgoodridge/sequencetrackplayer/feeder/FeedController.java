@@ -110,7 +110,7 @@ public class FeedController {
 	@SuppressWarnings("unused")
 	@RequestMapping("/list/all")
 	public String listAll(Model model) {
-		return "redirect:/feed/***REMOVED***r";
+		return "redirect:/feed/shuffler";
 	}
 
 	@RequestMapping("/list/current")
@@ -154,7 +154,7 @@ public class FeedController {
 			message = "No shuffle feed found at id " + feedTrackIndex;
 		} else {
 			AudioFeeder deletedItem = feedService.removeAudioFeeder(feedTrackIndex);
-			message = "The ***REMOVED***r feed "+item.get().getFeedName()+" (id " + feedTrackIndex + ") was deleted";
+			message = "The shuffler feed "+item.get().getFeedName()+" (id " + feedTrackIndex + ") was deleted";
 
 		}
 		model.addAttribute("deleted", message);

@@ -104,10 +104,10 @@ spring.data.mongodb.database=radioDB
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/media-player-***REMOVED***r.git
+git clone https://github.com/yourusername/media-player-shuffler.git
 
 # Navigate to project directory
-cd media-player-***REMOVED***r
+cd media-player-shuffler
 
 # Build with Gradle
 ./gradlew build
