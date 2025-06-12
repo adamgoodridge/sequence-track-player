@@ -1,9 +1,9 @@
-# Media Player
+# Media Player Shuffler
 This is a pet project that allowed me to learn more about the Spring framework. Current refactoring it to apply clean principles.
 
-In this public repo, it has modifitted to be a podcast player.
+In this public repo, it has been modified to be a podcast player.
 
-Frontend is in JS and thymeleaf, it is far from best practices. I want to change to React at somepoint, but my focus on the backend
+Frontend is in JS and thymeleaf, it is far from best practices. I want to change to React at some point, but my focus on the backend
 
 [![Gradle Build](https://img.shields.io/badge/build-gradle-blue.svg)](https://gradle.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3-green.svg)](https://spring.io/projects/spring-boot)
