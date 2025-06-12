@@ -55,11 +55,11 @@ public class FeedJsonController {
     @SuppressWarnings("unused")
     @GetMapping(value = "/get/{action}/{feedTrackListIndex}", produces = "application/json")
     public String getNextTextOnly(@PathVariable Long feedTrackListIndex, @PathVariable String action, @RequestParam("sessionId") String sessionId,
-                                                @RequestParam(value = "isScannerPage", required = false, defaultValue = "false") boolean isScannerPage) {
+                                                @RequestParam(value = "isShufflerPage", required = false, defaultValue = "false") boolean isShufflerPage) {
         AudioFeeder audioFeeder = getAudioFeederAndValidate(feedTrackListIndex, sessionId);
 
         /*
-            move the track after the track is played OR prev/next is clicked before ***REMOVED***r mode will move the next feed
+            move the track after the track is played OR prev/next is clicked before shuffler mode will move the next feed
          */
         feedService.trackControl(audioFeeder, TrackAction.fromString(action));
         long id;
@@ -68,7 +68,7 @@ public class FeedJsonController {
         status = checkAndUpdateStatus(audioFeeder);
         if (!action.equals("current") && settingService.getBoolean(SettingName.IS_SCANNING) && status) {
             //season takes ownership over the feed, the sessionId is already checked
-            if (isScannerPage) {
+            if (isShufflerPage) {
                 audioFeeder = feedService.getRandomAudioFeeder(sessionId);
             } else {
                 //if page single feed view
