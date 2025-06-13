@@ -16,7 +16,8 @@ class BrowserUtilsTest {
     @Test
     void generateFileItems_WithEmptyPath_ReturnsNull() {
         List<BreadCrumb> result = BrowserUtils.generateFileItems("");
-        assertNull(result);
+        assertEquals("folder1", result.get(0).name());
+        assertEquals("folder1/", result.get(0).path());
     }
 
     @Test

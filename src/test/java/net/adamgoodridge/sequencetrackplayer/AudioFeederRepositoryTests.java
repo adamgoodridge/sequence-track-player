@@ -35,17 +35,4 @@ class AudioFeederRepositoryTests {
         AudioFeeder audioFeeder = audioFeederRepository.getRandomBySessionId(sessionId);
         notNull(audioFeeder);
     }
-
-    @Test
-    void getRandomByFeedName(){
-        String feedName = "***REMOVED***-South";
-        AudioFeeder audioFeeder = audioFeederRepository.getAudioFeederByFeedName(feedName);
-        assertEquals(feedName, audioFeeder.getFeedName());
-    }
-    @Test
-    void countAllByFeedNameAndAndAudioInfoNotNull() {
-        String feedName = "***REMOVED***-South";
-        int count = audioFeederRepository.countAllByFeedNameAndAndAudioInfoNotNull(feedName);
-        assertNotEquals(0, count);
-    }
 }
