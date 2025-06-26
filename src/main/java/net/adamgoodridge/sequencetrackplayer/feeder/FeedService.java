@@ -2,11 +2,11 @@ package net.adamgoodridge.sequencetrackplayer.feeder;
 
 
 import net.adamgoodridge.sequencetrackplayer.filesystem.*;
-import net.adamgoodridge.sequencetrackplayer.directory.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.sequence.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.*;
+import net.adamgoodridge.sequencetrackplayer.filesystem.directory.*;
 import net.adamgoodridge.sequencetrackplayer.settings.*;
 import net.adamgoodridge.sequencetrackplayer.shortcut.*;
 import org.apache.commons.lang3.*;
@@ -50,7 +50,7 @@ public class FeedService {
         if (audioFeeder != null)
             return audioFeeder.getId();
 
-        audioFeeder = new GenerateTrack(settingService.getPreferredRandomSettings(), feedRequest).process();
+        audioFeeder = new AudioFeederFactory(settingService.getPreferredRandomSettings(), feedRequest).process();
         audioFeedersLoaded.put(audioFeeder.getId(), audioFeeder);
         audioFeederService.save(audioFeeder);
         return audioFeeder.getId();
@@ -87,6 +87,10 @@ public class FeedService {
     public List<AudioFeeder> getLoadedAudioFeeders() {
         return audioFeederService.getAll().stream().filter(audioFeeder -> audioFeeder.getAudioIOFileManager() != null).toList();
     }
+    //todo display only those which are not in error state under current feed page
+    public List<AudioFeeder> getAllErrorOutAudioFeeders() {
+        return audioFeederService.getAll();
+    }
 
     public AudioFeeder getRandomAudioFeeder() {
         return audioFeederService.getRandom();
@@ -104,23 +108,28 @@ public class FeedService {
         AudioFeeder audioFeeder = optional.get();
         if (audioFeeder.getAudioIOFileManager() != null)
             return audioFeeder;
-        AudioFeeder audioFeederLoaded = audioFeedersLoaded.get(id);
+        audioFeeder.throwIfError();
+        loadFutureInAudioFeederIfCompleted(audioFeeder);
+        audioFeederService.save(audioFeeder);
+        audioFeeder.throwIfError();
+        return audioFeeder;
+    }
+
+    private void loadFutureInAudioFeederIfCompleted(AudioFeeder audioFeeder) {
+        AudioFeeder audioFeederLoaded = audioFeedersLoaded.get(audioFeeder.getId());
         if (audioFeederLoaded == null)
-            throw new NotFoundError("Feed had an error when loading!");
+            audioFeeder.setErrorMessage("Feed had an error when loading!");
         CompletableFuture<AudioIOFileManager> future = audioFeederLoaded.getCompletableFuture();
         if (!future.isDone())
-            return audioFeeder;
+            return;
         try {
             audioFeeder.setAudioIOFileManager(future.get());
+            audioFeedersLoaded.remove(audioFeeder.getId());
+        } catch (JsonNotFoundError error) {
+            audioFeeder.setErrorMessage(error.getMessage());
         } catch (ExecutionException | InterruptedException e) {
             audioFeeder.setErrorMessage("Cannot load the feed");
         }
-
-        if (audioFeeder.getErrorMessage() != null)
-            throw new GetFeedException(audioFeeder.getErrorMessage());
-        audioFeedersLoaded.remove(audioFeeder.getId());
-        audioFeederService.save(audioFeeder);
-        return audioFeeder;
     }
 
     public void takeOwnershipShuffleAudioFeeders(String sessionId) {

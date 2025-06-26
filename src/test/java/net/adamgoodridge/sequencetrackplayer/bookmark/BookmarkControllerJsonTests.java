@@ -32,8 +32,6 @@ class BookmarkControllerJsonTests extends AbstractSpringBootTest {
     private AudioFeederRepository audioFeederRepository;
 
 
-    @Mock
-    private Model model;
 
     @BeforeEach
     void setUp() throws IOException {

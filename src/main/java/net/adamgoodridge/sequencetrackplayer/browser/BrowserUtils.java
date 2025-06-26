@@ -9,6 +9,9 @@ public class BrowserUtils {
     }
 
     public static List<BreadCrumb>  generateFileItems(final String path) {
+        if (path == null) {
+            return List.of();
+        }
         List<BreadCrumb> fileItems = List.of(new BreadCrumb("Home Directory", ""));
 
         if(!path.isEmpty()) {

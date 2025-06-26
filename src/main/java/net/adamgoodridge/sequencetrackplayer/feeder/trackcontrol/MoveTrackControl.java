@@ -10,7 +10,7 @@ import java.util.*;
 public class MoveTrackControl extends TrackControl {
     private static final Logger logger = LoggerFactory.getLogger(
             MoveTrackControl.class.getName());
-    private   final AudioFeeder audioFeeder;
+    private AudioFeeder audioFeeder;
 
 
     public MoveTrackControl(PreferredRandomSettings preferredRandomSettings, AudioFeeder audioFeeder) {
@@ -63,10 +63,13 @@ public class MoveTrackControl extends TrackControl {
 
 
     private void getNewRandomTrack() {
-        AudioIOFileManager audioIOFileManager = processRandomTrackFromFile(audioFeeder.getFeedName());
-        audioFeeder.setAudioIOFileManager(audioIOFileManager);
-        audioFeeder.resetTrackCount();
-        audioFeeder.increaseTrackCount();
+        FeedRequest feedRequest = FeedRequest.builder()
+                .name(audioFeeder.getFeedName())
+                .feedId(audioFeeder.getId())
+                .feedRequestType(FeedRequestType.RANDOM)
+                .build();
+        audioFeeder = new AudioFeederFactory(this.getPreferredRandomSettings(),
+                feedRequest).process();
     }
 
     private boolean shouldGetNewRandomTrack(AudioFeeder audioFeeder) {

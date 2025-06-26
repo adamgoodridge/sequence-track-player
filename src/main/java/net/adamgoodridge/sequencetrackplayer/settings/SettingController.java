@@ -2,9 +2,9 @@ package net.adamgoodridge.sequencetrackplayer.settings;
 
 
 import net.adamgoodridge.sequencetrackplayer.filesystem.*;
-import net.adamgoodridge.sequencetrackplayer.directory.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
+import net.adamgoodridge.sequencetrackplayer.filesystem.directory.*;
 import net.adamgoodridge.sequencetrackplayer.shortcut.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;

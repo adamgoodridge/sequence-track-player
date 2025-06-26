@@ -1,19 +1,21 @@
 package net.adamgoodridge.sequencetrackplayer;
 
-import net.adamgoodridge.sequencetrackplayer.feeder.FeedRequest;
+import net.adamgoodridge.sequencetrackplayer.exceptions.*;
+import net.adamgoodridge.sequencetrackplayer.feeder.*;
+import net.adamgoodridge.sequencetrackplayer.filesystem.*;
 import net.adamgoodridge.sequencetrackplayer.settings.*;
+import org.springframework.boot.test.context.*;
 
-import java.io.File;
+import java.util.*;
 
+@SpringBootTest
 public class Test {
-    public static void main(String[] args) {
-        //         System.out.println(new File("dfh").getAbsolutePath());
-        //         System.out.println(new File("dfh").list().length);
-      /*  System.out.println(new FeedRequest.Builder()
-                .name("test")
-                .path("/mnt/path/test/2023/2023-02_February/2023-02-01_Wednesday")
-                .build());*/
-        //PreferredRandomSettings settings = new PreferredRandomSettings.Builder().build();
+    public static void main(String[] args) throws GetFeedException {
+        String hi = "hi";
+        String[] args1 = new String[]{hi};
+        List<String> argsList = new ArrayList<>(Arrays.asList(args1));
+        System.out.println("argsList = " + argsList);
+
 
     }
 }
