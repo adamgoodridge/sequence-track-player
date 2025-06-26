@@ -1,7 +1,7 @@
 package net.adamgoodridge.sequencetrackplayer.shortcut;
 
 import net.adamgoodridge.sequencetrackplayer.filesystem.*;
-import net.adamgoodridge.sequencetrackplayer.directory.*;
+import net.adamgoodridge.sequencetrackplayer.filesystem.directory.*;
 import org.springframework.stereotype.*;
 
 import java.util.*;

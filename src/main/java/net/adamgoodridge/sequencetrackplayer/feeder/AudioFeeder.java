@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.google.gson.annotations.*;
 import net.adamgoodridge.sequencetrackplayer.*;
 import net.adamgoodridge.sequencetrackplayer.browser.*;
+import net.adamgoodridge.sequencetrackplayer.exceptions.*;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.*;
 
@@ -43,6 +44,8 @@ public class AudioFeeder {
     @Field
     private String startPath;
 
+    @Field
+    private DataItem dataItem;
     //needed for hibernate
     public AudioFeeder() {
 
@@ -191,6 +194,10 @@ public class AudioFeeder {
         if(getFeedName().startsWith("/"))
             return getFeedName().split("/")[1];
         return feedName;
+    }
+    public void throwIfError() throws GetFeedException {
+        if(errorMessage != null && !errorMessage.isBlank())
+            throw new GetFeedException(errorMessage);
     }
 }
 

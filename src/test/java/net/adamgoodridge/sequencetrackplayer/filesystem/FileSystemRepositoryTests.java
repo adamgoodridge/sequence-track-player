@@ -2,8 +2,8 @@ package net.adamgoodridge.sequencetrackplayer.filesystem;
 
 import net.adamgoodridge.sequencetrackplayer.AbstractSpringBootTest;
 import net.adamgoodridge.sequencetrackplayer.ConstantTextFileSystem;
-import net.adamgoodridge.sequencetrackplayer.directory.Directory;
-import net.adamgoodridge.sequencetrackplayer.directory.FileSystemRepository;
+import net.adamgoodridge.sequencetrackplayer.filesystem.directory.Directory;
+import net.adamgoodridge.sequencetrackplayer.filesystem.directory.FileSystemRepository;
 import net.adamgoodridge.sequencetrackplayer.mock.FileSystemMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

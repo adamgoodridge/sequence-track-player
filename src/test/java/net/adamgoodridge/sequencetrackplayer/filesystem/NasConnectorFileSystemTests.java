@@ -64,31 +64,6 @@ class NasConnectorFileSystemTests extends AbstractSpringBootTest {
             assertEquals("TEST_AUDIOFILE_2023-02-01_Wednesday_12-15-44.mp3", result.get(0).getFileName());
         }
     }
-
-    @Test
-    void getRanTrack_WithTimePreference_ShouldReturnTrackAtSpecifiedTime() throws GetFeedException {
-        try (MockedConstruction<File> ignored = FileSystemMock.MockFromJsonFile()) {
-            PreferredRandomSettings settings = new PreferredRandomSettings.Builder()
-                    .time(1200)
-                    .build();
-            AudioIOFileManager result = nasConnector.getRanTrack("test", settings);
-            assertNotNull(result);
-            assertTrue(result.getFile().getFileName().contains("12-"));
-        }
-    }
-
-    @Test
-    void getRanTrack_WithDayPreference_ShouldReturnTrackOnSpecifiedDay() throws GetFeedException {
-        try (MockedConstruction<File> ignored = FileSystemMock.MockFromJsonFile()) {
-            PreferredRandomSettings settings = new PreferredRandomSettings.Builder()
-                    .day("Monday")
-                    .build();
-            AudioIOFileManager result = nasConnector.getRanTrack("FeedB", settings);
-            assertNotNull(result);
-            assertTrue(result.getFile().getFileName().contains("Monday"));
-        }
-    }
-
     @Test
     void getBookmarkedTrack_ShouldReturnCorrectTrack() throws GetFeedException {
         try (MockedConstruction<File> ignored = FileSystemMock.MockFromJsonFile()) {
@@ -127,14 +102,6 @@ class NasConnectorFileSystemTests extends AbstractSpringBootTest {
     void getFiles_ShouldThrowNotFoundError_WhenDirectoryEmpty() {
         try (MockedConstruction<File> ignored = FileSystemMock.MockFromJsonFile()) {
             assertThrows(NotFoundError.class, () -> nasConnector.getFiles("server/nonexistent/path"));
-        }
-    }
-
-    @Test
-    void getRanTrack_ShouldThrowException_WhenNoFilesFound() {
-        try (MockedConstruction<File> ignored = FileSystemMock.MockFromJsonFile()) {
-            PreferredRandomSettings settings = new PreferredRandomSettings.Builder().build();
-            assertThrows(GetFeedException.class, () -> nasConnector.getRanTrack("nonexistent", settings));
         }
     }
 

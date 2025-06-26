@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,6 +25,7 @@ class AudioFeederRepositoryTest extends AbstractSpringBootTest {
     @Test
     void testFindAll() {
         List<AudioFeeder> audioFeederList = repository.findAll();
+        System.out.println("AudioFeeder count: " + audioFeederList.size());
         assertNotNull(audioFeederList);
         assertFalse(audioFeederList.isEmpty());
     }
@@ -40,5 +41,11 @@ class AudioFeederRepositoryTest extends AbstractSpringBootTest {
     void testGetAudioFeederByFeedName() {
         AudioFeeder audioFeeder = repository.getAudioFeederByFeedName("testDemo");
         assertNotNull(audioFeeder);
+    }
+    @Test
+    void testGetId() {
+        Optional<AudioFeeder> audioFeeder = repository.findById(248L);
+        assertTrue(audioFeeder.isPresent());
+        assertEquals("testDemo", audioFeeder.get().getFeedName());
     }
 }

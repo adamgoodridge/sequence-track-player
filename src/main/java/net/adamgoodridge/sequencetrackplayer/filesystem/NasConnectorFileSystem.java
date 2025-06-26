@@ -1,15 +1,16 @@
 package net.adamgoodridge.sequencetrackplayer.filesystem;
 
 import net.adamgoodridge.sequencetrackplayer.*;
-import net.adamgoodridge.sequencetrackplayer.directory.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
+import net.adamgoodridge.sequencetrackplayer.filesystem.directory.*;
 import net.adamgoodridge.sequencetrackplayer.settings.*;
 import net.adamgoodridge.sequencetrackplayer.thymeleaf.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
 
+import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
@@ -53,15 +54,6 @@ public class NasConnectorFileSystem implements NasConnectorService {
         return directory.subFilesMapToDataItems();
     }
     @Override
-    public AudioIOFileManager getRanTrack(final String feedName, PreferredRandomSettings preferredRandomSettings) throws GetFeedException {
-    return new RandomTrack(feedName, preferredRandomSettings).compute();
-    }
-
-
-
-
-
-    @Override
     public AudioIOFileManager getBookmarkedTrack(String fullPath) throws GetFeedException {
         return getTrack(fullPath, FeedRequestType.BOOKMARK);
     }
@@ -104,7 +96,6 @@ public class NasConnectorFileSystem implements NasConnectorService {
     @Override
     public AudioIOFileManager getTrack(final String fullPath, final FeedRequestType feedRequestType) throws GetFeedException {
 //substring get rid of the first slash e.g /folder/folder2 = folder/folder2
-        //         System.out.println("fullPath = " + fullPath);
         String[] directories = getDirectoriesWithFileShare(fullPath);
         StringBuilder currentPath = new StringBuilder();
         currentPath.append(ConstantTextFileSystem.getInstance().getSharePath()).append(directories[0]);

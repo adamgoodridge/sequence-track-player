@@ -11,7 +11,7 @@ import net.adamgoodridge.sequencetrackplayer.settings.PreferredRandomSettings;
 import net.adamgoodridge.sequencetrackplayer.thymeleaf.DateForCalendarView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedConstruction;
+import org.mockito.*;
 
 import java.io.File;
 import java.util.List;
@@ -19,23 +19,29 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NasConnectorFileSystemTests extends AbstractSpringBootTest {
+    @Mock
+    private File file;
     private NasConnectorFileSystem nasConnector;
 
     @BeforeEach
     void setUp() {
         nasConnector = new NasConnectorFileSystem();
     }
-
+    private String[] listSubFilesWithFileMock(String path) {
+        try (MockedConstruction<File> ignored = FileSystemMock.MockFromJsonFile()) {
+            return nasConnector.listSubFiles(path);
+        }
+    }
     @Test
     void listSubFiles_ShouldReturnCorrectFiles() {
-        try (MockedConstruction<File> ignored = FileSystemMock.MockFromJsonFile()) {
-            String[] result = nasConnector.listSubFiles("/mnt/path/test/2023/2023-02_February");
+        // then
+        String[] result = listSubFilesWithFileMock("/mnt/path/test/2023/2023-02_February");
+
             assertArrayEquals(new String[]{
                     "2023-02-01_Wednesday",
                     "2023-02-02_Thursday",
                     "2023-02-03_Friday"}, result);
         }
-    }
 
     @Test
     void listSubFeeds_ShouldThrowNotFoundError_WhenDirectoryEmpty() {
@@ -65,29 +71,6 @@ class NasConnectorFileSystemTests extends AbstractSpringBootTest {
         }
     }
 
-    @Test
-    void getRanTrack_WithTimePreference_ShouldReturnTrackAtSpecifiedTime() throws GetFeedException {
-        try (MockedConstruction<File> ignored = FileSystemMock.MockFromJsonFile()) {
-            PreferredRandomSettings settings = new PreferredRandomSettings.Builder()
-                    .time(1200)
-                    .build();
-            AudioIOFileManager result = nasConnector.getRanTrack("test", settings);
-            assertNotNull(result);
-            assertTrue(result.getFile().getFileName().contains("12-"));
-        }
-    }
-
-    @Test
-    void getRanTrack_WithDayPreference_ShouldReturnTrackOnSpecifiedDay() throws GetFeedException {
-        try (MockedConstruction<File> ignored = FileSystemMock.MockFromJsonFile()) {
-            PreferredRandomSettings settings = new PreferredRandomSettings.Builder()
-                    .day("Monday")
-                    .build();
-            AudioIOFileManager result = nasConnector.getRanTrack("FeedB", settings);
-            assertNotNull(result);
-            assertTrue(result.getFile().getFileName().contains("Monday"));
-        }
-    }
 
     @Test
     void getBookmarkedTrack_ShouldReturnCorrectTrack() throws GetFeedException {
@@ -127,14 +110,6 @@ class NasConnectorFileSystemTests extends AbstractSpringBootTest {
     void getFiles_ShouldThrowNotFoundError_WhenDirectoryEmpty() {
         try (MockedConstruction<File> ignored = FileSystemMock.MockFromJsonFile()) {
             assertThrows(NotFoundError.class, () -> nasConnector.getFiles("server/nonexistent/path"));
-        }
-    }
-
-    @Test
-    void getRanTrack_ShouldThrowException_WhenNoFilesFound() {
-        try (MockedConstruction<File> ignored = FileSystemMock.MockFromJsonFile()) {
-            PreferredRandomSettings settings = new PreferredRandomSettings.Builder().build();
-            assertThrows(GetFeedException.class, () -> nasConnector.getRanTrack("nonexistent", settings));
         }
     }
 

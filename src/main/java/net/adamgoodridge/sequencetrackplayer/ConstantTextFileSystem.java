@@ -6,7 +6,7 @@ import org.springframework.stereotype.*;
 
 @Component
 public class ConstantTextFileSystem {
-	private static final String WINDOWS_SLASH = "\\\\";
+	private static final String WINDOWS_SLASH = "\\";
 	private static final String FORWARD_SLASH = "/";
 	@Value("${file.slash}")
 	@SuppressWarnings("unused")

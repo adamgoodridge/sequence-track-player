@@ -1,5 +1,7 @@
 package net.adamgoodridge.sequencetrackplayer.settings;
 
+import net.adamgoodridge.sequencetrackplayer.feeder.*;
+
 public class PreferredRandomSettings {
     private String day;
     private final int time;
@@ -28,12 +30,23 @@ public class PreferredRandomSettings {
     public int getTrackCurrentCount() {
         return trackCurrentCount;
     }
-    public boolean isDayRequired() {
-        return !"*".equals(day);
-    }
+    /**
+     * Marks the day as "gotten", meaning it will be reset to "*" down the directory structure.
+     */
     public void gottenDay() {
         day = "*";
     }
+
+    public boolean shouldFilterByDay(DataItem dataItem) {
+        if(day.equals("*")) {
+            return false;
+        }
+        return dataItem.getFileName().contains(day);
+    }
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static class Builder {
         private String day = "*";
         private int time = 0;
@@ -63,9 +76,5 @@ public class PreferredRandomSettings {
         public PreferredRandomSettings build() {
             return new PreferredRandomSettings(this);
         }
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 }

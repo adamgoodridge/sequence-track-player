@@ -8,6 +8,7 @@ public class FeedRequest {
     private Long feedId;
     private final FeedRequestType feedRequestType;
 
+
     public String getName() {
         return name;
     }
@@ -41,10 +42,10 @@ public class FeedRequest {
         return feedId;
     }
 
-    public FeedRequestType getFeedRequestType() {
-        return feedRequestType;
-    }
 
+    public static Builder builder() {
+        return new Builder();
+    }
     public FeedRequest(Builder builder) {
         this.name = builder.name;
         this.path = builder.path;
