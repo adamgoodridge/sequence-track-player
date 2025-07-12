@@ -1,6 +1,6 @@
 package net.adamgoodridge.sequencetrackplayer.feeder;
 
-import net.adamgoodridge.sequencetrackplayer.ConstantTextFileSystem;
+import net.adamgoodridge.sequencetrackplayer.constanttext.ConstantTextFileSystem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

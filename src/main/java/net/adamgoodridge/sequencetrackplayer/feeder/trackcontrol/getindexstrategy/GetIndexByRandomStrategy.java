@@ -1,22 +1,24 @@
 package net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.getindexstrategy;
 
-import net.adamgoodridge.sequencetrackplayer.exceptions.*;
+import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
+import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.*;
 import net.adamgoodridge.sequencetrackplayer.filesystem.*;
 import net.adamgoodridge.sequencetrackplayer.settings.*;
 
 import java.util.*;
 
 public class GetIndexByRandomStrategy implements IGetIndexStrategy {
-	private static final Random rnd = new Random();
 	private final PreferredRandomSettings preferredRandomSettings;
+	private final RandomNumberGenerator rnd;
 	private RetrieveAudioFeeder retrieveAudioFeeder;
-	public GetIndexByRandomStrategy(PreferredRandomSettings preferredRandomSettings) {
+	public GetIndexByRandomStrategy(PreferredRandomSettings preferredRandomSettings, RandomNumberGenerator randomNumberGenerator) {
 		this.preferredRandomSettings = preferredRandomSettings;
+		rnd = randomNumberGenerator;
 	}
 
 
-	public int getFolderIndex(RetrieveAudioFeeder retrieveAudioFeeder) throws GetFeedException {
+	public int getFolderIndex(RetrieveAudioFeeder retrieveAudioFeeder) throws GetFeedError {
 		this.retrieveAudioFeeder = retrieveAudioFeeder;
 		List<DataItem> folders = retrieveAudioFeeder.getFolders();
 		Optional<Path> nextFolderToFind = retrieveAudioFeeder.getNextPathRemoveFromSearchFor();
@@ -35,8 +37,9 @@ public class GetIndexByRandomStrategy implements IGetIndexStrategy {
 				// Return a random match from found indices
 				return index;
 			}
+			throwExceptionMessage("Cannot find folder for day: " + preferredRandomSettings.getDay());
 		}
-		return rnd.nextInt(folders.size());
+		return rnd.getRandomNumber(folders.size());
 	}
 
 	@Override
@@ -47,18 +50,22 @@ public class GetIndexByRandomStrategy implements IGetIndexStrategy {
 			//find a specific time
 			return findIndexByTime();
 		}
-		return  rnd.nextInt(this.retrieveAudioFeeder.getSubFiles().size());
+		int maxRandomNumber = this.retrieveAudioFeeder.getSubFiles().size();
+		System.out.println("Max random number: " + maxRandomNumber);
+		int result = rnd.getRandomNumber(maxRandomNumber);
+		System.out.println("Random index: " + result);
+		return result;
 	}
 
 	@Override
-	public void throwExceptionMessage(RetrieveAudioFeeder retrieveAudioFeeder, String reason) throws GetFeedException {
+	public void throwExceptionMessage(RetrieveAudioFeeder retrieveAudioFeeder, String reason) throws GetFeedError {
 		this.retrieveAudioFeeder = retrieveAudioFeeder;
 		throwExceptionMessage(reason);
 	}
 
 
-	private void throwExceptionMessage(String reason) throws GetFeedException {
-		throw new GetFeedException("Cannot find random track for " + retrieveAudioFeeder.getSearchFor() + ", Reason: " + reason);
+	private void throwExceptionMessage(String reason) throws GetFeedError {
+		throw new GetFeedError("Cannot find random track for " + retrieveAudioFeeder.getSearchFor() + ", Reason: " + reason);
 	}
 	private int findIndexByTime() {
 		int time = preferredRandomSettings.getTime();
@@ -78,7 +85,7 @@ public class GetIndexByRandomStrategy implements IGetIndexStrategy {
 		} while (time != preferredRandomSettings.getTime());
 
 		//if not found, return a random track
-		return rnd.nextInt(this.retrieveAudioFeeder.getSubFiles().size());
+		return rnd.getRandomNumber(this.retrieveAudioFeeder.getSubFiles().size());
 	}
 
 	public int pickRandomItemPerRegex(String regex, List<DataItem> subFiles) {
@@ -88,7 +95,8 @@ public class GetIndexByRandomStrategy implements IGetIndexStrategy {
 		if (matchingItems.isEmpty()) {
 			return -1; // No matching items found
 		}
-		int randomIndex = rnd.nextInt(matchingItems.size());
+		int randomIndex = rnd.getRandomNumber(matchingItems.size());
+		System.out.println(matchingItems.get(0).getFullPath());
 		DataItem match = matchingItems.get(randomIndex);// Return a random index from the matching items
 		return this.retrieveAudioFeeder.getSubFiles().indexOf(match);
 	}

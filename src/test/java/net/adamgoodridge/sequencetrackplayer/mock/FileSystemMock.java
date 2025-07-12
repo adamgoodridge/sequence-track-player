@@ -1,58 +1,29 @@
 package net.adamgoodridge.sequencetrackplayer.mock;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import org.mockito.MockedConstruction;
+import com.google.gson.*;
+import net.adamgoodridge.sequencetrackplayer.filesystem.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
+import java.io.*;
+import java.util.*;
 
-import static org.mockito.Mockito.mockConstruction;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class FileSystemMock {
 
-    private static volatile HashMap<String, String[]> dataFromFile;
-    private static final Object lock = new Object();
-
-    public static MockedConstruction<File> process(String expectedPath, String[] expectedFiles) {
-        return process(new HashMap<String, String[]>() {{ put(expectedPath, expectedFiles); }});
-    }
-    public static MockedConstruction<File> MockFromJsonFile() {
-        if(dataFromFile == null) {
-            synchronized (lock) {
-                if (dataFromFile == null) { // Double-checked locking
-                    // Load data from JSON file only once
-                    try {
-                        dataFromFile = getDataFromJson();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+    public static void setupFileMock(FileListSubFileWrapper fileWrapper) {
+        HashMap<String, String[]> mockedFolder = getDataFromJson();
+        //when(fileWrapper.wrap(anyString())).thenReturn(new String[0]);
+            for(Map.Entry<String, String[]> entry : mockedFolder.entrySet()) {
+                when(fileWrapper.wrap(entry.getKey())).thenReturn(entry.getValue());
             }
         }
-        return process(dataFromFile);
-    }
 
-    public static MockedConstruction<File> process(HashMap<String, String[]> folders) {
-        return mockConstruction(File.class, (mock, context) -> {
-            // Get the constructor arguments
-            Object[] args = context.arguments().toArray();
-            String path = args.length > 0 ? args[0].toString() : "";
-            when(mock.list()).thenReturn(folders.containsKey(path) ? folders.get(path) : new String[0]);
-        });
-    }
 
-    private static HashMap<String, String[]>  getDataFromJson() throws IOException {
+    private static HashMap<String, String[]>  getDataFromJson(){
         HashMap<String, String[]> result = new HashMap<>();
 
         try (InputStream inputStream = FileSystemMock.class.getResourceAsStream("/TestData/FileSystem.json");
-             InputStreamReader reader = new InputStreamReader(inputStream)) {
+			 InputStreamReader reader = new InputStreamReader(inputStream)) {
 
             JsonObject jsonObject = new Gson().fromJson(reader, JsonObject.class);
             JsonArray data = jsonObject.getAsJsonArray("data");
@@ -70,7 +41,9 @@ public class FileSystemMock {
                 // Handle root directory
                 result.put(path, itemsArray);
             }
-        }
-        return result;
+        } catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return result;
     }
 }

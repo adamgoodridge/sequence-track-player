@@ -54,4 +54,15 @@ public class Setting {
     public void setValue(String value) {
         this.value = value;
     }
+
+    //for debugging
+    //todo: remove this
+    @Override
+    public String toString() {
+        return "Setting{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", value='" + value + '\'' +
+                '}';
+    }
 }

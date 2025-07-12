@@ -1,7 +1,7 @@
 package net.adamgoodridge.sequencetrackplayer.settings;
 
-import net.adamgoodridge.sequencetrackplayer.*;
-import net.adamgoodridge.sequencetrackplayer.utils.*;
+import net.adamgoodridge.sequencetrackplayer.constanttext.*;
+import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -22,12 +22,13 @@ public class SettingService {
         this.settingArrayRepository = settingArrayRepository;
         //making sure values are there in the db
         defaults(true);
-        }
-        //checkedOnload MEANING ALL setting should there, just making sure
+    }
+    //checkedOnload MEANING ALL setting should there, just making sure
     private void defaults(boolean checkedOnload) {
         for(SettingName settingName: SettingName.values()) {
-                Setting dbValue = getSetting(settingName.toString().toLowerCase());
-                if (dbValue != null) continue;
+                String searchValue = settingName.toString().toLowerCase();
+                Optional<Setting> dbValueOptional = settingRepository.findSettingByNameEquals(searchValue);
+                if (dbValueOptional.isPresent()) continue;
                 if(!checkedOnload) {
                     String errorMessage = String.format("%s isn't in the db, adding it right now with the value of %s", settingName, settingName.getDefaultValue());
                     logger.error(errorMessage);
@@ -36,26 +37,22 @@ public class SettingService {
         }
         }
     public void saveSettings(List<Setting> settings) {
+        if(settings.size() != SettingName.values().length) {
+            throw new InvalidOperationError("You must provide all settings to save them.");
+        }
         settingRepository.deleteAll();
         settingRepository.saveAll(settings);
     }
-    public Setting getSetting(String name) {
-        return settingRepository.findSettingByNameEquals(name);
+    public Optional<Setting> getSetting(String name) {
+        return settingRepository.findSettingByNameEquals(name.toLowerCase());
     }
     public Setting getSetting(SettingName settingName) {
-        String name = settingName.toString().toLowerCase();
-        return settingRepository.findSettingByNameEquals(name);
-    }
-    public String getSettingValue(String settingName){
-        return settingRepository.findSettingByNameEquals(settingName).getValue();
-    }
-    public String getSettingValue(SettingName settingName) {
-        return settingRepository.findSettingByNameEquals(settingName.toString().toLowerCase()).getValue();
+        return getSetting(settingName.name()).orElse(null);
     }
 
     public void saveBoolean(SettingName name,boolean value) {
-        if(!name.isBoolean())  //TODO: this is a bit of a hack, but it works)
-            throw new Error("The setting name must be a boolean");
+        if(!name.isBoolean())
+            throw new ShufflePlayerError("The setting name must be a boolean");
         update(name, value);
     }
     public void saveCalendarView(boolean value) {
@@ -63,15 +60,15 @@ public class SettingService {
     }
 
     public boolean isScanning() {
-        Setting setting = settingRepository.findSettingByNameEquals(SettingName.IS_SCANNING.toString().toLowerCase());
+        Setting setting = getSetting(SettingName.IS_SCANNING);
         return Boolean.parseBoolean(setting.getValue());
     }
     public boolean getBoolean(SettingName name) {
-        Setting setting = settingRepository.findSettingByNameEquals(name.toString().toLowerCase());
+        Setting setting = getSetting(name);
         return Boolean.parseBoolean(setting.getValue());
     }
     public int getInteger(SettingName name) {
-        Setting setting = settingRepository.findSettingByNameEquals(name.toString().toLowerCase());
+        Setting setting = getSetting(name);
         return Integer.parseInt(setting.getValue());
     }
     public void deleteAndReset() {
@@ -83,32 +80,28 @@ public class SettingService {
     }
 
     private void update(SettingName settingName, boolean value) {
-        Setting setting = settingRepository.findSettingByNameEquals(settingName.toString().toLowerCase());
+        String searchName = settingName.name().toLowerCase();
+        Optional<Setting> optional = settingRepository.findSettingByNameEquals(searchName);
+        if (optional.isEmpty()) {
+            throw new JsonNotFoundError("Setting not found: " + settingName);
+        }
+        Setting setting = optional.get();
         setting.setValue(String.valueOf(value));
         settingRepository.save(setting);
     }
-        public PreferredRandomSettings getPreferredRandomSetting() {
-        return null;
-    }
-
-    public String preferredDayOfWeek() {
-        String dayOfWeek = getSettingValue(SettingName.DAY_OF_WEEK);
-        if (dayOfWeek.equals(ConstantText.SETTINGS_VALUE_DAY_OF_WEEK_THIS_DAY))
-            dayOfWeek = TimeUtils.getDay(java.time.LocalDate.now().toString());
-        return dayOfWeek;
-    }
-
     public PreferredRandomSettings getPreferredRandomSettings() {
-        String day = getSettingValue(SettingName.DAY_OF_WEEK);
+        String day = getSetting(SettingName.PREFERRED_DAY_OF_WEEK).getValue();
         int time = preferredDateAndTime();
+        int trackCurrentCount = getInteger(SettingName.TRACK_CURRENT_COUNT);
         return new PreferredRandomSettings.Builder()
                 .day(day)
                 .time(time)
-                .trackCurrentCount(getInteger(SettingName.TRACK_CURRENT_COUNT))
+                .regularlyTrackChange(getBoolean(SettingName.REGULARLY_CHANGE_TO_RANDOM))
+                .trackCurrentCount(trackCurrentCount)
                 .build();
     }
     public int preferredDateAndTime() {
-        String timeOfDay = getSettingValue(SettingName.HOUR_OF_DAY);
+        String timeOfDay = getSetting(SettingName.PREFERRED_HOUR_OF_DAY).getValue();
         if (timeOfDay.equals(ConstantText.SETTINGS_VALUE_TIME_OF_DAY_THIS_HOUR))
             return Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         if (timeOfDay.equals("*"))

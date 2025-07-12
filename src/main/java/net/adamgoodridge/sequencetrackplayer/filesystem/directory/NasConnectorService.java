@@ -1,8 +1,7 @@
 package net.adamgoodridge.sequencetrackplayer.filesystem.directory;
 
-import net.adamgoodridge.sequencetrackplayer.exceptions.*;
+import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
-import net.adamgoodridge.sequencetrackplayer.settings.*;
 import net.adamgoodridge.sequencetrackplayer.thymeleaf.*;
 
 import java.util.*;
@@ -18,8 +17,8 @@ public interface NasConnectorService {
 
     List<DateForCalendarView> listDaysInYears(String path);
 
-    AudioIOFileManager getTrack(String path, FeedRequestType feedRequestType) throws GetFeedException;
-    AudioIOFileManager getBookmarkedTrack(String path) throws GetFeedException;
+    AudioIOFileManager getTrack(String path, FeedRequestType feedRequestType) throws GetFeedError;
+    AudioIOFileManager getBookmarkedTrack(String path) throws GetFeedError;
 
     String logoPath(String feedName);
 }

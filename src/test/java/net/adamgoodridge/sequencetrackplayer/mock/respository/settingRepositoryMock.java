@@ -1,22 +1,29 @@
 package net.adamgoodridge.sequencetrackplayer.mock.respository;
 
+import com.google.gson.*;
+import net.adamgoodridge.sequencetrackplayer.bookmark.*;
 import net.adamgoodridge.sequencetrackplayer.settings.Setting;
 import net.adamgoodridge.sequencetrackplayer.settings.SettingRepository;
+import org.bson.types.*;
 
 import static org.mockito.Mockito.when;
 
-public class settingRepositoryMock {
-    public static SettingRepository get() {
-        SettingRepository settingRepository = org.mockito.Mockito.mock(SettingRepository.class);
-        // Setup default mocked settings
-        Setting mockDayOfWeek = new Setting("day_of_week", "Monday");
-        Setting mockHourOfDay = new Setting("hour_of_day", "12");
-        Setting mockIsScanning = new Setting("is_scanning", "true");
+public class SettingRepositoryMock  extends AbstractMockRepository<Setting, SettingRepository> {
+    public SettingRepositoryMock() {
+        super(Setting.class);
+    }
 
-        when(settingRepository.findSettingByNameEquals("day_of_week")).thenReturn(mockDayOfWeek);
-        when(settingRepository.findSettingByNameEquals("hour_of_day")).thenReturn(mockHourOfDay);
-        when(settingRepository.findSettingByNameEquals("is_scanning")).thenReturn(mockIsScanning);
+    protected Setting deserializeObject(JsonElement json) {
+        JsonObject jsonObject = json.getAsJsonObject();
+        Setting setting = new Setting();
+        setting.setId(String.valueOf(new ObjectId(jsonObject.getAsJsonObject("_id").get("$oid").getAsString())));
+        setting.setName(jsonObject.get("name").getAsString());
+        setting.setValue(jsonObject.get("value").getAsString());
+        return setting;
+    }
 
-        return settingRepository;
+    @Override
+    protected String getFileJsonPath() {
+        return "src/test/resources/TestData/radioDB.settings.json";
     }
 }

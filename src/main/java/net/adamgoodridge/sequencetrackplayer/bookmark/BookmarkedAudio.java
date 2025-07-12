@@ -1,5 +1,6 @@
 package net.adamgoodridge.sequencetrackplayer.bookmark;
 
+import net.adamgoodridge.sequencetrackplayer.constanttext.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.*;
@@ -40,9 +41,10 @@ public class BookmarkedAudio {
     }
 
     public String getFeedName() {
-        String feedName = path.split("/")[1];
+        String feedName = getPathWithoutMount().split("/")[0];
+        //todo: get subfeed
         if(feedName.equals("FEEDD")) {
-            feedName += "-" + path.split("/")[2];
+            feedName += "-" + getPathWithoutMount().split("/")[2];
         }
         return feedName;
     }
@@ -50,10 +52,25 @@ public class BookmarkedAudio {
     public FeedRequest toRequest() {
         return new FeedRequest.Builder()
                 .name(getFeedName())
-                .path(path)
+                .path(getPathWithoutMount())
                 .feedRequestType(FeedRequestType.BOOKMARK)
                 .build();
     }
+    @Deprecated
+    //db migration needed for deprecated method
+    public String getPathWithoutMount() {
+        String mountPath = ConstantTextFileSystem.getInstance().getSharePath();
+        if (path.startsWith(mountPath)) {
+            return path.substring(mountPath.length());
+        }
+        return path;
+    }
+    /**
+     * Returns the name of the file without its extension.
+     * For example, if the path is "path/to/file.mp3", it will return "file".
+     *
+     * @return The name of the file without its extension.
+     */
     public String nameWithoutExtension() {
         String name = path.split("/")[path.split("/").length - 1];
         return name.substring(0, name.lastIndexOf('.'));

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-import static net.adamgoodridge.sequencetrackplayer.ConstantText.*;
+import static net.adamgoodridge.sequencetrackplayer.constanttext.ConstantText.*;
 
 @SuppressWarnings({"SameReturnValue","unused"})
 @ControllerAdvice
@@ -61,6 +61,14 @@ public class ExceptionHandingController {
     @ExceptionHandler(JsonNotFoundError.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public @ResponseBody String jsonNotFoundError(JsonNotFoundError error) {
+        Map<String, String> output = new HashMap<>();
+        Gson gson = new Gson();
+        output.put("error", error.getMessage());
+        return gson.toJson(output);
+    }
+    @ExceptionHandler(GetFeedError.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public @ResponseBody String getFeedError(JsonNotFoundError error) {
         Map<String, String> output = new HashMap<>();
         Gson gson = new Gson();
         output.put("error", error.getMessage());

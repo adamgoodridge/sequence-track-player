@@ -1,6 +1,6 @@
 package net.adamgoodridge.sequencetrackplayer.feeder;
 
-import net.adamgoodridge.sequencetrackplayer.*;
+import net.adamgoodridge.sequencetrackplayer.constanttext.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 public class FeedRequest {
     private final String name;

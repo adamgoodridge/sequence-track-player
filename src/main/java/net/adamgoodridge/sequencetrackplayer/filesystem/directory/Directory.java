@@ -1,6 +1,6 @@
 package net.adamgoodridge.sequencetrackplayer.filesystem.directory;
 
-import net.adamgoodridge.sequencetrackplayer.*;
+import net.adamgoodridge.sequencetrackplayer.constanttext.*;
 import net.adamgoodridge.sequencetrackplayer.filesystem.Path;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import org.springframework.data.annotation.Id;
@@ -89,7 +89,7 @@ public class Directory {
     }
     public boolean containItem(String searchValue) {
         if(isEmpty()) return false;
-        return Arrays.asList(searchValue).contains(searchValue);
+        return Arrays.asList(subFiles).contains(searchValue);
     }
 
     public boolean isEmpty() {

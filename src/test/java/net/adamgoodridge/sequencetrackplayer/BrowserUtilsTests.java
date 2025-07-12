@@ -61,7 +61,9 @@ class BrowserUtilsTests {
         List<BreadCrumb> result = BrowserUtils.generateBreadCrumbs("folder1/folder2");
 
         assertEquals(2, result.size());
-        assertEquals("folder1", result.get(0).path());
-        assertEquals("folder2", result.get(2).name());
+        assertEquals("folder1", result.get(0).name());
+        assertEquals("folder1/", result.get(0).path());
+        assertEquals("folder2", result.get(1).name());
+        assertEquals("folder1/folder2/", result.get(1).path());
     }
 }

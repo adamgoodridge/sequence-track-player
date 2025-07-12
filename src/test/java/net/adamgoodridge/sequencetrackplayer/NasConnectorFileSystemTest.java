@@ -1,137 +1,130 @@
 package net.adamgoodridge.sequencetrackplayer;
+
 import net.adamgoodridge.sequencetrackplayer.filesystem.NasConnectorFileSystem;
-import net.adamgoodridge.sequencetrackplayer.exceptions.GetFeedException;
+import net.adamgoodridge.sequencetrackplayer.exceptions.errors.GetFeedError;
+import net.adamgoodridge.sequencetrackplayer.exceptions.errors.NotFoundError;
 import net.adamgoodridge.sequencetrackplayer.feeder.AudioIOFileManager;
+import net.adamgoodridge.sequencetrackplayer.feeder.DataItem;
 import net.adamgoodridge.sequencetrackplayer.feeder.FeedRequestType;
-import net.adamgoodridge.sequencetrackplayer.settings.PreferredRandomSettings;
-import net.adamgoodridge.sequencetrackplayer.settings.SettingArrayRepository;
-import net.adamgoodridge.sequencetrackplayer.settings.SettingRepository;
+import net.adamgoodridge.sequencetrackplayer.mock.FileSystemMockConstruction;
+import net.adamgoodridge.sequencetrackplayer.thymeleaf.DateForCalendarView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.*;
+
+import java.io.File;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-class NasConnectorFileSystemTest {
-
-    private NasConnectorFileSystem nasConnectorService;
-
+class NasConnectorFileSystemTest extends AbstractSpringBootTest {
     @Mock
-    private SettingRepository settingRepository;
+    private File file;
+    private NasConnectorFileSystem nasConnector;
 
-    @Mock
-    private SettingArrayRepository settingArrayRepository;
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        nasConnectorService = new NasConnectorFileSystem();
+        LoadClassDef.initializeComponents();
+        nasConnector = new NasConnectorFileSystem();
     }
-
-    /*
-    @Test
-    void getRanTrack_WithValidFeedName_ReturnsAudioIOFileManager() throws GetFeedException {
-        // Given
-        String feedName = "Test_Folder";
-        PreferredRandomSettings preferredRandomSettings = new PreferredRandomSettings.Builder()
-            .day("*")
-            .time(-1)
-            .regularlyTrackChange(false)
-            .trackCurrentCount(1)
-            .build();
-        // When
-        AudioIOFileManager result = nasConnectorService.getRanTrack(feedName, preferredRandomSettings);
-
-        // Then
-        assertNotNull(result);
-        assertNotNull(result.getFile());
+    private String[] listSubFilesWithFileMock(String path) {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+            return nasConnector.listSubFiles(path);
+        }
     }
     @Test
-    void getRanTrack_WithValidFeedNamePreferredDay_ReturnsAudioIOFileManager() throws GetFeedException {
-        // Given
-        String feedName = "***REMOVED***";
-        // When
-        AudioIOFileManager result = nasConnectorService.getRanTrack(feedName, new PreferredRandomSettings.Builder()
-            .day("Monday")
-            .time(-1)
-            .regularlyTrackChange(false)
-            .trackCurrentCount(99)
-            .build());
+    void listSubFiles_ShouldReturnCorrectFiles() {
+        // then
+        String[] result = listSubFilesWithFileMock("/mnt/path/test/2023/2023-02_February");
 
-        // Then
-        assertNotNull(result);
-        //         System.out.println(result.getFile().getFullPath());
-        //         System.out.println(result.getFile().getFullPath());
-        assertTrue(result.getFile().getFullPath().contains("Monday"));
-    }
-    @Test
-    void getTrack_WithValidAudioPath_ReturnsAudioIOFileManager() throws GetFeedException {
-        // Given
-        String path = "/ACT/2020/2020-09_September/2020-09-08_Tuesday/ACT_2020-09-08_Tuesday_23-27_TO_23-57_004.mp3";
-        // When
-        AudioIOFileManager result = nasConnectorService.getTrack(path, FeedRequestType.BOOKMARK);
-        String actualPath = result.getFile().getFullPathLocalFileSystem().replace(ConstantTextFileSystem.getInstance().getSharePath(),"");
-        // Then
-        assertEquals(path.substring(1),actualPath);
-    }
-    @Test
-    void getTrack_WithInValidAudioPathThrowError(){
-        // Given
-        String path = "/ACT/2020/2020-09_September/2020-09-08_Tuesday/no.mp3";
-        // When
-        assertThrows(GetFeedException.class, () -> {
-            nasConnectorService.getTrack(path, FeedRequestType.BOOKMARK);
-        });
+            assertArrayEquals(new String[]{
+                    "2023-02-01_Wednesday",
+                    "2023-02-02_Thursday",
+                    "2023-02-03_Friday"}, result);
+        }
 
-    }
     @Test
-    void getRanTrack_WithForwardSlashes_NormalizesPath() throws GetFeedException {
-        // Given
-        String feedName = "/***REMOVED***/2020";
-        // When
-        AudioIOFileManager result = nasConnectorService.getRanTrack(feedName, new PreferredRandomSettings.Builder().day("*")
-                .time(1200).regularlyTrackChange(false).trackCurrentCount(1).build());
-
-        // Then
-        assertNotNull(result);
+    void listSubFeeds_ShouldThrowNotFoundError_WhenDirectoryEmpty() {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+            assertThrows(NotFoundError.class, () -> nasConnector.listSubFeeds("nonexistent/path"));
+        }
     }
 
     @Test
-    void getRanTrack_WithEmptyDirectory_ThrowsGetFeedException() {
-        // Given
-        String feedName = "Empty_Folder";
-
-        // When/Then
-        assertThrows(GetFeedException.class, () ->
-                nasConnectorService.getRanTrack(feedName, new PreferredRandomSettings.Builder()
-                    .day("*")
-                    .time(1200)
-                    .regularlyTrackChange(true)
-                    .trackCurrentCount(100)
-                    .build()));
+    void listSubFeeds_ShouldReturnFeeds() {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+            String[] result = nasConnector.listSubFeeds("/");
+            assertArrayEquals(new String[]{
+                    "emptyDir","exclude","FeedA", "FeedB", "FeedC", "test", "testDirUnsorted"
+            }, result);
+        }
     }
 
     @Test
-    void getRanTrack_WithInvalidPath_ThrowsNotFoundError() {
-        // Given
-        String feedName = "NonExistentFolder";
-        // When/Then
-        assertThrows(GetFeedException.class, () ->
-            nasConnectorService.getRanTrack(feedName,  new PreferredRandomSettings.Builder()
-                    .day("*")
-                    .time(1200)
-                    .regularlyTrackChange(true)
-                    .trackCurrentCount(100)
-                    .build()));
-
-    }*/
+    void getFiles_ShouldReturnDataItems() {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+            String path = "/mnt/path/test/2023/2023-11_November/2023-11-19_Sunday";
+            List<DataItem> result = nasConnector.getFiles(path);
+            assertEquals(3, result.size());
+            String expectedFirstFileName = "TEST_AUDIOFILE_2023-11-19_Sunday_12-44-14.mp3";
+            assertEquals(expectedFirstFileName, result.get(0).getFileName());
+        }
+    }
 
 
+    @Test
+    void getBookmarkedTrack_ShouldReturnCorrectTrack() throws GetFeedError {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+            AudioIOFileManager result = nasConnector.getBookmarkedTrack("test/2023/2023-02_February/2023-02-01_Wednesday/TEST_AUDIOFILE_2023-02-01_Wednesday_12-15-44.mp3");
+            assertNotNull(result);
+            assertEquals("TEST_AUDIOFILE_2023-02-01_Wednesday_12-15-44.mp3", result.getFile().getFileName());
+        }
+    }
 
+    @Test
+    void getTrack_ShouldThrowException_WhenFileNotFound() {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+            assertThrows(GetFeedError.class,
+                    () -> nasConnector.getTrack("nonexistent/path", FeedRequestType.BOOKMARK));
+        }
+    }
 
+    @Test
+    void logoPath_ShouldReturnCorrectPath() {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+            String result = nasConnector.logoPath("FeedB");
+            assertEquals("FeedB", result);
+        }
+    }
+    @Test
+    void logoPath_ShouldReturnNullWhenNotExist() {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+            String result = nasConnector.logoPath("FeedC");
+            assertEquals("", result);
+        }
+    }
+    @Test
+    void listDaysInYears_ShouldReturnAllDays() {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+            List<DateForCalendarView> result = nasConnector.listDaysInYears("/mnt/path/test/2023");
+            assertFalse(result.isEmpty());
+            assertTrue(result.stream().anyMatch(d -> d.date().equals("2023-02-01")));
+        }
+    }
 
+    @Test
+    void getFiles_ShouldThrowNotFoundError_WhenDirectoryEmpty() {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+            assertThrows(NotFoundError.class, () -> nasConnector.getFiles("server/nonexistent/path"));
+        }
+    }
 
+    @Test
+    void logoPath_ShouldReturnEmptyString_WhenLogoNotFound() {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+            String result = nasConnector.logoPath("NonExistentFeed");
+            assertEquals("", result);
+        }
+    }
 
 }

@@ -28,14 +28,8 @@ class AudioFeederRepositoryTests {
 
     @Test
     void getRandom(){
-        List<AudioFeeder> audioFeeders = new ArrayList<>();
-        for (int i = 0; i < 50; i++) {
-            AudioFeeder audioFeeder = audioFeederRepository.getRandomAudioFileNotNull();
-            if(audioFeeder != null) {
-                audioFeeders.add(audioFeeder);
-            }
-        }
-        assertEquals(1, audioFeeders.size());
+        AudioFeeder audioFeeder = audioFeederRepository.getRandomAudioFileNotNull();
+        assertNotNull(audioFeeder);
     }
 
     @Test

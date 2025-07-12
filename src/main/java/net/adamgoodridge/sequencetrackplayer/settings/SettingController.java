@@ -58,9 +58,9 @@ public class SettingController {
         //method = settingsForm.getClass().getMethod("set");
         String currentSilenceLength = settingService.getSetting(SettingName.SILENCE_LENGTH).getValue();
         settingsForm.setSilenceLength(currentSilenceLength);
-        String dayOfWeek = settingService.getSetting(SettingName.DAY_OF_WEEK).getValue();
+        String dayOfWeek = settingService.getSetting(SettingName.PREFERRED_DAY_OF_WEEK).getValue();
         settingsForm.setDayOfWeek(dayOfWeek);
-        String hourOfDay = settingService.getSetting(SettingName.HOUR_OF_DAY).getValue();
+        String hourOfDay = settingService.getSetting(SettingName.PREFERRED_HOUR_OF_DAY).getValue();
         settingsForm.setHourOfDay(hourOfDay);
         Boolean isScanning = settingService.getBoolean(IS_SCANNING);
         settingsForm.setScanning(isScanning);
@@ -74,7 +74,7 @@ public class SettingController {
         settingsForm.setOverwriteFeed(overwriteFeed);
         Boolean regularlyChangeToRandom = settingService.getBoolean(SettingName.REGULARLY_CHANGE_TO_RANDOM);
         settingsForm.setRegularlyChangeToRandom(regularlyChangeToRandom);
-        String trackCurrentCount = settingService.getSettingValue(SettingName.TRACK_CURRENT_COUNT);
+        String trackCurrentCount = settingService.getSetting(SettingName.TRACK_CURRENT_COUNT).getValue();
         settingsForm.setTrackCurrentCount(trackCurrentCount);
         model.addAttribute("settingsForm", settingsForm);
         model.addAttribute("settingRestored", settingRestored);

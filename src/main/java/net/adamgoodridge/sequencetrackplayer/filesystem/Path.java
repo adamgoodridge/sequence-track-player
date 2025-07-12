@@ -1,6 +1,6 @@
 package net.adamgoodridge.sequencetrackplayer.filesystem;
 
-import net.adamgoodridge.sequencetrackplayer.*;
+import net.adamgoodridge.sequencetrackplayer.constanttext.*;
 
 import java.util.*;
 
@@ -14,9 +14,6 @@ public class Path {
 	private final List<String> tree;
 	public Path() {
 		this.tree = new ArrayList<>();
-	}
-	public Path(Path path) {
-		this(path.toString());
 	}
 	public Path(String in) {
 		if (in == null || in.isEmpty()) {
@@ -53,10 +50,11 @@ public class Path {
 
 	@Override
 	public String toString() {
-		return ConstantTextFileSystem.getInstance().getSharePath() + tree.stream()
+		String fulPath = ConstantTextFileSystem.getInstance().getSharePath() + tree.stream()
 				.filter(s -> !s.isEmpty())
 				.reduce((s1, s2) -> s1 + SLASH + s2)
 				.orElse("");
+		return FileUtils.removeTrailingSlash(fulPath);
 	}
 
 	public void addFile(String fileName) {

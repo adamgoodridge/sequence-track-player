@@ -16,7 +16,6 @@ import org.springframework.ui.Model;
 import java.io.IOException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
@@ -41,18 +40,19 @@ class BookmarkControllerJsonTests extends AbstractSpringBootTest {
     }
 
     @Test
-    public void testAddBookmark() throws Exception {
+    void testAddBookmark() throws Exception {
         int feedTrackIndex = 248;
         String expectedPath = "/TEST/FEEDC/2023/2023-11_November/2023-11-19_Sunday/FEEDC_AUDIOFILE_2023-11-19_Sunday_13-45-21.mp3";
         
         mockMvc.perform(delete("/bookmark/json/add/" + feedTrackIndex))
                .andExpect(status().is(200))
                .andExpect(jsonPath("$.bookmarkId").exists())
+                .andExpect(jsonPath("$.feedTrackIndex").value(feedTrackIndex))
                .andExpect(jsonPath("$.path").value(expectedPath));
     }
 
     @Test
-    public void testDeleteBookmark_Success() throws Exception {
+    void testDeleteBookmark_Success() throws Exception {
         String bookmarkId = "63c3d88ced2a9155d57e9252";
         
         mockMvc.perform(delete("/bookmark/json/delete/" + bookmarkId))
@@ -61,7 +61,7 @@ class BookmarkControllerJsonTests extends AbstractSpringBootTest {
     }
 
     @Test
-    public void testDeleteBookmark_NotFound() throws Exception {
+    void testDeleteBookmark_NotFound() throws Exception {
         String bookmarkId = "123";
         
         mockMvc.perform(delete("/bookmark/json/delete/" + bookmarkId))

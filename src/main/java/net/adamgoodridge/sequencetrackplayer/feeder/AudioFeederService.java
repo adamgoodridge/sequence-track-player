@@ -77,8 +77,7 @@ public class AudioFeederService {
             EXAMPLES
             
                 /FEEDD/SUBFEEDA/10326_SUBFEEDA_North-South/2022-01-05_Wednesday/FEEDD_2022-01-05_Wednesday_23-50-42_10326_SUBFEEDA_North-South.m4a
-                /***REMOVED******REMOVED***/2022/2022-02_February/2022-02-26_Saturday/***REMOVED******REMOVED***_AUDIOFILE_2022-02-26_Saturday_19-47-44.mp3
-             */
+                */
                 if(split[1].equals("FEEDD")) {
                     feedName =  split[1] + "/" + split[2] + "/" + split[3];
                 }  else {

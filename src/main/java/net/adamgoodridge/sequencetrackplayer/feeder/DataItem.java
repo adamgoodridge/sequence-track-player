@@ -1,10 +1,8 @@
 package net.adamgoodridge.sequencetrackplayer.feeder;
 
 
-import net.adamgoodridge.sequencetrackplayer.*;
 import net.adamgoodridge.sequencetrackplayer.filesystem.*;
 
-import javax.persistence.*;
 import java.io.*;
 //todo remove this class, it is not used anymore combine with DataItem in the filesystem package
 //blocker old data in the database

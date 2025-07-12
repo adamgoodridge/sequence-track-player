@@ -5,7 +5,7 @@ public interface IAudioIOFileManager {
 
     DataItem getFile();
 
-    void increaseFileNo();
+    void increaseFileNoAndResetCurrentPosition();
 
     boolean isAtEnd();
 
@@ -20,7 +20,7 @@ public interface IAudioIOFileManager {
 
     void decreaseFileNo();
 
-    String getCurrentFileName();
+    String getCurrentFullPath();
 
     int getCurrentPosition();
 

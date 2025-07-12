@@ -1,12 +1,17 @@
 package net.adamgoodridge.sequencetrackplayer.bookmark;
 
-import net.adamgoodridge.sequencetrackplayer.AbstractSpringBootTest;
+import net.adamgoodridge.sequencetrackplayer.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.DataBaseError;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.ServerError;
+import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.repository.AudioFeederRepository;
-import net.adamgoodridge.sequencetrackplayer.mock.FileSystemMock;
+import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.*;
+import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.getindexstrategy.*;
+import net.adamgoodridge.sequencetrackplayer.filesystem.*;
+import net.adamgoodridge.sequencetrackplayer.mock.FileSystemMockConstruction;
 import net.adamgoodridge.sequencetrackplayer.mock.respository.AudioFeederRepositoryMock;
 import net.adamgoodridge.sequencetrackplayer.mock.respository.BookmarkRepositoryMock;
+import net.adamgoodridge.sequencetrackplayer.settings.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -38,13 +43,14 @@ import static org.mockito.Mockito.*;
         MockitoAnnotations.openMocks(this);
         new BookmarkRepositoryMock().fillWithMockData(bookmarkedAudioRepository);
         new AudioFeederRepositoryMock().fillWithMockData(audioFeederRepository);
+        LoadClassDef.initializeComponents();
     }
-//todo: when nas is static
+//todo: when nas is staticz
     @Test
     void testGetBookmark_Success() throws DataBaseError {
         String bookmarkID = "63c3d88ced2a9155d57e9252";
 
-        try (MockedConstruction<File> ignored = FileSystemMock.MockFromJsonFile()) {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
             String response = bookmarkController.getBookmark(bookmarkID);
             assertEquals("redirect:/feed/get/1", response);
         }

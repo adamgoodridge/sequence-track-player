@@ -2,9 +2,9 @@ package net.adamgoodridge.sequencetrackplayer.feeder;
 
 import com.fasterxml.jackson.annotation.*;
 import com.google.gson.annotations.*;
-import net.adamgoodridge.sequencetrackplayer.*;
 import net.adamgoodridge.sequencetrackplayer.browser.*;
-import net.adamgoodridge.sequencetrackplayer.exceptions.*;
+import net.adamgoodridge.sequencetrackplayer.constanttext.*;
+import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.*;
 
@@ -32,7 +32,7 @@ public class AudioFeeder {
     private boolean isIncludeInFullScreenShuffle;
     @Field
     @Transient
-    private transient CompletableFuture<AudioIOFileManager> completableFuture;
+    private CompletableFuture<AudioIOFileManager> completableFuture;
     @Field
     private String errorMessage;
     @Field
@@ -195,9 +195,9 @@ public class AudioFeeder {
             return getFeedName().split("/")[1];
         return feedName;
     }
-    public void throwIfError() throws GetFeedException {
+    public void throwIfError() throws GetFeedError {
         if(errorMessage != null && !errorMessage.isBlank())
-            throw new GetFeedException(errorMessage);
+            throw new GetFeedError(errorMessage);
     }
 }
 

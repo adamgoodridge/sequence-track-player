@@ -1,5 +1,6 @@
 package net.adamgoodridge.sequencetrackplayer;
 
+import net.adamgoodridge.sequencetrackplayer.constanttext.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import net.adamgoodridge.sequencetrackplayer.settings.*;
 import net.adamgoodridge.sequencetrackplayer.thymeleaf.*;
@@ -31,7 +32,7 @@ public class ShuffleController {
         String sessionId = feedService.generateSessionId();
         feedService.takeOwnershipShuffleAudioFeeders(sessionId);
         model.addAttribute("sessionId", sessionId);
-        model.addAttribute(ConstantText.FEED_ATTRIBUTE_SILENCE, settingService.getSettingValue(SettingName.SILENCE_LENGTH));
+        model.addAttribute(ConstantText.FEED_ATTRIBUTE_SILENCE, settingService.getSetting(SettingName.SILENCE_LENGTH).getValue());
         model.addAttribute(ConstantText.FEED_ATTRIBUTE_IS_SCANNING, settingService.isScanning());
         return "shuffle";
     }

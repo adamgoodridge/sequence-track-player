@@ -74,14 +74,18 @@ class BookmarkedAudioServiceTests extends AbstractSpringBootTest {
 
     @Test
     void testDelete() {
+        // Given
         String id = "63c3d88ced2a9155d57e9252"; // ID to delete
-        String name  = "/FEEDD/SUBFEEDA/10326_SUBFEEDA_North-South/2022-01-22_Saturday/FEEDD_2022-01-22_Saturday_18-45-41_10326_SUBFEEDA_North-South.m4a";
+        String name  = "/mnt/path/test/2023/2023-02_February/2023-02-01_Wednesday/TEST_AUDIOFILE_2023-02-01_Wednesday_12-15-44.mp3";
 
+        // When
         BookmarkedAudio bookmarkedAudio = bookmarkedAudioService.getById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Bookmark not found with id: " + id));
         bookmarkedAudio.setBookmarkId(id);
         bookmarkedAudioService.delete(bookmarkedAudio);
         Optional<BookmarkedAudio> deletedBookmark = bookmarkedAudioService.getById(id);
+
+        // Then
         assertEquals(name, bookmarkedAudio.getPath());
         assertTrue(deletedBookmark.isEmpty(), "Bookmark should be deleted");
     }

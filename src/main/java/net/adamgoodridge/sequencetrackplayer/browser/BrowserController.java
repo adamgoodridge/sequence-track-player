@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-import static net.adamgoodridge.sequencetrackplayer.ConstantText.*;
+import static net.adamgoodridge.sequencetrackplayer.constanttext.ConstantText.*;
 
 
 @Controller()
@@ -57,6 +57,7 @@ public class BrowserController {
         }
 
         String feedName = path.split("/")[0];
+        //todo add subfeed[]
         if (isAudioFile(path)) {
             AudioFeeder audioFeeder = new AudioFeeder(feedName);
             audioFeeder.setId(feedId);
@@ -119,7 +120,7 @@ public class BrowserController {
         Optional<AudioFeeder> optional = feedService.getAudioFeeder(feedId);
         //END baseUrl
         if (optional.isEmpty())
-            throw new NotFoundError("No feed with the id of " + feedId + "cannot be found.");;
+            throw new NotFoundError("No feed with the id of " + feedId + "cannot be found.");
         String baseUrl = URL_ENDING_FEED + feedId + "/";
         String path = BrowserUtils.getFilePathFromUrl(httpServletRequest.getRequestURI(), baseUrl);
         String folderPath;
@@ -138,7 +139,6 @@ public class BrowserController {
             int lastBackslashIndex = fullPath.lastIndexOf("/");
             folderPath = fullPath.substring(0, lastBackslashIndex);
             currentFile = audioFeeder.getAudioIOFileManager().getFile().getFullPathLocalFileSystem();
-
         } else {
             folderPath = path;
             currentFile = audioFeeder.fileInFolder(path);

@@ -11,8 +11,8 @@ import java.util.stream.*;
 public enum SettingName {
 
     SILENCE_LENGTH ("0"),
-    DAY_OF_WEEK ("*"),
-    HOUR_OF_DAY ("*"),
+    PREFERRED_DAY_OF_WEEK("*"),
+    PREFERRED_HOUR_OF_DAY("*"),
     IS_SCANNING  (Boolean.toString(false)),
     CALENDAR_VIEW ("true"),
     LOGO_VIEW ("true"),

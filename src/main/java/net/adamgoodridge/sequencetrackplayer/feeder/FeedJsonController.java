@@ -3,7 +3,6 @@ package net.adamgoodridge.sequencetrackplayer.feeder;
 
 import com.google.gson.*;
 import net.adamgoodridge.sequencetrackplayer.bookmark.*;
-import net.adamgoodridge.sequencetrackplayer.exceptions.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.*;
 import net.adamgoodridge.sequencetrackplayer.settings.*;
@@ -46,7 +45,7 @@ public class FeedJsonController {
         try {
             AudioFeeder audioFeeder = feedService.checkAndUpdateStatus(feedTrackListIndex);
             output.put("isLoaded", audioFeeder.getAudioIOFileManager() != null ? "true" : "false");
-        } catch (GetFeedException e) {
+        } catch (GetFeedError e) {
             throw new JsonReturnError(e.getMessage());
         }
         return gson.toJson(output);
@@ -91,7 +90,7 @@ public class FeedJsonController {
         boolean status;
         try {
             status = feedService.checkAndUpdateStatus(audioFeeder.getId()).getAudioIOFileManager() != null;
-        } catch (GetFeedException e) {
+        } catch (GetFeedError e) {
             throw new JsonReturnError("Failed to load the feed:" + e.getMessage());
         }
         return status;
@@ -120,7 +119,7 @@ public class FeedJsonController {
     //todo
     //For shuffle page
     @RequestMapping(value = "/{type}", produces = "application/json")
-    public @ResponseBody String getAll(@PathVariable String type) {
+    public String getAll(@PathVariable String type) {
         List<AudioFeeder> audioFeeders = type.equals("shuffle") ?
                 feedService.getShufflesAudioFeeders() : feedService.getLoadedAudioFeeders();
 

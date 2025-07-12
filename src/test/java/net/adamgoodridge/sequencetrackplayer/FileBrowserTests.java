@@ -40,15 +40,15 @@ public class FileBrowserTests {`
     @Test
     public void getChildFolderName() {
         AudioFeeder audioFeeder = feedService.getAudioFeeder(6).get();
-        String currentChild = audioFeeder.fileInFolder("***REMOVED******REMOVED***/2021/2021-03_March/");
+        String currentChild = audioFeeder.fileInFolder("GIPPSLANDCFA/2021/2021-03_March/");
         assertEquals("2021-03-25_Thursday", currentChild);
     }
 
     @Test
     public void getChildFolderNameUtils() {
         AudioFeeder audioFeeder = feedService.getAudioFeeder(6).get();
-        List<BreadCrumb> browserFileItems = BrowserUtils.generateFileItems("***REMOVED******REMOVED***/2021/2021-03_March/r");
-        String currentChild = BrowserUtils.fileInFolder(browserFileItems, "***REMOVED******REMOVED***/2021/2021-03_March/r/");
+        List<BreadCrumb> browserFileItems = BrowserUtils.generateFileItems("GIPPSLANDCFA/2021/2021-03_March/r");
+        String currentChild = BrowserUtils.fileInFolder(browserFileItems, "GIPPSLANDCFA/2021/2021-03_March/r/");
         assertEquals("d", currentChild);
     }
 }*/

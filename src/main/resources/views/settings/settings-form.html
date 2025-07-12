@@ -18,7 +18,7 @@
 	<fieldset class="row mb-3">
 		<legend class="col-form-label col-sm-2 pt-0">Select Silence Length*</legend>
 		<div class="col-sm-10">
-				<th:block th:each="number : ${T(com.example.shuffleplayer.ConstantText).SETTINGS_CHOICES_SILENCE_NUMBERS}">
+				<th:block th:each="number : ${T(net.adamgoodridge.sequencetrackplayer.constanttext.ConstantText).SETTINGS_CHOICES_SILENCE_NUMBERS}">
 					<div class="form-check">
 						<input class="form-check-input" type="radio" name="silenceLengthRadios" th:id="${'silenceRadios' + number}" th:field="*{silenceLength}" th:value="${number}" th:checked="${settingsForm.silenceLength == number} ? 'checked' : ''">
 						<label class="form-check-label" th:for="${'silenceRadios' + number}" th:text="${number + ' second(s)'}"></label>
@@ -47,7 +47,7 @@
 				<input class="form-check-input" type="radio" name="dayOfWeekRadios" id="dayAny" value="*" th:field="*{dayOfWeek}" th:checked="${settingsForm.getDayOfWeek() == '*'} ? 'checked' : ''">
 				<label class="form-check-label" for="dayAny">Any day of week</label>
 			</div>
-			<th:block th:each="day : ${T(com.example.shuffleplayer.ConstantText).SETTINGS_CHOICES_DAYS_OF_WEEK}">
+			<th:block th:each="day : ${T(net.adamgoodridge.sequencetrackplayer.constanttext.ConstantText).SETTINGS_CHOICES_DAYS_OF_WEEK}">
 				<div class="form-check">
 					<input class="form-check-input" type="radio" name="dayOfWeekRadios" th:id="${'day' + dayOfWeek}" th:value="${day}" th:field="${settingsForm.dayOfWeek}" th:checked="${settingsForm.getDayOfWeek() == day} ? 'checked' : ''">
 					<label class="form-check-label" th:for="${'day' + day}" th:text="${day}"></label>
@@ -62,8 +62,8 @@
 			<div class="form-check">
 		<select id="timesSelector" th:field="*{hourOfDay}" th:selected="false">
 			<option th:value="${'*'}">Any time of the day</option>
-			<option th:value="${T(com.example.shuffleplayer.ConstantText).SETTINGS_VALUE_TIME_OF_DAY_THIS_HOUR}">The current hour</option>
-			<option th:each="hourChoice : ${T(com.example.shuffleplayer.ConstantText).SETTINGS_CHOICES_TIMES_OF_DAY}" th:text="${hourChoice}" th:value="${hourChoice}"
+			<option th:value="${T(net.adamgoodridge.sequencetrackplayer.constanttext.ConstantText).SETTINGS_VALUE_TIME_OF_DAY_THIS_HOUR}">The current hour</option>
+			<option th:each="hourChoice : ${T(net.adamgoodridge.sequencetrackplayer.constanttext.ConstantText).SETTINGS_CHOICES_TIMES_OF_DAY}" th:text="${hourChoice}" th:value="${hourChoice}"
 			></option>
 
 		</select>
@@ -76,7 +76,7 @@
 		<div class="col-sm-10">
 			<div class="form-check">
 				<input class="form-check-input" type="radio" name="isCalendarViewRadios" id="calendarViewYes" th:value="true" th:field="*{calendarView}" th:checked="${settingsForm.getCalendarView == true} ? 'checked' : ''">
-				<label class="form-check-label" for="calendarViewYes" th:text="Yes"></label>
+				<label class="form-check-label" for="calendarViewYes">Yes</label>
 			</div>
 			<div class="form-check">
 				<input class="form-check-input" type="radio" name="isCalendarViewRadios" id="calendarViewNo" th:value="false" th:field="*{calendarView}" th:checked="${settingsForm.getCalendarView == false} ? 'checked' : ''">
@@ -90,11 +90,11 @@
 		<legend class="col-form-label col-sm-2 pt-0">Turn Logo View on *</legend>
 		<div class="col-sm-10">
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="isLogoViewRadios" id="logoViewYes" th:value="true" th:field="*{logoView}" th:checked="${settingsForm.getLogoView == true} ? 'checked' : ''">
+				<input class="form-check-input" type="radio" name="isLogoViewRadios" id="logoViewYes" value="true" th:field="*{logoView}" th:checked="${settingsForm.getLogoView == true} ? 'checked' : ''">
 				<label class="form-check-label" for="logoViewYes" th:text="Yes"></label>
 			</div>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="isLogoViewRadios" id="logoViewNo" th:value="false" th:field="*{logoView}" th:checked="${settingsForm.getLogoView == false} ? 'checked' : ''">
+				<input class="form-check-input" type="radio" name="isLogoViewRadios" id="logoViewNo" value="false" th:field="*{logoView}" th:checked="${settingsForm.getLogoView == false} ? 'checked' : ''">
 				<label class="form-check-label" for="logoViewNo" th:text="No"></label>
 			</div>
 			</th:block>
@@ -133,7 +133,7 @@
 		<div class="col-sm-10">
 			<div class="form-check">
 		<select id="timesSelector" th:field="*{trackCurrentCount}" th:selected="false">
-			<option th:each="trackCurrentCount: ${T(com.example.shuffleplayer.ConstantText).TRACK_CURRENT_COUNT}" th:text="${trackCurrentCount}" th:value="${trackCurrentCount}"></option>
+			<option th:each="trackCurrentCount: ${T(net.adamgoodridge.sequencetrackplayer.constanttext.ConstantText).TRACK_CURRENT_COUNT}" th:text="${trackCurrentCount}" th:value="${trackCurrentCount}"></option>
 			</option>
 
 		</select>

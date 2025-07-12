@@ -49,7 +49,7 @@ public class PreferredRandomSettings {
 
     public static class Builder {
         private String day = "*";
-        private int time = 0;
+        private int time = -1;
         private boolean regularlyTrackChange = false;
         private int trackCurrentCount = 0;
 
@@ -59,7 +59,7 @@ public class PreferredRandomSettings {
         }
 
         public Builder time(int time) {
-            this.time = Math.max(0, time);
+            this.time = time;
             return this;
         }
 

@@ -1,8 +1,8 @@
 {
   "data": [
     {
-      "name": "/mnt/path/",
-      "items": ["FeedA", "FeedB", "FeedC", "test"]
+      "name": "/mnt/path",
+      "items": ["FeedA", "FeedB", "FeedC", "test", "testDirUnsorted","emptyDir","exclude"]
     },
     {
       "name": "/mnt/path/test",
@@ -106,71 +106,83 @@
     },
     {
       "name": "/mnt/path/FeedB",
-      "items": ["2023"]
+      "items": ["2022", "2023"]
     },
     {
       "name": "/mnt/path/FeedB/2023",
-      "items": ["2023-06_June", "2023-07_July"]
+      "items": ["2023-07_July"]
     },
     {
-      "name": "/mnt/path/FeedB/2023/2023-06_June",
-      "items": ["2023-06-05_Monday", "2023-06-12_Monday", "2023-06-21_Wednesday", "2023-06-22_Thursday", "2023-06-23_Friday"]
+      "name": "/mnt/path/FeedB/2022",
+      "items": ["2022-06_June"]
+    },
+    {
+      "name": "/mnt/path/FeedB/2022/2022-06_June",
+      "items": ["2022-06-05_Sunday", "2022-06-06_Monday", "2022-06-12_Sunday", "2022-06-21_Tuesday", "2022-06-22_Wednesday", "2022-06-23_Thursday"]
+    },
+    {
+      "name": "/mnt/path/FeedB/2022/2022-06_June/2022-06-05_Sunday",
+      "items": [
+        "FEEDB_AUDIOFILE_2022-06-05_Sunday_09-00-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-05_Sunday_12-30-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-05_Sunday_14-45-00.mp3"
+      ]
+    },
+    {
+      "name": "/mnt/path/FeedB/2022/2022-06_June/2022-06-06_Monday",
+      "items": [
+        "FEEDB_AUDIOFILE_2022-06-06_Monday_09-15-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-06_Monday_12-30-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-06_Monday_14-45-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-06_Monday_17-30-00.mp3"
+      ]
+    },
+    {
+      "name": "/mnt/path/FeedB/2022/2022-06_June/2022-06-12_Sunday",
+      "items": [
+        "FEEDB_AUDIOFILE_2022-06-12_Sunday_09-00-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-12_Sunday_12-30-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-12_Sunday_14-44-14.mp3",
+        "FEEDB_AUDIOFILE_2022-06-12_Sunday_17-45-00.mp3"
+      ]
+    },
+    {
+      "name": "/mnt/path/FeedB/2022/2022-06_June/2022-06-21_Tuesday",
+      "items": [
+        "FEEDB_AUDIOFILE_2022-06-21_Tuesday_09-15-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-21_Tuesday_12-15-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-21_Tuesday_14-30-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-21_Tuesday_17-30-00.mp3"
+      ]
+    },
+    {
+      "name": "/mnt/path/FeedB/2022/2022-06_June/2022-06-22_Wednesday",
+      "items": [
+        "FEEDB_AUDIOFILE_2022-06-22_Wednesday_10-00-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-22_Wednesday_12-30-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-22_Wednesday_14-30-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-22_Wednesday_17-30-00.mp3"
+      ]
+    },
+    {
+      "name": "/mnt/path/FeedB/2022/2022-06_June/2022-06-23_Thursday",
+      "items": [
+        "FEEDB_AUDIOFILE_2022-06-23_Thursday_09-45-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-23_Thursday_12-45-02.mp3",
+        "FEEDB_AUDIOFILE_2022-06-23_Thursday_14-15-00.mp3",
+        "FEEDB_AUDIOFILE_2022-06-23_Thursday_17-15-00.mp3"
+      ]
     },
     {
       "name": "/mnt/path/FeedB/2023/2023-07_July",
       "items": ["2023-07-03_Monday", "2023-07-19_Wednesday", "2023-07-20_Thursday", "2023-07-21_Friday"]
     },
     {
-      "name": "/mnt/path/FeedB/2023/2023-06_June/2023-06-05_Monday",
-      "items": [
-        "FEEDB_AUDIOFILE_2023-06-05_Monday_09-00-00.mp3",
-        "FEEDB_AUDIOFILE_2023-06-05_Monday_12-30-00.mp3",
-        "FEEDB_AUDIOFILE_2023-06-05_Monday_14-45-00.mp3",
-        "FEEDB_AUDIOFILE_2023-06-05_Monday_17-45-00.mp3"
-      ]
-    },
-    {
-      "name": "/mnt/path/FeedB/2023/2023-06_June/2023-06-12_Monday",
-      "items": [
-        "FEEDB_AUDIOFILE_2023-06-12_Monday_09-00-00.mp3",
-        "FEEDB_AUDIOFILE_2023-06-12_Monday_12-30-00.mp3",
-        "FEEDB_AUDIOFILE_2023-06-12_Monday_14-44-14.mp3",
-        "FEEDB_AUDIOFILE_2023-06-12_Monday_17-45-00.mp3"
-      ]
-    },
-    {
-      "name": "/mnt/path/FeedB/2023/2023-06_June/2023-06-21_Wednesday",
-      "items": [
-        "FEEDB_AUDIOFILE_2023-06-21_Wednesday_09-15-00.mp3",
-        "FEEDB_AUDIOFILE_2023-06-21_Wednesday_12-15-00.mp3",
-        "FEEDB_AUDIOFILE_2023-06-21_Wednesday_14-30-00.mp3",
-        "FEEDB_AUDIOFILE_2023-06-21_Wednesday_17-30-00.mp3"
-      ]
-    },
-    {
-      "name": "/mnt/path/FeedB/2023/2023-06_June/2023-06-22_Thursday",
-      "items": [
-        "FEEDB_AUDIOFILE_2023-06-22_Thursday_10-00-00.mp3",
-        "FEEDB_AUDIOFILE_2023-06-22_Thursday_12-30-00.mp3",
-        "FEEDB_AUDIOFILE_2023-06-22_Thursday_14-30-00.mp3",
-        "FEEDB_AUDIOFILE_2023-06-22_Thursday_17-30-00.mp3"
-      ]
-    },
-    {
-      "name": "/mnt/path/FeedB/2023/2023-06_June/2023-06-23_Friday",
-      "items": [
-        "FEEDB_AUDIOFILE_2023-06-23_Friday_09-45-00.mp3",
-        "FEEDB_AUDIOFILE_2023-06-23_Friday_12-45-02.mp3",
-        "FEEDB_AUDIOFILE_2023-06-23_Friday_14-15-00.mp3",
-        "FEEDB_AUDIOFILE_2023-06-23_Friday_17-15-00.mp3"
-      ]
-    },
-    {
       "name": "/mnt/path/FeedB/2023/2023-07_July/2023-07-03_Monday",
       "items": [
         "FEEDB_AUDIOFILE_2023-07-03_Monday_09-00-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-03_Monday_12-30-00.mp3",
-        "FEEDB_AUDIOFILE_2023-07-03_Monday_15-45-00.mp3"
+        "FEEDB_AUDIOFILE_2023-07-03_Monday_17-45-00.mp3"
       ]
     },
     {
@@ -178,7 +190,7 @@
       "items": [
         "FEEDB_AUDIOFILE_2023-07-19_Wednesday_09-15-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-19_Wednesday_12-22-00.mp3",
-        "FEEDB_AUDIOFILE_2023-07-19_Wednesday_15-45-00.mp3"
+        "FEEDB_AUDIOFILE_2023-07-19_Wednesday_17-45-00.mp3"
       ]
     },
     {
@@ -186,7 +198,7 @@
       "items": [
         "FEEDB_AUDIOFILE_2023-07-20_Thursday_10-30-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-20_Thursday_12-45-00.mp3",
-        "FEEDB_AUDIOFILE_2023-07-20_Thursday_14-15-00.mp3"
+        "FEEDB_AUDIOFILE_2023-07-20_Thursday_17-15-00.mp3"
       ]
     },
     {
@@ -194,7 +206,24 @@
       "items": [
         "FEEDB_AUDIOFILE_2023-07-21_Friday_09-30-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-21_Friday_12-15-00.mp3",
-        "FEEDB_AUDIOFILE_2023-07-21_Friday_15-00-00.mp3"
+        "FEEDB_AUDIOFILE_2023-07-21_Friday_17-00-00.mp3"
       ]
+    },
+    {
+      "name": "/mnt/path/testDirUnsorted",
+      "items": ["c.txt", "a.txt", "b.txt"
+      ]
+    },
+    {
+      "name": "/mnt/path/emptyDir",
+      "items": []
+    },
+    {
+      "name": "/mnt/path/exclude",
+      "items": ["logos"]
+    },
+    {
+      "name": "/mnt/path/exclude/logos",
+      "items": ["FeedB.png"]
     }
   ]}

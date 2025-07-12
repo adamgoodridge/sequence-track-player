@@ -36,7 +36,7 @@ public class AudioIOFileManager implements IAudioIOFileManager {
         return files.get(fileNo);  }
 
     @Override
-    public void increaseFileNo() {
+    public void increaseFileNoAndResetCurrentPosition() {
         fileNo++;
         currentPosition = 0;
     }
@@ -44,7 +44,7 @@ public class AudioIOFileManager implements IAudioIOFileManager {
 
     @Override
     public boolean isAtEnd() {
-        //fileNo went over the amount of files, index
+        //fileNo went over the amount of files
         return fileNo >= files.size();
     }
 
@@ -78,7 +78,7 @@ public class AudioIOFileManager implements IAudioIOFileManager {
     }
 
     @Override
-    public String getCurrentFileName() {
+    public String getCurrentFullPath() {
         return files.get(fileNo).getFullPath();
     }
 
@@ -105,8 +105,7 @@ public class AudioIOFileManager implements IAudioIOFileManager {
     public String toString() {
         return "AudioIOFileManager{" +
                 "fileNo=" + fileNo +
-                ", files" + getFile().getFullPath() +
-                ", parentDir=" + parentDir +
+                ", files" + getCurrentFullPath() +
                 '}';
     }
 }

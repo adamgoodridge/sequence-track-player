@@ -2,7 +2,6 @@ package net.adamgoodridge.sequencetrackplayer.feeder;
 
 
 import net.adamgoodridge.sequencetrackplayer.filesystem.*;
-import net.adamgoodridge.sequencetrackplayer.exceptions.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.sequence.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.*;
@@ -24,12 +23,13 @@ public class FeedService {
     private final SequenceGeneratorService sequenceGeneratorService;
     private final ShortcutService shortcutService;
     private final NasConnectorService nasConnectorService;
-
+    private final AudioIOFileManagerService audioIOFileManagerService;
     @Autowired
-    public FeedService(SettingService settingService, AudioFeederService audioFeederService, SequenceGeneratorService sequenceGeneratorService, ShortcutService shortcutService) {
+    public FeedService(SettingService settingService, AudioFeederService audioFeederService, SequenceGeneratorService sequenceGeneratorService, ShortcutService shortcutService, AudioIOFileManagerService audioIOFileManagerService) {
         this.settingService = settingService;
         this.audioFeederService = audioFeederService;
-        this.nasConnectorService = new NasConnectorFileSystem();
+		this.audioIOFileManagerService = audioIOFileManagerService;
+		this.nasConnectorService = new NasConnectorFileSystem();
         this.sequenceGeneratorService = sequenceGeneratorService;
         this.shortcutService = shortcutService;
     }
@@ -50,7 +50,7 @@ public class FeedService {
         if (audioFeeder != null)
             return audioFeeder.getId();
 
-        audioFeeder = new AudioFeederFactory(settingService.getPreferredRandomSettings(), feedRequest).process();
+        audioFeeder = audioIOFileManagerService.createAudioFeeder(feedRequest);
         audioFeedersLoaded.put(audioFeeder.getId(), audioFeeder);
         audioFeederService.save(audioFeeder);
         return audioFeeder.getId();
@@ -100,7 +100,7 @@ public class FeedService {
         return audioFeederService.getRandomBySessionId(sessionId);
     }
 
-    public AudioFeeder checkAndUpdateStatus(long id) throws GetFeedException {
+    public AudioFeeder checkAndUpdateStatus(long id) throws GetFeedError {
         //making sure that we don't override session
         Optional<AudioFeeder> optional = audioFeederService.get(id);
         if (optional.isEmpty())
@@ -190,11 +190,15 @@ public class FeedService {
      */
     public void trackControl(AudioFeeder audioFeeder, TrackAction action) {
         MoveTrackControl moveTrackControl = new MoveTrackControl(settingService.getPreferredRandomSettings(), audioFeeder);
-        if (action == TrackAction.NEXT)
+        if (action == TrackAction.NEXT) {
             //include getting new random track if the limit is reached
             moveTrackControl.increaseFileNo();
-        else if (action == TrackAction.PREVIOUS)
+            audioFeeder.increaseTrackCount();
+        }
+        else if (action == TrackAction.PREVIOUS) {
             moveTrackControl.decreaseFileNo();
+            audioFeeder.increaseTrackCount();
+        }
         updateAudioFeeder(audioFeeder);
     }
 }

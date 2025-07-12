@@ -1,6 +1,7 @@
 package net.adamgoodridge.sequencetrackplayer.filesystem;
 
 import net.adamgoodridge.sequencetrackplayer.*;
+import net.adamgoodridge.sequencetrackplayer.constanttext.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,10 +25,10 @@ class PathTest extends AbstractSpringBootTest {
         //assertions
         assertNotNull(path);
         assertEquals(folder, path.getFileName());
-        String expectedPath = constantTextFileSystem.getSharePath() + folder;        
+        String expectedPath = constantTextFileSystem.getSharePath() + folder;
         assertEquals(expectedPath, path.toString());
-        assertEquals(expectedPath.replace(constantTextFileSystem.getSharePath(), constantTextFileSystem.getWindowsSharePath())
-                .replace("/", constantTextFileSystem.getWindowsSlash()), path.getWindowsPath());
+        String expectedWindowPath = "P:\\AUDIOFILE\\FULLY_PROCESSED\\folder";
+        assertEquals(expectedWindowPath, path.getWindowsPath());
     }
 
     @Test
@@ -40,8 +41,8 @@ class PathTest extends AbstractSpringBootTest {
 
         assertEquals("file.txt", path.getFileName());
         assertEquals(inputPath + slash + "subfolder/file.txt", path.toString());
-        assertEquals((inputPath + slash + "subfolder/file.txt").replace(constantTextFileSystem.getSharePath(), constantTextFileSystem.getWindowsSharePath())
-                .replace("/", constantTextFileSystem.getWindowsSlash()), path.getWindowsPath());
+        assertEquals("P:\\AUDIOFILE\\FULLY_PROCESSED\\folder\\subfolder\\file.txt",
+                path.getWindowsPath());
     }
 
     @Test
@@ -52,22 +53,22 @@ class PathTest extends AbstractSpringBootTest {
         path.addFile("subfolder\\file.txt");
 
         assertEquals("file.txt", path.getFileName());
-        assertEquals(inputPath + slash + "subfolder/file.txt", path.toString());
-        assertEquals((inputPath + slash + "subfolder/file.txt").replace(constantTextFileSystem.getSharePath(), constantTextFileSystem.getWindowsSharePath())
-                .replace("/", constantTextFileSystem.getWindowsSlash()), path.getWindowsPath());
+        assertEquals("/mnt/path/folder/subfolder/file.txt", path.toString());
+        assertEquals("P:\\AUDIOFILE\\FULLY_PROCESSED\\folder\\subfolder\\file.txt",
+                path.getWindowsPath());
     }
 
     @Test
     void testWindowsAddFileTwoPath() {
-        String inputPath = constantTextFileSystem.getWindowsSharePath() + "folder";
+        String inputPath = "P:\\AUDIOFILE\\FULLY_PROCESSED\\" + "folder";
         Path path = new Path(inputPath);
 
         path.addFile("subfolder\\file.txt");
 
         assertEquals("file.txt", path.getFileName());
-        assertEquals(constantTextFileSystem.getSharePath() + "folder/subfolder/file.txt", path.toString());
-        assertEquals((constantTextFileSystem.getSharePath() + "folder/subfolder/file.txt").replace(constantTextFileSystem.getSharePath(), constantTextFileSystem.getWindowsSharePath())
-                .replace("/", constantTextFileSystem.getWindowsSlash()), path.getWindowsPath());
+        assertEquals("/mnt/path/folder/subfolder/file.txt", path.toString());
+        assertEquals("P:\\AUDIOFILE\\FULLY_PROCESSED\\folder\\subfolder\\file.txt",
+                path.getWindowsPath());
     }
 
     @Test
@@ -78,22 +79,24 @@ class PathTest extends AbstractSpringBootTest {
                 "subfolder",
                 "file.txt"
         );
-
-        String expectedPath = constantTextFileSystem.getSharePath() + "folder/subfolder/file.txt";
-        assertEquals(expectedPath, joinedPath);
-        assertEquals(expectedPath.replace(constantTextFileSystem.getSharePath(), constantTextFileSystem.getWindowsSharePath())
-                .replace("/", constantTextFileSystem.getWindowsSlash()), new Path(joinedPath).getWindowsPath());
+        // When
+        Path path = new Path(joinedPath);
+        // Then
+        assertEquals("file.txt", path.getFileName());
+        assertEquals("/mnt/path/folder/subfolder/file.txt", path.toString());
+        assertEquals("P:\\AUDIOFILE\\FULLY_PROCESSED\\folder\\subfolder\\file.txt", path.getWindowsPath());
     }
 
     @Test
     void testPathValidationRemovesDoubleSlashes() {
         String inputPath = constantTextFileSystem.getSharePath() + "folder//subfolder///file.txt";
-        Path path = new Path(inputPath);
 
+        // When
+        Path path = new Path(inputPath);
+        // Then
         assertEquals("file.txt", path.getFileName());
-        assertEquals(constantTextFileSystem.getSharePath() + "folder/subfolder/file.txt", path.toString());
-        assertEquals((constantTextFileSystem.getSharePath() + "folder/subfolder/file.txt").replace(constantTextFileSystem.getSharePath(), constantTextFileSystem.getWindowsSharePath())
-                .replace("/", constantTextFileSystem.getWindowsSlash()), path.getWindowsPath());
+        assertEquals("/mnt/path/folder/subfolder/file.txt", path.toString());
+        assertEquals("P:\\AUDIOFILE\\FULLY_PROCESSED\\folder\\subfolder\\file.txt", path.getWindowsPath());
     }
 
     @Test
@@ -101,7 +104,7 @@ class PathTest extends AbstractSpringBootTest {
         String joinedPath = Path.join("", constantTextFileSystem.getSharePath(), "folder", "");
         String expectedPath = constantTextFileSystem.getSharePath() + "folder";
         assertEquals(expectedPath, joinedPath);
-        assertEquals(expectedPath.replace(constantTextFileSystem.getSharePath(), constantTextFileSystem.getWindowsSharePath())
+        assertEquals(expectedPath.replace(constantTextFileSystem.getSharePath(), "P:\\AUDIOFILE\\FULLY_PROCESSED\\")
                 .replace("/", constantTextFileSystem.getWindowsSlash()), new Path(joinedPath).getWindowsPath());
     }
 
@@ -110,17 +113,33 @@ class PathTest extends AbstractSpringBootTest {
         String joinedPath = Path.join(constantTextFileSystem.getSharePath() + "/", "folder/", "subfolder/");
         String expectedPath = constantTextFileSystem.getSharePath() + "folder/subfolder";
         assertEquals(expectedPath, joinedPath);
-        assertEquals(expectedPath.replace(constantTextFileSystem.getSharePath(), constantTextFileSystem.getWindowsSharePath())
-                .replace("/", constantTextFileSystem.getWindowsSlash()), new Path(joinedPath).getWindowsPath());
+        assertEquals("P:\\AUDIOFILE\\FULLY_PROCESSED\\folder\\subfolder",
+                new Path(joinedPath).getWindowsPath());
     }
 
     @Test
     void testJoinHandlesNullPaths() {
         String joinedPath = Path.join(null, constantTextFileSystem.getSharePath(), "folder", null);
-        String expectedPath = constantTextFileSystem.getSharePath() + "folder";
-        assertEquals(expectedPath, joinedPath);
-        assertEquals(expectedPath.replace(constantTextFileSystem.getSharePath(), constantTextFileSystem.getWindowsSharePath())
-                .replace("/", constantTextFileSystem.getWindowsSlash()), new Path(joinedPath).getWindowsPath());
+
+        // When
+        Path path = new Path(joinedPath);
+
+        // Then
+
+        assertEquals("/mnt/path/folder", path.toString());
+        assertEquals("P:\\AUDIOFILE\\FULLY_PROCESSED\\folder", path.getWindowsPath());
+    }
+    @Test
+    void testJoinHandlesTrailing() {
+        String pathValue = "/mnt/path/folder/";
+
+        // When
+        Path path = new Path(pathValue);
+
+        // Then
+
+        assertEquals("/mnt/path/folder", path.toString());
+        assertEquals("P:\\AUDIOFILE\\FULLY_PROCESSED\\folder", path.getWindowsPath());
     }/*
     @Test
     void testGetNextInPath() {

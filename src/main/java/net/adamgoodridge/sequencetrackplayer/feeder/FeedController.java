@@ -1,7 +1,7 @@
 package net.adamgoodridge.sequencetrackplayer.feeder;
 
 import jakarta.servlet.http.*;
-import net.adamgoodridge.sequencetrackplayer.*;
+import net.adamgoodridge.sequencetrackplayer.constanttext.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.livefeeder.*;
 import net.adamgoodridge.sequencetrackplayer.settings.*;
@@ -65,7 +65,8 @@ public class FeedController {
 		FeedCurrentPlayingInfoDTO feedCurrentPlayingInfo = new FeedCurrentPlayingInfoDTO(audioFeeder, feedId, null);
 		model.addAttribute(ConstantText.FEED_ATTRIBUTE_CURRENT_FEED, feedCurrentPlayingInfo);
 		//settings
-		model.addAttribute(ConstantText.FEED_ATTRIBUTE_SILENCE, settingService.getSettingValue(SettingName.SILENCE_LENGTH));
+		Setting silenceSetting = settingService.getSetting(SettingName.SILENCE_LENGTH);
+		model.addAttribute(ConstantText.FEED_ATTRIBUTE_SILENCE, silenceSetting.getValue());
 		model.addAttribute("sessionId", audioFeeder.getSessionId());
 		model.addAttribute(ConstantText.FEED_ATTRIBUTE_IS_SCANNING, settingService.getBoolean(SettingName.IS_SCANNING));
 		model.addAttribute("isRandomChange", settingService.getBoolean(SettingName.REGULARLY_CHANGE_TO_RANDOM));

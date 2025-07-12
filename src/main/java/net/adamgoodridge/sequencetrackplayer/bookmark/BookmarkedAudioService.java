@@ -1,6 +1,6 @@
 package net.adamgoodridge.sequencetrackplayer.bookmark;
 
-import net.adamgoodridge.sequencetrackplayer.*;
+import net.adamgoodridge.sequencetrackplayer.constanttext.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;

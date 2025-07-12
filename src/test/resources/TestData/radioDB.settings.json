@@ -1,0 +1,80 @@
+[{
+  "_id": {
+    "$oid": "68314eb2b2c77038462404aa"
+  },
+  "name": "logo_view",
+  "value": "false",
+  "_class": "net.adamgoodridge.sequencetrackplayer.settings.Setting"
+},
+  {
+    "_id": {
+      "$oid": "683172be372d3b061bdb0c4d"
+    },
+    "name": "silence_length",
+    "value": "0",
+    "_class": "net.adamgoodridge.sequencetrackplayer.settings.Setting"
+  },
+  {
+    "_id": {
+      "$oid": "683172be372d3b061bdb0c4e"
+    },
+    "name": "preferred_day_of_week",
+    "value": "*",
+    "_class": "net.adamgoodridge.sequencetrackplayer.settings.Setting"
+  },
+  {
+    "_id": {
+      "$oid": "683172be372d3b061bdb0c4f"
+    },
+    "name": "preferred_hour_of_day",
+    "value": "*",
+    "_class": "net.adamgoodridge.sequencetrackplayer.settings.Setting"
+  },
+  {
+    "_id": {
+      "$oid": "683172be372d3b061bdb0c50"
+    },
+    "name": "is_scanning",
+    "value": "false",
+    "_class": "net.adamgoodridge.sequencetrackplayer.settings.Setting"
+  },
+  {
+    "_id": {
+      "$oid": "683172be372d3b061bdb0c51"
+    },
+    "name": "calendar_view",
+    "value": "true",
+    "_class": "net.adamgoodridge.sequencetrackplayer.settings.Setting"
+  },
+  {
+    "_id": {
+      "$oid": "683172be372d3b061bdb0c52"
+    },
+    "name": "random_from_current",
+    "value": "false",
+    "_class": "net.adamgoodridge.sequencetrackplayer.settings.Setting"
+  },
+  {
+    "_id": {
+      "$oid": "683172be372d3b061bdb0c53"
+    },
+    "name": "overwrite_feed",
+    "value": "true",
+    "_class": "net.adamgoodridge.sequencetrackplayer.settings.Setting"
+  },
+  {
+    "_id": {
+      "$oid": "683172be372d3b061bdb0c54"
+    },
+    "name": "regularly_change_to_random",
+    "value": "true",
+    "_class": "net.adamgoodridge.sequencetrackplayer.settings.Setting"
+  },
+  {
+    "_id": {
+      "$oid": "683172be372d3b061bdb0c55"
+    },
+    "name": "track_current_count",
+    "value": "50",
+    "_class": "net.adamgoodridge.sequencetrackplayer.settings.Setting"
+}]

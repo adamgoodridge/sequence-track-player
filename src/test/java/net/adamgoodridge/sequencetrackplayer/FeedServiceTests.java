@@ -2,16 +2,28 @@ package net.adamgoodridge.sequencetrackplayer;
 
 import net.adamgoodridge.sequencetrackplayer.feeder.AudioFeeder;
 import net.adamgoodridge.sequencetrackplayer.feeder.FeedService;
+import net.adamgoodridge.sequencetrackplayer.feeder.repository.*;
+import net.adamgoodridge.sequencetrackplayer.mock.*;
+import net.adamgoodridge.sequencetrackplayer.mock.respository.*;
+import org.junit.*;
 import org.junit.jupiter.api.Test;
+import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-import java.util.Optional;
+import java.io.*;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-public class FeedServiceTests extends AbstractSpringBootTest {
+class FeedServiceTests extends AbstractSpringBootTest {
     @Autowired
     private FeedService feedService;
+    @Autowired
+    private AudioFeederRepository audioFeederRepository;
+    @Before
+    public void setUp() throws IOException {
+        LoadClassDef.initializeComponents();
+        new AudioFeederRepositoryMock().fillWithMockData(audioFeederRepository);
+    }
     @Test
     public void testSessionIdInsert() {
         AudioFeeder audioFeeder = new AudioFeeder();
@@ -23,8 +35,11 @@ public class FeedServiceTests extends AbstractSpringBootTest {
         assertEquals(sessionId,optionalAudioFeeder.get().getSessionId());
     }
     @Test
-    public void testAllFeed() throws IOException {
-        boolean isEmpty = feedService.feedNames().length == 0;
-         assertFalse(isEmpty);
+    void testAllFeed() throws IOException {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+            String[] feedNames = feedService.feedNames();
+            String[] expectedFeedNames = {"FeedA", "FeedB", "FeedC", "test", "testDirUnsorted","emptyDir"};
+            assertArrayEquals(expectedFeedNames, feedNames);
+        }
     }
     }

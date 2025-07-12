@@ -1,6 +1,7 @@
 package net.adamgoodridge.sequencetrackplayer.mock.respository;
 
 import net.adamgoodridge.sequencetrackplayer.bookmark.BookmarkedAudio;
+import net.adamgoodridge.sequencetrackplayer.GsonConfig;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import org.bson.types.ObjectId;
@@ -23,7 +24,7 @@ public abstract class AbstractMockRepository<T, R extends MongoRepository> {
     protected List<T> getList() throws IOException {
         String jsonContent = new String(Files.readAllBytes(Paths.get(getFileJsonPath())));
 
-        Gson gson = new GsonBuilder()
+        Gson gson = new GsonConfig().gson().newBuilder()
                 .registerTypeAdapter(ObjectId.class, (JsonDeserializer<ObjectId>) (JsonElement json, Type typeOfT, JsonDeserializationContext context) ->{
                         if (json.isJsonObject() && json.getAsJsonObject().has("$oid")) {
                             //convert the JSON object's attribute to an MongoDB ObjectId
@@ -43,8 +44,8 @@ public abstract class AbstractMockRepository<T, R extends MongoRepository> {
     protected abstract String getFileJsonPath();
 
     public void fillWithMockData(R repo) throws IOException {
-        List<T> mockData = getList();
         repo.deleteAll();
+        List<T> mockData = getList();
         repo.saveAll(mockData);
     }
 }

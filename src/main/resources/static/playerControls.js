@@ -108,7 +108,7 @@ function updateLengthTimeText(titleId) {
         $.getJSON(url, function (data) {
 
         });
-        url = "/feed/text/get/current/" + feedId + "?sessionId=" + sessionId;
+        url = "/feed/json/get/current/" + feedId + "?sessionId=" + sessionId;
         $.getJSON(url, function (data) {
             loadDataIntoPlayer(data, false);
         });
@@ -116,7 +116,7 @@ function updateLengthTimeText(titleId) {
     }
     
     timerText.innerHTML = secondToTime(currentLength) + "/" + secondToTime(Math.round(totalDuration));
-    const update_url = "/feed/text/update/length/" + feedId    + "/" + currentLength + "?sessionId=" + sessionId;
+    const update_url = "/feed/json/update/length/" + feedId    + "/" + currentLength + "?sessionId=" + sessionId;
     if(aborter) aborter.abort();
 
     aborter = new AbortController();

@@ -1,16 +1,12 @@
 package net.adamgoodridge.sequencetrackplayer.filesystem;
 
-import net.adamgoodridge.sequencetrackplayer.*;
-import net.adamgoodridge.sequencetrackplayer.exceptions.*;
+import net.adamgoodridge.sequencetrackplayer.constanttext.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import net.adamgoodridge.sequencetrackplayer.filesystem.directory.*;
-import net.adamgoodridge.sequencetrackplayer.settings.*;
 import net.adamgoodridge.sequencetrackplayer.thymeleaf.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
-
-import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
@@ -30,15 +26,15 @@ public class NasConnectorFileSystem implements NasConnectorService {
         return directoryRepository.findDirectoryByNameEquals(path).getSubFiles();
     }
     @Override
-    public String[] listSubFeeds(String path) {
-        Directory directory = directoryRepository.findDirectoryByNameEquals(path);
-        checkIfDirEmpty(directory);
-        String[] names = directory.getSubFiles();
-        String prefix = path.isEmpty() ? "": path + "/";
-        for (int i = 0; i < Objects.requireNonNull(names).length; i++) {
-            names[i] = prefix + names[i];
+    public String[] listSubFeeds(String pathValue) {
+        Path path = new Path(pathValue);
+        String[] subFiles = listSubFiles(path.toString());
+        if(pathValue.isEmpty())
+            return subFiles; //if path is empty, then return the root directory files
+        for (int i = 0; i < Objects.requireNonNull(subFiles).length; i++) {
+            subFiles[i] = pathValue + "/" + subFiles[i];
         }
-        return names;
+        return subFiles;
     }
     private void checkIfDirEmpty(Directory directory) {
         if(directory.getSubFiles() == null) {
@@ -54,36 +50,36 @@ public class NasConnectorFileSystem implements NasConnectorService {
         return directory.subFilesMapToDataItems();
     }
     @Override
-    public AudioIOFileManager getBookmarkedTrack(String fullPath) throws GetFeedException {
+    public AudioIOFileManager getBookmarkedTrack(String fullPath) throws GetFeedError {
         return getTrack(fullPath, FeedRequestType.BOOKMARK);
     }
 
     @Override
     public String logoPath(String feedName) {
         String[] split = feedName.split("/");
-        Directory logosDirectory = directoryRepository.findDirectoryByNameEquals(ConstantTextFileSystem.getInstance().getSharePath()  + "exclude"
-                + ConstantTextFileSystem.getInstance().getSlash() + "logos" + ConstantTextFileSystem.getInstance().getSlash() + feedName +".png");
-
+        Directory logosDirectory = directoryRepository.findDirectoryByNameEquals(getLogoDirectoryPath());
+        String searchValue;
         if(split.length > 2) {
-            String moreSpecificName = getSubFeedLogo(split, logosDirectory);
-            if (moreSpecificName != null) return moreSpecificName;
+            searchValue = getSubFeedName(split);
+        } else {
+            searchValue = split[0];
         }
 
-        return logosDirectory.containItem(feedName) ? feedName : "";
+        return logosDirectory.containItem(searchValue) ? feedName : "";
     }
 
-    private static String getSubFeedLogo(String[] split, Directory logosDirectory) {
-        String moreSpecificName = split[0] + "-" + split[1];
-        if(logosDirectory.containItem(moreSpecificName)) {
-            return moreSpecificName;
-        }
-        return null;
+    private static String getSubFeedName(String[] split) {
+        return split[0] + "-" + split[1];
     }
 
+    private static String getLogoDirectoryPath() {
+        return ConstantTextFileSystem.getInstance().getSharePath() + "exclude"
+                + ConstantTextFileSystem.getInstance().getSlash() + "logos";
+    }
     @Override
     public List<DateForCalendarView> listDaysInYears(final String feedPath) {
         List<DateForCalendarView> dates = new ArrayList<>();
-        Directory directory = directoryRepository.findDirectoryByNameEquals(feedPath.replace("/",ConstantTextFileSystem.getInstance().getSlash() ));
+        Directory directory = directoryRepository.findDirectoryByNameEquals(feedPath.replace("/", ConstantTextFileSystem.getInstance().getSlash() ));
         for(String folder: directory.getSubFilesFullPath()) {
             String[] days = directoryRepository.findDirectoryByNameEquals(folder).getSubFiles();
             assert days != null;
@@ -94,7 +90,7 @@ public class NasConnectorFileSystem implements NasConnectorService {
         return dates;
     }
     @Override
-    public AudioIOFileManager getTrack(final String fullPath, final FeedRequestType feedRequestType) throws GetFeedException {
+    public AudioIOFileManager getTrack(final String fullPath, final FeedRequestType feedRequestType) throws GetFeedError {
 //substring get rid of the first slash e.g /folder/folder2 = folder/folder2
         String[] directories = getDirectoriesWithFileShare(fullPath);
         StringBuilder currentPath = new StringBuilder();
@@ -112,7 +108,7 @@ public class NasConnectorFileSystem implements NasConnectorService {
         return audioIOFileManager;
     }
 
-    private AudioIOFileManager findFileInCurrentFile(List<DataItem> dataItems, StringBuilder currentPath, String directories) throws GetFeedException {
+    private AudioIOFileManager findFileInCurrentFile(List<DataItem> dataItems, StringBuilder currentPath, String directories) throws GetFeedError {
         currentPath.append(ConstantTextFileSystem.getInstance().getSlash()).append(directories);
         DataItem found = findIndexAndValidSubFile(dataItems, currentPath.toString());
         int folderNo = dataItems.indexOf(found);
@@ -125,17 +121,17 @@ public class NasConnectorFileSystem implements NasConnectorService {
         return path.split(Pattern.quote(ConstantTextFileSystem.getInstance().getSlash()));
     }
 
-    private List<DataItem> getDataItems(FeedRequestType feedRequestType, String currentPath) throws GetFeedException {
+    private List<DataItem> getDataItems(FeedRequestType feedRequestType, String currentPath) throws GetFeedError {
         List<DataItem> dataItems = directoryRepository.findDirectoryByNameEquals(currentPath).subFilesMapToDataItems();
         if(dataItems.isEmpty())
-            throw new GetFeedException("The folder ("+ currentPath +") is empty therefore the "+ feedRequestType.label +" couldn't be found as IO Error, folder was empty");
+            throw new GetFeedError("The folder ("+ currentPath +") is empty therefore the "+ feedRequestType.label +" couldn't be found as IO Error, folder was empty");
         return dataItems;
     }
 
-    private DataItem findIndexAndValidSubFile(List<DataItem> dataItems, String searchValue) throws GetFeedException {
+    private DataItem findIndexAndValidSubFile(List<DataItem> dataItems, String searchValue) throws GetFeedError {
         DataItem found = dataItems.stream().filter(d -> d.getFullPathLocalFileSystem().equals(searchValue)).findFirst().orElse(null);
         if(found == null)
-            throw new GetFeedException("The file wasn't in the folder.");
+            throw new GetFeedError("The file wasn't in the folder.");
         return found;
     }
     //if the user wants to, this method pick track based the time select

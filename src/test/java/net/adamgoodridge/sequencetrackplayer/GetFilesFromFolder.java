@@ -3,7 +3,7 @@ package net.adamgoodridge.sequencetrackplayer;
 /*
 public class GetFilesFromFolder {
     public static void main(String[] args) {
-        String url = "https://radioplayer.adsmac.net/***REMOVED***/2019/AUDIOFILE_2019-05/AUDIOFILE_2019-05-02_Thursday/AUDIOFILE_MFB_2019-05-02_Thursday_23-15_TO_23-45";
+        String url = "https://radioplayer.adsmac.net/FRV/2019/AUDIOFILE_2019-05/AUDIOFILE_2019-05-02_Thursday/AUDIOFILE_MFB_2019-05-02_Thursday_23-15_TO_23-45";
         List<DataItem> items = getFiles(url);
         //         System.out.println(items.size());
     }
