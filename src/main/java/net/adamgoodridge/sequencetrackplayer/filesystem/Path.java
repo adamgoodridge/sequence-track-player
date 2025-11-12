@@ -95,9 +95,4 @@ public class Path {
         return this.toString().replace(SHARE_PATH, WINDOWS_SHARE_PATH)
                 .replace("/", WINDOWS_SLASH);
     }
-
-    private String convertToWindowsPath(String fullPath) {
-        // Example conversion logic
-        return fullPath.replace("/", "\\");
-    }
 }

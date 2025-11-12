@@ -138,7 +138,7 @@ public class BrowserController {
             String fullPath = audioFeeder.getAudioIOFileManager().getFile().getFullPath().replace("\\", "/");
             int lastBackslashIndex = fullPath.lastIndexOf("/");
             folderPath = fullPath.substring(0, lastBackslashIndex);
-            currentFile = audioFeeder.getAudioIOFileManager().getFile().getFullPathLocalFileSystem();
+            currentFile = audioFeeder.getAudioIOFileManager().getFile().getFullPath();
         } else {
             folderPath = path;
             currentFile = audioFeeder.fileInFolder(path);

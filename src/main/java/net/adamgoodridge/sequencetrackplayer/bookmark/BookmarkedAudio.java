@@ -1,14 +1,14 @@
 package net.adamgoodridge.sequencetrackplayer.bookmark;
 
+import lombok.*;
 import net.adamgoodridge.sequencetrackplayer.constanttext.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.*;
 
-
-
 @Document(collection = "bookmarkedAudio")
 @SuppressWarnings("unused")
+@Data
 public class BookmarkedAudio {
     @Id
     private String bookmarkId;
@@ -19,25 +19,8 @@ public class BookmarkedAudio {
     public BookmarkedAudio() {
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
-
     public BookmarkedAudio(String path) {
         this.path = path;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public String getBookmarkId() {
-
-        return bookmarkId;
-    }
-
-    public void setBookmarkId(String id) {
-        this.bookmarkId = id;
     }
 
     public String getFeedName() {

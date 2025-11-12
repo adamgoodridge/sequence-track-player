@@ -129,7 +129,7 @@ public class NasConnectorFileSystem implements NasConnectorService {
     }
 
     private DataItem findIndexAndValidSubFile(List<DataItem> dataItems, String searchValue) throws GetFeedError {
-        DataItem found = dataItems.stream().filter(d -> d.getFullPathLocalFileSystem().equals(searchValue)).findFirst().orElse(null);
+        DataItem found = dataItems.stream().filter(d -> d.getFullPath().equals(searchValue)).findFirst().orElse(null);
         if(found == null)
             throw new GetFeedError("The file wasn't in the folder.");
         return found;

@@ -12,7 +12,7 @@ public class MoveTrackControl extends TrackControl {
     private static final Logger logger = LoggerFactory.getLogger(
             MoveTrackControl.class.getName());
     private AudioFeeder audioFeeder;
-
+    private boolean needsToRandomize = false;
 
     public MoveTrackControl(PreferredRandomSettings preferredRandomSettings, AudioFeeder audioFeeder) {
         super(preferredRandomSettings);
@@ -58,7 +58,7 @@ public class MoveTrackControl extends TrackControl {
 
     public void increaseFileNo() {
         if (shouldGetNewRandomTrack()) {
-            getNewRandomTrack();
+            needsToRandomize = true;
         } else {
             nextTrack();
         }
@@ -71,8 +71,7 @@ public class MoveTrackControl extends TrackControl {
                 .feedId(audioFeeder.getId())
                 .feedRequestType(FeedRequestType.RANDOM)
                 .build();
-        //todō
-        //audioFeeder = new AudioFeederFactory(this.getPreferredRandomSettings(feedRequest).process();
+        audioFeeder = new AudioFeederFactory(this.getPreferredRandomSettings(),feedRequest).process();
 
     }
 
@@ -131,6 +130,9 @@ public class MoveTrackControl extends TrackControl {
         int index = Boolean.TRUE.equals(isAtStartOfFolder) ? 0 : children.size() - 1;
         audioIOFileManager = new AudioIOFileManager(children, index, audioIOFileManager);
         return audioIOFileManager;
+    }
+    public boolean isNeedsToRandomize() {
+        return needsToRandomize;
     }
 
 

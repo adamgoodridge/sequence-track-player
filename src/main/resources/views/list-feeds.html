@@ -3,24 +3,61 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Title</title>
-
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 </head>
 
 <div th:insert="~{fragments/menu :: nav}"></div>
 <body>
-   <h1>Welcome</h1>
-	   <div class="list-group" >
-   <span th:each="shortcut : ${shortcuts}">
-	   <a  th:href="@{/feed/get/random/{feedName}(feedName=${shortcut.feedName})}" class="list-group-item list-group-item-action" th:text="${shortcut.title}"></a>
-	</span>
-	   </div>
-	<br>
-
+   <h1 id="heading" style="background-color:grey">Loading heading...</h1>
+   <div class="list-group" id="feedsList">
+	   <span id="shortcuts-loading">Loading shortcuts...</span>
+   </div>
+   <br>
    <a th:href="@{/setting/shortcut/showForm}"><button type="button" class="btn btn-primary">Edit Shortcuts</button></a>
    <a th:href="@{/setting/showForm}"><button type="button" class="btn btn-primary">Edit Settings</button></a>
-   <p style="padding-top: 1em; font-size: medium"><span th:text="${compileTime}"></span></p>
+   <p style="padding-top: 1em; font-size: medium"><span id="compileTime">Loading compile time...</span></p>
+   <script>
+    $(document).ready(function(){
+        // Heading with colour and summary
+        $('#heading').text('Loading heading...').css('background-color', 'grey');
+        $.get('/api/heading', function(data) {
+            if (typeof data === 'object' && typeof data.success === 'number' && typeof data.total === 'number') {
+                var summaryText = "Welcome, the live feed status " + data.success + " out of " + data.total;
+                var headingColour = data.success === data.total ? "green" : "red";
+                $('#heading')
+                    .text(summaryText)
+                    .css('background-color', headingColour);
+            } else {
+                $('#heading').text('Cannot connect to the most recent API').css('background-color', 'red');
+            }
+        }).fail(function() {
+            $('#heading').text('Cannot connect to the most recent API').css('background-color', 'red');
+        });
+
+        // Compile time
+        $('#compileTime').text('Loading compile time...');
+        $.get('/api/compileTime', function(data) {
+            $('#compileTime').text(data || '');
+        });
+
+        // Shortcuts
+        $('#shortcuts-loading').show();
+        $.getJSON('/feed/json/shortcuts', function(shortcuts) {
+            var list = $('#feedsList');
+            list.empty();
+            shortcuts.forEach(function(shortcut) {
+                var link = `
+                    <a href="/feed/get/random/${shortcut.feedName}" class="list-group-item list-group-item-action">
+                        ${shortcut.title}
+                    </a>
+                `;
+                list.append(link);
+            });
+        });
+    });
+   </script>
 </body>
 </html>

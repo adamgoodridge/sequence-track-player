@@ -10,11 +10,12 @@ import net.adamgoodridge.sequencetrackplayer.thymeleaf.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.*;
+
 
 import java.util.*;
 
-@SuppressWarnings("unused")
-@RestController()
+@Controller()
 @RequestMapping("/feed/json")
 public class FeedJsonController {
     private final Logger logger =  LoggerFactory.getLogger(this.getClass());
@@ -38,8 +39,8 @@ public class FeedJsonController {
         this.audioFeederService = audioFeederService;
     }
 
-    @SuppressWarnings("unused")
-    @GetMapping(value = "/status/{feedTrackListIndex}", produces = "application/json")
+    @GetMapping("/status/{feedTrackListIndex}")
+    @ResponseBody
     public String status(@PathVariable int feedTrackListIndex) {
         Map<String, String> output = new HashMap<>();
         try {
@@ -50,9 +51,15 @@ public class FeedJsonController {
         }
         return gson.toJson(output);
     }
+    @GetMapping(value = "/shortcuts", produces = "application/json")
+    @ResponseBody
+    public String getShortcuts() {
+        return gson.toJson(feedService.getShortcuts());
+    }
 
     @SuppressWarnings("unused")
     @GetMapping(value = "/get/{action}/{feedTrackListIndex}", produces = "application/json")
+    @ResponseBody
     public String getNextTextOnly(@PathVariable Long feedTrackListIndex, @PathVariable String action, @RequestParam("sessionId") String sessionId,
                                                 @RequestParam(value = "isShufflerPage", required = false, defaultValue = "false") boolean isShufflerPage) {
         AudioFeeder audioFeeder = getAudioFeederAndValidate(feedTrackListIndex, sessionId);
@@ -60,7 +67,8 @@ public class FeedJsonController {
         /*
             move the track after the track is played OR prev/next is clicked before shuffler mode will move the next feed
          */
-        feedService.trackControl(audioFeeder, TrackAction.fromString(action));
+        audioFeeder = feedService.trackControl(audioFeeder, TrackAction.fromString(action));
+        audioFeederService.save(audioFeeder);
         long id;
         //see if it is loaded
         boolean status;
@@ -107,7 +115,8 @@ public class FeedJsonController {
         return optionalAudioFeeder.get();
     }
 
-    @GetMapping(value = "/update/length/{feedTrackListIndex}/{length}", produces = "application/json")
+    @PatchMapping("/update/length/{feedTrackListIndex}/{length}")
+    @ResponseBody
     public String updateLength(@PathVariable long feedTrackListIndex, @PathVariable int length, @RequestParam("sessionId") String sessionId) {
         AudioFeeder audioFeeder = getAudioFeederAndValidate(feedTrackListIndex,sessionId);
         audioFeeder.getAudioIOFileManager().setCurrentPosition(length);
@@ -118,7 +127,8 @@ public class FeedJsonController {
     }
     //todo
     //For shuffle page
-    @RequestMapping(value = "/{type}", produces = "application/json")
+    @GetMapping("/{type}")
+    @ResponseBody
     public String getAll(@PathVariable String type) {
         List<AudioFeeder> audioFeeders = type.equals("shuffle") ?
                 feedService.getShufflesAudioFeeders() : feedService.getLoadedAudioFeeders();
@@ -135,7 +145,8 @@ public class FeedJsonController {
     }
 
     @SuppressWarnings("unused")
-    @RequestMapping(value = "/logging/{message}", produces = "application/json")
+    @PutMapping(value = "/logging/{message}")
+    @ResponseBody
     public String logging(@PathVariable String message) {
         logger.info(message);
         Map<String, String> map = new HashMap<>();

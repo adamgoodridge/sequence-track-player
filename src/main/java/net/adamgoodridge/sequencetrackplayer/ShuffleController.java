@@ -39,7 +39,7 @@ public class ShuffleController {
 
     @RequestMapping("/shuffle")
     public String shuffleProcessForm(Model model) {
-        List<AudioFeederItemDTO> audioFeederItems =  audioFeederService.getAllByAudioInfoNotNull().stream().map(AudioFeederItemDTO::new).toList();
+        List<AudioFeederItemDTO> audioFeederItems =  audioFeederService.getAllByAudioIOFileManagerNotNull().stream().map(AudioFeederItemDTO::new).toList();
         model.addAttribute("audioFeederItems",audioFeederItems);
         return "shuffle-item-form";
     }

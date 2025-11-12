@@ -48,6 +48,7 @@ public class ExceptionHandingController {
     }
 
     @ExceptionHandler(JsonReturnError.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public @ResponseBody String jsonReturnError(JsonReturnError error) {
         Map<String, String> output = new HashMap<>();
         Gson gson = new Gson();

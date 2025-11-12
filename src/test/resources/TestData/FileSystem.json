@@ -191,8 +191,8 @@
         "FEEDB_AUDIOFILE_2023-07-19_Wednesday_09-15-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-19_Wednesday_12-22-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-19_Wednesday_17-45-00.mp3"
-      ]
-    },
+      ],
+      new String[]{"file1.txt", "file2.txt"} },
     {
       "name": "/mnt/path/FeedB/2023/2023-07_July/2023-07-20_Thursday",
       "items": [

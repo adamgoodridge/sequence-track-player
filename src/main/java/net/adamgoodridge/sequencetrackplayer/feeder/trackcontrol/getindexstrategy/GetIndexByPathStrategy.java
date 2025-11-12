@@ -1,5 +1,6 @@
 package net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.getindexstrategy;
 
+import lombok.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.*;
@@ -7,11 +8,9 @@ import net.adamgoodridge.sequencetrackplayer.filesystem.*;
 
 import java.util.*;
 
+@NoArgsConstructor
 public class GetIndexByPathStrategy implements IGetIndexStrategy {
 	private RetrieveAudioFeeder retrieveAudioFeeder;
-	public GetIndexByPathStrategy() {
-		// default constructor
-	}
 	@Override
 	public int getFolderIndex(RetrieveAudioFeeder retrieveAudioFeeder) throws GetFeedError {
 		this.retrieveAudioFeeder = retrieveAudioFeeder;
@@ -49,7 +48,7 @@ public class GetIndexByPathStrategy implements IGetIndexStrategy {
 	private DataItem findIndexAndValidSubFile() throws GetFeedError {
 		List<DataItem> dataItems =   retrieveAudioFeeder.getSubFiles();
 		String searchValue =   retrieveAudioFeeder.getSearchFor().toString();
-		DataItem found = dataItems.stream().filter(d -> d.getFullPathLocalFileSystem().equals(searchValue)).findFirst().orElse(null);
+		DataItem found = dataItems.stream().filter(d -> d.getFullPath().equals(searchValue)).findFirst().orElse(null);
 		if(found == null)
 			throw new GetFeedError(searchValue +" wasn't in the folder.");
 		return found;

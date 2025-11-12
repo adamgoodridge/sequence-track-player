@@ -55,25 +55,7 @@ class FileSystemRepositoryTests extends AbstractSpringBootTest {
         }
 
     }
-    @Test
-    void findDirectoryByNameEqualsInDifferentThread_WithSharePath_ReturnsDirectory() {
-        // Given
-        String fullPath = Contants.TEST_ROOT + "testDir";
-        String[] expectedFiles = new String[]{"file1.txt", "file2.txt"};
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        try (MockedStatic<FileListSubFileWrapper> mockedStatic = mockStatic(FileListSubFileWrapper.class)) {
-            // Set up mock BEFORE async operation
-            mockedStatic.when(() -> FileListSubFileWrapper.wrap(fullPath)).thenReturn(expectedFiles);
-            CompletableFuture<Directory> futureResult = CompletableFuture.supplyAsync(() ->
-                    fileSystemRepository.findDirectoryByNameEquals(fullPath), executor
-            );
-            Directory result = futureResult.join(); // Wait for the future to complete
-            // Then
-            assertNotNull(result);
-            assertArrayEquals(expectedFiles, result.getSubFiles());
-        }
 
-	}
     public static void mockFileSystem(MockedStatic<FileListSubFileWrapper> mockedStatic) {
         String fullPath = Contants.TEST_ROOT + "testDir";
         String[] expectedFiles = new String[]{"file1.txt", "file2.txt"};

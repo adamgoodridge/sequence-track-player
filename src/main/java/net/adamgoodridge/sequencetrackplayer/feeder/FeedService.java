@@ -56,7 +56,6 @@ public class FeedService {
         return audioFeeder.getId();
     }
 
-
     public Optional<AudioFeeder> getAudioFeeder(long index) {
         return audioFeederService.get(index);
     }
@@ -158,8 +157,8 @@ public class FeedService {
             Shortcut shortcut = shortcuts.get(i);
             int count = audioFeederService.countFeedNameAndLoaded(shortcut.getFeedName());
             String feedTitle = shortcut.getFeedName();
-            feedTitle += count > 0 ? "(" + count + ")" : "";
             shortcut.setTitle(feedTitle);
+            shortcut.setCount(count);
             shortcuts.set(i, shortcut);
         }
         return shortcuts;
@@ -169,7 +168,7 @@ public class FeedService {
         List<Long> scanningAble = new ArrayList<>();
         for (String id : data)
             scanningAble.add(Long.valueOf(id));
-        List<AudioFeeder> audioFeeders = audioFeederService.getAllByAudioInfoNotNull();
+        List<AudioFeeder> audioFeeders = audioFeederService.getAllByAudioIOFileManagerNotNull();
         audioFeeders.stream().filter(audioFeeder -> scanningAble.contains(audioFeeder.getId()))
                 .forEach(audioFeeder -> {
                     audioFeeder.setIncludeInFullScreenShuffle(true);
@@ -188,17 +187,27 @@ public class FeedService {
      * @param audioFeeder the audio feeder to track
      * @param action      the action to perform (NEXT or PREVIOUS)
      */
-    public void trackControl(AudioFeeder audioFeeder, TrackAction action) {
+    public AudioFeeder trackControl(AudioFeeder audioFeeder, TrackAction action) {
         MoveTrackControl moveTrackControl = new MoveTrackControl(settingService.getPreferredRandomSettings(), audioFeeder);
         if (action == TrackAction.NEXT) {
             //include getting new random track if the limit is reached
             moveTrackControl.increaseFileNo();
-            audioFeeder.increaseTrackCount();
-        }
-        else if (action == TrackAction.PREVIOUS) {
+            if (moveTrackControl.isNeedsToRandomize()) {
+                FeedRequest feedRequest = FeedRequest.builder()
+                        .name(audioFeeder.getFeedName())
+                        .feedId(audioFeeder.getId())
+                        .feedRequestType(FeedRequestType.RANDOM)
+                        .build();
+                AudioIOFileManager audioIOFileManager = audioIOFileManagerService.generateFeed(feedRequest);
+                audioFeeder.setAudioIOFileManager(audioIOFileManager);
+                audioFeeder.resetTrackCount();
+            } else {
+                audioFeeder.increaseTrackCount();
+            }
+        } else if (action == TrackAction.PREVIOUS) {
             moveTrackControl.decreaseFileNo();
             audioFeeder.increaseTrackCount();
         }
-        updateAudioFeeder(audioFeeder);
+        return audioFeeder;
     }
 }

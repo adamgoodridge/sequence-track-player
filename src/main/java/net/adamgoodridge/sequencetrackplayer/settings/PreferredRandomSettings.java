@@ -1,7 +1,8 @@
 package net.adamgoodridge.sequencetrackplayer.settings;
 
+import lombok.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
-
+@Getter
 public class PreferredRandomSettings {
     private String day;
     private final int time;
@@ -13,22 +14,6 @@ public class PreferredRandomSettings {
         this.time = builder.time;
         this.regularlyTrackChange = builder.regularlyTrackChange;
         this.trackCurrentCount = builder.trackCurrentCount;
-    }
-
-    public String getDay() {
-        return day;
-    }
-
-    public int getTime() {
-        return time;
-    }
-
-    public boolean isRegularlyTrackChange() {
-        return regularlyTrackChange;
-    }
-
-    public int getTrackCurrentCount() {
-        return trackCurrentCount;
     }
     /**
      * Marks the day as "gotten", meaning it will be reset to "*" down the directory structure.

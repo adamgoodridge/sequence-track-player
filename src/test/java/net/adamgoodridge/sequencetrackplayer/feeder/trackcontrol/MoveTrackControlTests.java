@@ -125,7 +125,7 @@ class MoveTrackControlTests extends AbstractSpringBootTest {
 
 			// Verify we moved to previous directory's last track
 			assertNotNull(audioFeeder.getAudioIOFileManager());
-			String expectedPath = "/mnt/path/FeedB/2023/2023-07_July/2023-07-20_Thursday/FEEDB_AUDIOFILE_2023-07-20_Thursday_14-15-00.mp3";
+			String expectedPath = "/mnt/path/FeedB/2023/2023-07_July/2023-07-20_Thursday/FEEDB_AUDIOFILE_2023-07-20_Thursday_17-15-00.mp3";
 			String actualPath = audioFeeder.getAudioIOFileManager().getCurrentFullPath();
 			Assertions.assertEquals(expectedPath, actualPath, "Should move to previous directory's last track");
 			Assertions.assertEquals(2, audioFeeder.getAudioIOFileManager().getFileNo());

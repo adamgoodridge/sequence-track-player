@@ -1,11 +1,13 @@
 package net.adamgoodridge.sequencetrackplayer.thymeleaf;
 
+import lombok.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
 
 /*
 This class decides what text to show in thymeleaf template
  */
 @SuppressWarnings("unused")
+@Getter
 public class AudioFeederItemDTO {
 
     private final long id;
@@ -20,20 +22,6 @@ public class AudioFeederItemDTO {
     }
 
 
-
-    public String getText() {
-        return text;
-    }
-
-    public long getId() {
-        return id;
-    }
-    
-    public String getFeedName() {
-        return feedName;
-    }
-    
-    
     @Override
     public String toString() {
         return "AudioFeederItem{" +

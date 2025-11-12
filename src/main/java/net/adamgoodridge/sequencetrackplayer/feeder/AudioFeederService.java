@@ -39,7 +39,6 @@ public class AudioFeederService {
     public AudioFeeder getRandomByFeedName(String feedName) {
         return audioFeederRepository.getAudioFeederByFeedName(feedName);
     }
-
     public void delete(AudioFeeder feeder) {
         audioFeederRepository.delete(feeder);
     }
@@ -48,16 +47,16 @@ public class AudioFeederService {
         audioFeederRepository.saveAll(audioFeeders);
     }
 
-    public List<AudioFeeder> getAllByAudioInfoNotNull() {
-        return audioFeederRepository.getAllByAudioInfoNotNull();
+    public List<AudioFeeder> getAllByAudioIOFileManagerNotNull() {
+        return audioFeederRepository.getAllByAudioIOFileManagerNull();
     }
     public void deleteAllByAudioInfoNull() {
-        List<AudioFeeder> loadedFeeds = audioFeederRepository.getAllByAudioInfoNull();
+        List<AudioFeeder> loadedFeeds = audioFeederRepository.getAllByAudioIOFileManagerNull();
         audioFeederRepository.deleteAll(loadedFeeds);
     }
 
     public int countFeedNameAndLoaded(String feeName) {
-        return audioFeederRepository.countAllByFeedNameAndAndAudioInfoNotNull(feeName);
+        return audioFeederRepository.countAllByFeedNameAndAndAudioIOFileManagerNotNull(feeName);
     }
 
     public void deleteAllByAudioNegativeOne() {
@@ -69,7 +68,7 @@ public class AudioFeederService {
         return audioFeederRepository.getAllByIsIncludeInFullScreenShuffle();
     }
     public void repairDocument(){
-        List<AudioFeeder> audioFeeders = audioFeederRepository.getAllByAudioInfoTitleErrors();
+        List<AudioFeeder> audioFeeders = audioFeederRepository.getAllByAudioIOFileManagerTitleErrors();
         for(AudioFeeder audioFeeder: audioFeeders) {
             String feedName = audioFeeder.getFeedName();
             String[] split = feedName.split("/");

@@ -120,16 +120,19 @@ function updateLengthTimeText(titleId) {
     if(aborter) aborter.abort();
 
     aborter = new AbortController();
-    const singal = aborter.singal;
-    $.getJSON(update_url,{singal}).then(data => {
-        //if it isn't the not right session
-        aborter == null;
+    const signal = aborter.singal;
+    $.ajax({
+        url: update_url,
+        type: 'PATCH',
+        dataType: 'json',
+        signal: signal,
+    }).then(data => {
+        aborter = null;
         if (data.hasOwnProperty("error")) {
             updatePlayerControlsHidden(true);
             player.pause();
-            //document.getElementById("statusTitle" + titleId).innerHTML = data["error"];
             titleText.innerHTML = data["feedName"];
-            titeText.hidden = false;
+            titleText.hidden = false;
             updatePlayerButtonsHidden(true);
             statusText.innerHTML = data["error"];
             statusText.hidden = false;

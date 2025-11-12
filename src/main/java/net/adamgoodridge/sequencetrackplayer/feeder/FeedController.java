@@ -80,25 +80,8 @@ public class FeedController {
 		//whether it should show logo view
 		String view = settingService.getBoolean(SettingName.LOGO_VIEW)
 				? "list-feeds-icon-view" : "list-feeds";
-		model.addAttribute("heading", getHeadingForMostRecentApi());
-		model.addAttribute("shortcuts", feedService.getShortcuts());
 		model.addAttribute("compileTime", CompileTime.get());
 		return view;
-	}
-	private String getHeadingForMostRecentApi() {
-
-		String headingColour;
-		String summaryText;
-		//live stream
-		FeederOutputSummary summary = liveFeederService.getSummary();
-		if (summary != null) {
-			summaryText =  "Welcome, the live feed status" + summary.success() + " out of "+ summary.total();
-			headingColour = summary.success() == summary.total() ? "green" : "red";
-		} else {
-			summaryText = "Cannot connect to the most recent API";
-			headingColour = "red";
-		}
-		return "<h1 style=\"background-color:" + headingColour + "\">"+ summaryText + "</h1>";
 	}
 
 	@SuppressWarnings("unused")

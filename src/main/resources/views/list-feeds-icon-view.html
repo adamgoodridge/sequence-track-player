@@ -73,27 +73,56 @@
 </head>
 <body>
 <div>
+    <div>
 <div th:insert="~{fragments/menu :: nav}"></div>
-    [(${heading})]
-	   <div class="cust-grid" id="feedsGrid" >
-		   <div th:each="shortcut : ${shortcuts}" class ="cust-cell">
-			   <a th:href="@{/feed/get/random/{feedName}(feedName=${shortcut.feedName})}">
-				<span th:if="${shortcut.getLogoPath() != ''}">
-			        <img th:src="@{https://feedplayer.adamgoodridge.net/exclude/logos/{imagePath}(imagePath=${shortcut.getLogoPath()})}" th:alt="${shortcut.feedName}">
-				</span>
-				<span th:if="${shortcut.getLogoPath() == ''}">
-			        <img th:src="@{https://feedplayer.adamgoodridge.net/exclude/logos/default.png}" th:alt="${shortcut.feedName}" >
-				</span>
-			   <h4 th:text="${shortcut.title}"></h4>
-			   </a>
-		   </div>
-	   </div>
-	<br>
-	<h1>end</h1>
-   <a th:href="@{/setting/shortcut/showForm}"><button type="button" class="btn btn-primary">Edit Shortcuts</button></a>
-   <a th:href="@{/setting/showForm}"><button type="button" class="btn btn-primary">Edit Settings</button></a>
+    <span id="heading">Loading heading...</span>
+    <div class="cust-grid" id="feedsGrid">
+        <span id="shortcuts-loading">Loading shortcuts...</span>
+    </div>
+    <br>
+    <h1>end</h1>
+    <a th:href="@{/setting/shortcut/showForm}"><button type="button" class="btn btn-primary">Edit Shortcuts</button></a>
+    <a th:href="@{/setting/showForm}"><button type="button" class="btn btn-primary">Edit Settings</button></a>
+    <p style="padding-top: 1em; font-size: medium"><span id="compileTime">Loading compile time...</span></p>
+</div>
+<script>
+    $(document).ready(function(){
+        window.onresize = resizeAction;
 
-	<p style="padding-top: 1em; font-size: medium"><span th:text="${compileTime}"></span></p>
+        // Show loading for heading
+        $('#heading').text('Loading heading...');
+        $.get('/api/live/summary', function(data) {
+            $('#heading').text(data || '');
+        });
+
+        // Show loading for compileTime
+        $('#compileTime').text('Loading compile time...');
+        $.get('/api/compileTime', function(data) {
+            $('#compileTime').text(data || '');
+        });
+
+        // Show loading for shortcuts
+        $('#shortcuts-loading').show();
+        $.getJSON('/feed/json/shortcuts', function(shortcuts) {
+            var grid = $('#feedsGrid');
+            grid.empty();
+            shortcuts.forEach(function(shortcut) {
+                var logoPath = shortcut.logoPath && shortcut.logoPath !== '' ? shortcut.logoPath : 'default.png';
+                var cell = `
+                    <div class="cust-cell">
+                        <a href="/feed/get/random/${shortcut.feedName}">
+                            <span>
+                                <img src="https://feedplayer.adamgoodridge.net/exclude/logos/${logoPath}" alt="${shortcut.feedName}">
+                            </span>
+                            <h4>${shortcut.title}${shortcut.count > 0 ? ` (${shortcut.count})` : ''}</h4>
+                        </a>
+                    </div>
+                `;
+                grid.append(cell);
+            });
+        });
+    });
+        </script>
 </div>
 </body>
 </html>

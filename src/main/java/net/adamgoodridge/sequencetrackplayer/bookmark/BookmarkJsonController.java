@@ -5,11 +5,12 @@ import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
+import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@RestController()
+@Controller()
 @RequestMapping("/bookmark/json")
 public class BookmarkJsonController {
 
@@ -31,8 +32,9 @@ public class BookmarkJsonController {
         bookmarkedAudioService.delete(found.get());
 
     }
-
-    @RequestMapping(value = "/add/{feedTrackIndex}")
+    @PutMapping("/add/{feedTrackIndex}")
+    @RequestMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public String addBookmark(@PathVariable int feedTrackIndex) {
         Optional<AudioFeeder> optionalAudioFeeder = feedService.getAudioFeeder(feedTrackIndex);
         if(optionalAudioFeeder.isEmpty())

@@ -2,6 +2,7 @@ package net.adamgoodridge.sequencetrackplayer.feeder;
 
 import com.fasterxml.jackson.annotation.*;
 import com.google.gson.annotations.*;
+import lombok.*;
 import net.adamgoodridge.sequencetrackplayer.browser.*;
 import net.adamgoodridge.sequencetrackplayer.constanttext.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
@@ -15,12 +16,13 @@ import java.util.concurrent.*;
 @Document(collection = "currentAudioFeeder")
 //old field in db or _class in json for tesṯing
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 public class AudioFeeder {
     @Transient
     public static final String SEQUENCE_NAME = "audio_feeders";
     @Expose
     @Field
-    private AudioIOFileManager audioInfo;
+    private AudioIOFileManager audioIOFileManager;
     @Field
     private AudioIOFileManager previousAudioPlayed;
     @Field
@@ -60,95 +62,18 @@ public class AudioFeeder {
     }
 
     public AudioFeeder(String feedName, AudioIOFileManager audioIOFileManager) {
-        this.audioInfo = audioIOFileManager;
+        this.audioIOFileManager = audioIOFileManager;
         //e.g /ACT/2020/2020-08_August/2020-08-29_Saturday/ACT_2020-08-29_Saturday_08-13_TO_08-43_011.mp3
         this.feedName = feedName;
-    }
-
-    public AudioIOFileManager getAudioIOFileManager() {
-        return audioInfo;
-    }
-
-    public boolean isAudioIOFileManager() {
-        return audioInfo != null;
-    }
-
-    public void setAudioInfo(AudioIOFileManager audioInfo) {
-        this.audioInfo = audioInfo;
-    }
-    public void setAudioIOFileManager(AudioIOFileManager audioIOFileManager) {
-        this.audioInfo = audioIOFileManager;
-    }
-
-    public AudioIOFileManager getPreviousAudioPlayed() {
-        return previousAudioPlayed;
-    }
-
-    public String getFeedName() {
-        return feedName;
-    }
-
-    public void setPreviousAudioPlayed(AudioIOFileManager previousAudioPlayed) {
-        this.previousAudioPlayed = previousAudioPlayed;
-    }
-
-    public void setIncludeInFullScreenShuffle(boolean includeInFullScreenShuffle) {
-        isIncludeInFullScreenShuffle = includeInFullScreenShuffle;
-    }
-
-
-    public void setErrorMessage(String completionErrorMessage) {
-        this.errorMessage = completionErrorMessage;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
-
-    public CompletableFuture<AudioIOFileManager> getCompletableFuture() {
-        return completableFuture;
-    }
-
-    public void setCompletableFuture(CompletableFuture<AudioIOFileManager> completableFuture) {
-        this.completableFuture = completableFuture;
-    }
-
-    public void setFeedName(String feedName) {
-        this.feedName = feedName;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     // FEED/2021/2021-03_March/2021-03-25_Thursday if input FEED/2021/2021-03_March it will return 2021-03-25_Thursday if input
     public String fileInFolder(String currentPath) {
         //increase the audio file
-        List<BreadCrumb> fileItems = BrowserUtils.generateFileItems(audioInfo.getFile().getHref().replace(ConstantText.DEFAULT_SERVER_URL, ""));
+        List<BreadCrumb> fileItems = BrowserUtils.generateFileItems(audioIOFileManager.getFile().getHref().replace(ConstantText.DEFAULT_SERVER_URL, ""));
 
         int childIndex = fileItems.stream().map(BreadCrumb::path).toList().indexOf(currentPath) + 1;
         return fileItems.get(childIndex).name();
-    }
-
-    public boolean isIncludeInFullScreenShuffle() {
-        return isIncludeInFullScreenShuffle;
-    }
-
-    public int getCurrentTrackCount() {
-        return currentTrackCount;
     }
 
     public void increaseTrackCount() {
@@ -164,29 +89,18 @@ public class AudioFeeder {
         currentTrackCount = 0;
     }
 
-    public boolean ableToPlay() {
-        return audioInfo != null && this.getAudioIOFileManager().getFile().getFileName() != null;
-    }
-
-    public void setStartPath(String startPath) {
-        this.startPath = startPath;
-    }
-
-    public String getStartPath() {
-        return startPath;
-    }
 
     public boolean isLoaded() {
-        return audioInfo != null;
-    }
-
-    public void setIsIncludeInFullScreenShuffle(boolean isIncludeInFullScreenShuffle) {
-        this.isIncludeInFullScreenShuffle = isIncludeInFullScreenShuffle;
+        return audioIOFileManager != null;
     }
 
     public String displayText() {
-        if(isLoaded())
-            return audioInfo.getFile().getFullPathLocalFileSystem();
+        try {
+            if (isLoaded())
+                return audioIOFileManager.getFile().getFileName();
+        } catch (Exception ignored) {
+            return getFeedName() + "(id:" + getId() + ")" + " has an invalid path";
+        }
        return getFeedName() + " is loading";
     }
 

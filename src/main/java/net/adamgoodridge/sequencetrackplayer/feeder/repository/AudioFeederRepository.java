@@ -9,10 +9,9 @@ import java.util.*;
 
 @Repository
 public interface AudioFeederRepository extends MongoRepository<AudioFeeder, Long>, CustomAudioFeederRepository{
-    List<AudioFeeder> getAllByAudioInfoNotNull();
+    List<AudioFeeder> getAllByAudioIOFileManagerNull();
     //get loading feeds
-    int countAllByFeedNameAndAndAudioInfoNotNull(String feedName);
-    List<AudioFeeder> getAllByAudioInfoNull();
+    int countAllByFeedNameAndAndAudioIOFileManagerNotNull(String feedName);
     @Query("{feedName:{$regex: /.*mp3$|.*m4a/}}")
-    List<AudioFeeder> getAllByAudioInfoTitleErrors();
+    List<AudioFeeder> getAllByAudioIOFileManagerTitleErrors();
 }

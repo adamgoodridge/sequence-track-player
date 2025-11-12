@@ -1,3 +1,4 @@
+
 package net.adamgoodridge.sequencetrackplayer.constanttext;
 
 import org.springframework.boot.context.properties.*;

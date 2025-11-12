@@ -1,10 +1,10 @@
 services:
   webShuffle: #8443
     image: sequence-track-player:v10
-    container_name: web_shuffle_9
+    container_name: web_shuffle_nonprod_9
     volumes:
-      - /smb/ssd/feed/FULLY_PROCESSED/:/mnt/p/feed/FULLY_PROCESSED/
+      - /smb/ssd/Radio/FULLY_PROCESSED/:/mnt/p/VOX/FULLY_PROCESSED/
       - /var/lib/docker/volumes/self-signed/_data/:/etc/ssl/certs/java/carts/
     restart: unless-stopped
     ports:
-      - 192.168.0.24:84:8443
+      - 192.168.181.24:85:8443

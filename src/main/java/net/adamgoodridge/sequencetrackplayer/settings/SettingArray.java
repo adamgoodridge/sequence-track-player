@@ -1,10 +1,12 @@
 package net.adamgoodridge.sequencetrackplayer.settings;
 
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.*;
 
 import javax.persistence.*;
 import java.util.*;
 
+@Data
 @Document("setting_arrays")
 public class SettingArray {
     @Id
@@ -21,13 +23,5 @@ public class SettingArray {
         this.values = values;
     }
 
-    // Getters and setters
 
-    public List<String> getValues() {
-        return values;
-    }
-
-    public void setValues(List<String> values) {
-        this.values = values;
-    }
 }

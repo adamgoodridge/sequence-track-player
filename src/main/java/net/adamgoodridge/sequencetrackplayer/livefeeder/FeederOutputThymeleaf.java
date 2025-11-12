@@ -1,7 +1,9 @@
-
 package net.adamgoodridge.sequencetrackplayer.livefeeder;
 
 
+import lombok.*;
+
+@Data
 public class FeederOutputThymeleaf{
 	private FeederOutput feederOutput;
 	private String cssClass;
@@ -17,25 +19,5 @@ public class FeederOutputThymeleaf{
 		html += "<td>"+ feederOutput.getLastUpdateTime() + "</td>";
 		html += "</tr>";
 		
-	}
-	
-	public void setFeederOutput(FeederOutput feederOutput) {
-		this.feederOutput = feederOutput;
-	}
-	
-	public String getCssClass() {
-		return cssClass;
-	}
-	
-	public void setCssClass() {
-		this.cssClass = feederOutput.isRecent() ? "table-success" : "tale-danger";
-	}
-	
-	public String getHtml() {
-		return html;
-	}
-	
-	public void setHtml(String html) {
-		this.html = html;
 	}
 }
