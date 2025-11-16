@@ -44,7 +44,7 @@ test {
     }
     systemProperty "spring.profiles.active", "test"
     systemProperty "spring.config.location", "classpath:application-test.properties"
-    systemProperty "spring.config.name", "application-est"
+    systemProperty "spring.config.name", "application-test"
 }
 
 dependencies {

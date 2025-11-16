@@ -1,23 +1,29 @@
 
 package net.adamgoodridge.sequencetrackplayer.constanttext;
 
+import jakarta.annotation.*;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.context.properties.*;
 import org.springframework.stereotype.*;
-/*
-@ConfigurationProperties(prefix = "other")
-@ConfigurationPropertiesScan
+
+@Component
 public class ConstantTextProperties {
-	private boolean isMultiThreaded = true;
-
-	public ConstantTextProperties() {
-		// Default constructor
+	@Value("${other.commit.time}")
+	private String compileTime;
+	private ConstantTextProperties() {
+		// private constructor to prevent instantiation
 	}
-	private void setMultiThreaded(boolean multiThreaded) {
-		isMultiThreaded = multiThreaded;
+	private static ConstantTextProperties instance;
+	@PostConstruct
+	@SuppressWarnings("unused")
+	public void init() {
+		instance = this;
 	}
-
-	public boolean isMultiThreaded() {
-		return isMultiThreaded;
+	public static ConstantTextProperties getInstance() {
+		return instance;
 	}
+	public String getCompileTime() {
+		return compileTime;
+	}
+	
 }
-*/

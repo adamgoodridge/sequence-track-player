@@ -83,7 +83,7 @@
     <h1>end</h1>
     <a th:href="@{/setting/shortcut/showForm}"><button type="button" class="btn btn-primary">Edit Shortcuts</button></a>
     <a th:href="@{/setting/showForm}"><button type="button" class="btn btn-primary">Edit Settings</button></a>
-    <p style="padding-top: 1em; font-size: medium"><span id="compileTime">Loading compile time...</span></p>
+    <p style="padding-top: 1em; font-size: medium"><span id="commitTime">Loading compile time...</span></p>
 </div>
 <script>
     $(document).ready(function(){
@@ -97,8 +97,10 @@
 
         // Show loading for compileTime
         $('#compileTime').text('Loading compile time...');
-        $.get('/api/compileTime', function(data) {
-            $('#compileTime').text(data || '');
+        $.get('/api/commit-time', function(data) {
+            console.log(data);
+            const version = data['commitTime'] || data.commitTime || '';
+            $('#commitTime').text('Version: ' + version);
         });
 
         // Show loading for shortcuts
