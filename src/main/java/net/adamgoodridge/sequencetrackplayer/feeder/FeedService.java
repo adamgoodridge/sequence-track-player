@@ -84,7 +84,9 @@ public class FeedService {
     }
 
     public List<AudioFeeder> getLoadedAudioFeeders() {
-        return audioFeederService.getAll().stream().filter(audioFeeder -> audioFeeder.getAudioIOFileManager() != null).toList();
+        List<AudioFeeder> loadedAudioFeeders = audioFeederService
+                .getAll();
+        return loadedAudioFeeders.stream().filter(audioFeeder -> audioFeeder.getAudioIOFileManager() != null).toList();
     }
     //todo display only those which are not in error state under current feed page
     public List<AudioFeeder> getAllErrorOutAudioFeeders() {

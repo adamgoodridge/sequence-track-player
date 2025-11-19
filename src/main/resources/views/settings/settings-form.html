@@ -30,11 +30,11 @@
 	<legend class="col-form-label col-sm-2 pt-0">Turn Scanning on *</legend>
 	<div class="col-sm-10">
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="isScanningRadios" id="scanningYes" th:value="true" th:field="*{scanning}" th:checked="${settingsForm.isScanning == true} ? 'checked' : ''">
+				<input class="form-check-input" type="radio" name="isScanningRadios" id="scanningYes" th:value="true" th:field="*{IsScanning}" th:checked="${settingsForm.isScanning == true} ? 'checked' : ''">
 				<label class="form-check-label" for="scanningYes" th:text="Yes"></label>
 			</div>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="isScanningRadios" id="scanningNo" th:value="false" th:field="*{scanning}" th:checked="${settingsForm.isScanning == false} ? 'checked' : ''">
+				<input class="form-check-input" type="radio" name="isScanningRadios" id="scanningNo" th:value="false" th:field="*{IsScanning}" th:checked="${settingsForm.isScanning == false} ? 'checked' : ''">
 				<label class="form-check-label" for="scanningNo" th:text="No"></label>
 			</div>
 		</th:block>

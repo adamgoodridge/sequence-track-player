@@ -21,7 +21,7 @@ public class AudioFeeder {
     @Transient
     public static final String SEQUENCE_NAME = "audio_feeders";
     @Expose
-    @Field
+    @Field("audioInfo")
     private AudioIOFileManager audioIOFileManager;
     @Field
     private AudioIOFileManager previousAudioPlayed;

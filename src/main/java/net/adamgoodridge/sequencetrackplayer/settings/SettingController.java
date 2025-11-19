@@ -63,7 +63,7 @@ public class SettingController {
         String hourOfDay = settingService.getSetting(SettingName.PREFERRED_HOUR_OF_DAY).getValue();
         settingsForm.setHourOfDay(hourOfDay);
         Boolean isScanning = settingService.getBoolean(IS_SCANNING);
-        settingsForm.setScanning(isScanning);
+        settingsForm.setIsScanning(isScanning);
         Boolean calendarView = settingService.getBoolean(SettingName.CALENDAR_VIEW);
         settingsForm.setCalendarView(calendarView);
         Boolean logoView = settingService.getBoolean(SettingName.LOGO_VIEW);

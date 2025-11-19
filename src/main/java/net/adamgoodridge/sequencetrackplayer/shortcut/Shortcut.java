@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.*;
 
 import javax.persistence.*;
 
-
+@NoArgsConstructor
 @Data
 @Entity
 @Document("shortcuts")
@@ -26,8 +26,5 @@ public class Shortcut {
         this.logoPath = logoPath;
     }
 
-    public Shortcut() {
-
-    }
 
 }

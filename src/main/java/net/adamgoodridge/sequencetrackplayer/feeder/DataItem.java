@@ -7,10 +7,10 @@ import net.adamgoodridge.sequencetrackplayer.filesystem.*;
 import java.io.*;
 //todo remove this class, it is not used anymore combine with DataItem in the filesystem package
 //blocker old data in the database
-@Data
 @NoArgsConstructor
 public class DataItem {
     private String name;
+    @Getter
     private String href;
     private Path path;
 
@@ -21,12 +21,16 @@ public class DataItem {
         this.href = path.getUrl();
     }
 
+
     //for non dav
     public DataItem(File file) {
         this(file.getAbsolutePath());
     }
 
     public String getFullPath() {
+        if(path == null) {
+            path = new Path(name);
+        }
         return path.toString();
     }
 

@@ -10,7 +10,7 @@ public class SettingsForm {
 	private String dayOfWeek;
 	private String hourOfDay;
 	
-	private Boolean scanning;
+	private Boolean isScanning;
 	private Boolean calendarView;
 	private Boolean logoView;
 	
@@ -25,7 +25,7 @@ public class SettingsForm {
 		//every new setting new to be added
 		List<Setting> settings = new LinkedList<>();
 		settings.add(new Setting(SettingName.SILENCE_LENGTH, silenceLength));
-		settings.add(new Setting(SettingName.IS_SCANNING, scanning));
+		settings.add(new Setting(SettingName.IS_SCANNING, isScanning));
 		settings.add(new Setting(SettingName.CALENDAR_VIEW, calendarView));
 		settings.add(new Setting(SettingName.RANDOM_FROM_CURRENT, randomFromCurrent));
 		settings.add(new Setting(SettingName.LOGO_VIEW, logoView));
