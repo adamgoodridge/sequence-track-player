@@ -3,6 +3,7 @@ package net.adamgoodridge.sequencetrackplayer.feeder;
 
 import lombok.*;
 import net.adamgoodridge.sequencetrackplayer.filesystem.*;
+import org.springframework.data.annotation.*;
 
 import java.io.*;
 //todo remove this class, it is not used anymore combine with DataItem in the filesystem package
@@ -12,6 +13,7 @@ public class DataItem {
     private String name;
     @Getter
     private String href;
+    @Transient
     private Path path;
 
 
