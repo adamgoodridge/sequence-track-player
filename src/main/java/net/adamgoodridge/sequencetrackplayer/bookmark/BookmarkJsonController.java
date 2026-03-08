@@ -25,25 +25,15 @@ public class BookmarkJsonController {
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBookmark(@PathVariable String id) {
-        Optional<BookmarkedAudio> found = bookmarkedAudioService.getById(id);
-        if(found.isEmpty())
-            throw new JsonNotFoundError("Bookmark id (" + id + ") cannot find in the database.");
-
-        bookmarkedAudioService.delete(found.get());
+        bookmarkedAudioService.delete(id);
 
     }
-    @PutMapping("/add/{feedTrackIndex}")
-    @RequestMapping
+    @PostMapping("/add/{feedTrackIndex}")
     @ResponseStatus(HttpStatus.CREATED)
-    public String addBookmark(@PathVariable int feedTrackIndex) {
-        Optional<AudioFeeder> optionalAudioFeeder = feedService.getAudioFeeder(feedTrackIndex);
-        if(optionalAudioFeeder.isEmpty())
-            throw new JsonNotFoundError("There's no feed found loaded on the server currently");
-
-        AudioFeeder audioFeeder = optionalAudioFeeder.get();
-        bookmarkedAudioService.add(audioFeeder);
-        BookmarkedAudio bookmarkedAudio = bookmarkedAudioService.getBookedMarked(audioFeeder.getAudioIOFileManager());
-        return new Gson().toJson(bookmarkedAudio);
+    @ResponseBody
+    public BookmarkedAudio addBookmark(@PathVariable long feedTrackIndex) {
+        BookmarkedAudio bookmarkedAudio = bookmarkedAudioService.add(feedTrackIndex);
+        return bookmarkedAudio;
     }
 
 }

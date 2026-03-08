@@ -26,12 +26,9 @@ public class BookmarkController {
 
     @RequestMapping("/get/{bookmarkID}")
     public String getBookmark(@PathVariable String bookmarkID) throws DataBaseError {
-        Optional<BookmarkedAudio> optionalBookmarkedAudio = bookmarkedAudioService.getById(bookmarkID);
-        if (optionalBookmarkedAudio.isEmpty())
-            throw new ServerError("Bookmark ID doesn't exists in database.");
-
+        BookmarkedAudio bookmarkedAudio = bookmarkedAudioService.getById(bookmarkID);
         //get the row from the database
-        FeedRequest feedRequest = optionalBookmarkedAudio.get().toRequest();
+        FeedRequest feedRequest =  bookmarkedAudio.toRequest();
 
 
         long feedId = feedService.populateFeed(feedRequest);

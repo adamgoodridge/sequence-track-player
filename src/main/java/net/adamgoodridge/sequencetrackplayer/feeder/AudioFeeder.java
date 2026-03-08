@@ -21,6 +21,7 @@ public class AudioFeeder {
     @Transient
     public static final String SEQUENCE_NAME = "audio_feeders";
     @Expose
+    @SerializedName("audioInfo")
     @Field("audioInfo")
     private AudioIOFileManager audioIOFileManager;
     @Field

@@ -6,16 +6,15 @@ import net.adamgoodridge.sequencetrackplayer.mock.respository.AudioFeederReposit
 import net.adamgoodridge.sequencetrackplayer.mock.respository.BookmarkRepositoryMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.ui.Model;
 
 import java.io.IOException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
@@ -30,8 +29,6 @@ class BookmarkControllerJsonTests extends AbstractSpringBootTest {
     @Autowired
     private AudioFeederRepository audioFeederRepository;
 
-
-
     @BeforeEach
     void setUp() throws IOException {
         MockitoAnnotations.openMocks(this);
@@ -42,13 +39,11 @@ class BookmarkControllerJsonTests extends AbstractSpringBootTest {
     @Test
     void testAddBookmark() throws Exception {
         int feedTrackIndex = 248;
-        String expectedPath = "/TEST/FEEDC/2023/2023-11_November/2023-11-19_Sunday/FEEDC_AUDIOFILE_2023-11-19_Sunday_13-45-21.mp3";
-        
-        mockMvc.perform(delete("/bookmark/json/add/" + feedTrackIndex))
-               .andExpect(status().is(200))
+        String expectedUrl = "https://testplayer.adamgoodridge.net/FeedB/2023/2023-07_July/2023-07-20_Thursday/FEEDB_AUDIOFILE_2023-07-20_Thursday_14-15-00.mp3";
+        mockMvc.perform(post("/bookmark/json/add/" + feedTrackIndex))
+               .andExpect(status().is(201))
                .andExpect(jsonPath("$.bookmarkId").exists())
-                .andExpect(jsonPath("$.feedTrackIndex").value(feedTrackIndex))
-               .andExpect(jsonPath("$.path").value(expectedPath));
+               .andExpect(jsonPath("$.path").value(expectedUrl));
     }
 
     @Test
@@ -63,26 +58,28 @@ class BookmarkControllerJsonTests extends AbstractSpringBootTest {
     @Test
     void testDeleteBookmark_NotFound() throws Exception {
         String bookmarkId = "123";
+        String expectedMessage = "Bookmark not found with id: 123";
         
         mockMvc.perform(delete("/bookmark/json/delete/" + bookmarkId))
                .andExpect(status().is(404))
-               .andExpect(jsonPath("$.error").value("Bookmark id (123) cannot find in the database."));
+               .andExpect(jsonPath("$.error").value(expectedMessage));
     }
 
     @Test
     void testAddBookmark_NoFeedLoaded() throws Exception {
         int feedTrackIndex = 0;
+        String expectedMessage = "There's no feed found loaded on the server currently";
         
-        mockMvc.perform(delete("/bookmark/json/add/" + feedTrackIndex))
+        mockMvc.perform(post("/bookmark/json/add/" + feedTrackIndex))
                .andExpect(status().is(404))
-               .andExpect(jsonPath("$.error").value("There's no feed found loaded on the server currently"));
+               .andExpect(jsonPath("$.error").value(expectedMessage));
     }
 
     @Test
     void testAddBookmark_NoAudioFeederFound() throws Exception {
         int feedTrackIndex = 1;
         
-        mockMvc.perform(delete("/bookmark/json/add/" + feedTrackIndex))
+        mockMvc.perform(post("/bookmark/json/add/" + feedTrackIndex))
                .andExpect(status().is(404))
                .andExpect(jsonPath("$.error").value("There's no feed found loaded on the server currently"));
     }

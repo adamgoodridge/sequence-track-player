@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
         new AudioFeederRepositoryMock().fillWithMockData(audioFeederRepository);
         LoadClassDef.initializeComponents();
     }
-//todo: when nas is staticz
+
     @Test
     void testGetBookmark_Success() throws DataBaseError {
         String bookmarkID = "63c3d88ced2a9155d57e9252";

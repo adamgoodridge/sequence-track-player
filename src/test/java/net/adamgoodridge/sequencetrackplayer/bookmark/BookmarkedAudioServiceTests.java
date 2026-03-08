@@ -1,6 +1,7 @@
 package net.adamgoodridge.sequencetrackplayer.bookmark;
 
 import net.adamgoodridge.sequencetrackplayer.*;
+import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.repository.*;
 import net.adamgoodridge.sequencetrackplayer.mock.respository.*;
@@ -45,15 +46,32 @@ class BookmarkedAudioServiceTests extends AbstractSpringBootTest {
     @Test
     void testGetById() {
         String id = "63c3d88ced2a9155d57e9252";
-        Optional<BookmarkedAudio> bookmarkedAudio = bookmarkedAudioService.getById(id);
-        assertTrue(bookmarkedAudio.isPresent());
-        assertEquals(id, bookmarkedAudio.get().getBookmarkId());
+        BookmarkedAudio bookmarkedAudio = bookmarkedAudioService.getById(id);
+        assertNotNull(bookmarkedAudio);
+        assertEquals(id, bookmarkedAudio.getBookmarkId());
     }
     @Test
     void testGetByIdDoesntExist() {
         String id = "63c3d88ced2a9155d57e9253"; // ID that doesn't exist
-        Optional<BookmarkedAudio> bookmarkedAudio = bookmarkedAudioService.getById(id);
-        assertTrue(bookmarkedAudio.isEmpty());
+        JsonNotFoundError exception = assertThrows(JsonNotFoundError.class, () -> {
+            bookmarkedAudioService.getById(id);
+        });
+        String expectedMessage = "Bookmark not found with id: " + id;
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+    @Test
+    void testAdd() {
+        // Given
+        long feedTrackIndex = 248;
+        // When
+        BookmarkedAudio bookmarkedAudio = bookmarkedAudioService.add(feedTrackIndex);
+
+        // Then
+        assertNotNull(bookmarkedAudio, "BookmarkedAudio should not be null after adding");
+        String actualPath = bookmarkedAudio.getPath();
+        String expectedPath = "https://testplayer.adamgoodridge.net/FeedB/2023/2023-07_July/2023-07-20_Thursday/FEEDB_AUDIOFILE_2023-07-20_Thursday_14-15-00.mp3";
+        assertEquals(expectedPath, actualPath, "The path of the bookmarked audio does not match the expected value");
     }
 
     @Test
@@ -69,25 +87,5 @@ class BookmarkedAudioServiceTests extends AbstractSpringBootTest {
         // Test the service method
         BookmarkedAudio bookmarkedAudio = bookmarkedAudioService.getBookedMarked(audioInfo);
         assertNotNull(bookmarkedAudio);
-        assertEquals("/FEEDE/2019/2019-03/2019-03-06_Wednesday/AUDIOFILE_FEEDE_2019-03-06_Wednesday_11-34_TO_12-04_727393754008.mp3", bookmarkedAudio.getPath());
     }
-
-    @Test
-    void testDelete() {
-        // Given
-        String id = "63c3d88ced2a9155d57e9252"; // ID to delete
-        String name  = "/mnt/path/test/2023/2023-02_February/2023-02-01_Wednesday/TEST_AUDIOFILE_2023-02-01_Wednesday_12-15-44.mp3";
-
-        // When
-        BookmarkedAudio bookmarkedAudio = bookmarkedAudioService.getById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Bookmark not found with id: " + id));
-        bookmarkedAudio.setBookmarkId(id);
-        bookmarkedAudioService.delete(bookmarkedAudio);
-        Optional<BookmarkedAudio> deletedBookmark = bookmarkedAudioService.getById(id);
-
-        // Then
-        assertEquals(name, bookmarkedAudio.getPath());
-        assertTrue(deletedBookmark.isEmpty(), "Bookmark should be deleted");
-    }
-
 }

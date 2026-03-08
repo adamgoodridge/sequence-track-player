@@ -4,7 +4,7 @@ services:
     container_name: web_shuffle_9
     volumes:
       - /smb/ssd/feed/FULLY_PROCESSED/:/mnt/p/feed/FULLY_PROCESSED/
-      - /var/lib/docker/volumes/self-signed/_data/:/etc/ssl/certs/java/carts/
+      - /home/adam/.local/share/docker/volumes/self-signed/_data/:/etc/ssl/certs/java/carts/
     restart: unless-stopped
     ports:
       - 192.168.0.24:84:8443
