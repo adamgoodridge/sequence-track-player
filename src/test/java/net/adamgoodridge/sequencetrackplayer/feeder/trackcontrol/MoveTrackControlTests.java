@@ -4,7 +4,6 @@ import net.adamgoodridge.sequencetrackplayer.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.repository.*;
-import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.getindexstrategy.*;
 import net.adamgoodridge.sequencetrackplayer.filesystem.*;
 import net.adamgoodridge.sequencetrackplayer.mock.*;
 import net.adamgoodridge.sequencetrackplayer.mock.respository.*;
@@ -19,19 +18,40 @@ class MoveTrackControlTests extends AbstractSpringBootTest {
 	@Autowired
 	private AudioFeederRepository repository;
 
+	// minimal filesystem map used by these tests
+	private java.util.HashMap<String, String[]> feedBMock() {
+		java.util.HashMap<String, String[]> map = new java.util.HashMap<>();
+		map.put("/mnt/path", new String[]{"FeedB"});
+		map.put("/mnt/path/FeedB", new String[]{"2023"});
+		map.put("/mnt/path/FeedB/2023", new String[]{"2023-07_July", "2023-06_June"});
+		map.put("/mnt/path/FeedB/2023/2023-07_July", new String[]{"2023-07-19_Wednesday","2023-07-20_Thursday","2023-07-21_Friday","2023-07-03_Monday"});
+		map.put("/mnt/path/FeedB/2023/2023-07_July/2023-07-19_Wednesday",
+				new String[]{"FEEDB_AUDIOFILE_2023-07-19_Wednesday_09-15-00.mp3","FEEDB_AUDIOFILE_2023-07-19_Wednesday_12-22-00.mp3","FEEDB_AUDIOFILE_2023-07-19_Wednesday_17-45-00.mp3"});
+		map.put("/mnt/path/FeedB/2023/2023-07_July/2023-07-20_Thursday",
+				new String[]{"FEEDB_AUDIOFILE_2023-07-20_Thursday_10-30-00.mp3","FEEDB_AUDIOFILE_2023-07-20_Thursday_12-45-00.mp3","FEEDB_AUDIOFILE_2023-07-20_Thursday_14-15-00.mp3"});
+		map.put("/mnt/path/FeedB/2023/2023-07_July/2023-07-21_Friday",
+				new String[]{"FEEDB_AUDIOFILE_2023-07-21_Friday_09-30-00.mp3","FEEDB_AUDIOFILE_2023-07-21_Friday_12-15-00.mp3","FEEDB_AUDIOFILE_2023-07-21_Friday_15-00-00.mp3"});
+		map.put("/mnt/path/FeedB/2023/2023-07_July/2023-07-03_Monday",
+				new String[]{"FEEDB_AUDIOFILE_2023-07-03_Monday_09-00-00.mp3"});
+		map.put("/mnt/path/FeedB/2023/2023-06_June", new String[]{"2023-06-23_Friday"});
+		map.put("/mnt/path/FeedB/2023/2023-06_June/2023-06-23_Friday",
+				new String[]{"FEEDB_AUDIOFILE_2023-06-23_Friday_17-15-00.mp3"});
+		return map;
+	}
+
 	@BeforeEach
 	void setUp() throws IOException {
 		// fixes classNotFoundException, before loading the MockedConstruction
 		new AudioFeederRepositoryMock().fillWithMockData(repository);
-		new Path("/mnt/patb");
-		System.out.println(FeedRequestType.BOOKMARK);
+		new Path("/mnt/pathB"); //pre-load Path class to avoid ClassNotFoundException during MockedConstruction
 		FileListSubFileWrapper.wrap("/mnt/path/FeedB/2023/2023-07_July/2023-07-20_Thursday");
+		FileUtils.removeTrailingSlash("/mnt/");
 	}
 	@Test
-	void MoveTrackWhenNextTrackGoToPrevious(){
+	void MoveTrackWhenNextTrackGoToPrevious() {
 		AudioFeeder audioFeeder = repository.findById(249L).orElseThrow();
 		MoveTrackControl moveTrackControl = new MoveTrackControl(PreferredRandomSettings.builder().regularlyTrackChange(false).build(), audioFeeder);
-		try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+		try (MockedConstruction<File> ignored = FileSystemMockConstruction.process(feedBMock())) {
 			// Initial state verification
 			assertNotNull(audioFeeder.getAudioIOFileManager());
 			Assertions.assertEquals(2, audioFeeder.getAudioIOFileManager().getFileNo());
@@ -54,7 +74,7 @@ class MoveTrackControlTests extends AbstractSpringBootTest {
 	void MoveTrackWhenNextTrackInNextDirectory() {
 		AudioFeeder audioFeeder = repository.findById(249L).orElseThrow();
 		MoveTrackControl moveTrackControl = new MoveTrackControl(PreferredRandomSettings.builder().regularlyTrackChange(false).build(), audioFeeder);
-		try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+		try (MockedConstruction<File> ignored = FileSystemMockConstruction.process(feedBMock())) {
 			// Initial state verification
 			assertNotNull(audioFeeder.getAudioIOFileManager());
 			Assertions.assertEquals(2, audioFeeder.getAudioIOFileManager().getFileNo());
@@ -78,7 +98,7 @@ class MoveTrackControlTests extends AbstractSpringBootTest {
 	void MoveTrackWhenNextTrackInNextDirectoryAndGoBack() throws GetFeedError {
 		AudioFeeder audioFeeder = repository.findById(249L).orElseThrow();
 		MoveTrackControl moveTrackControl = new MoveTrackControl(PreferredRandomSettings.builder().regularlyTrackChange(false).build(), audioFeeder);
-		try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+		try (MockedConstruction<File> ignored = FileSystemMockConstruction.process(feedBMock())) {
 			// Initial state verification
 			assertNotNull(audioFeeder.getAudioIOFileManager());
 			Assertions.assertEquals(2, audioFeeder.getAudioIOFileManager().getFileNo());
@@ -111,7 +131,7 @@ class MoveTrackControlTests extends AbstractSpringBootTest {
 	void MoveTrackToPreviousDirectoryFirstTrack() {
 		AudioFeeder audioFeeder = repository.findById(250L).orElseThrow();
 		MoveTrackControl moveTrackControl = new MoveTrackControl(PreferredRandomSettings.builder().regularlyTrackChange(false).build(), audioFeeder);
-		try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+		try (MockedConstruction<File> ignored = FileSystemMockConstruction.process(feedBMock())) {
 			// Initial state verification
 			assertNotNull(audioFeeder.getAudioIOFileManager());
 			Assertions.assertEquals(0, audioFeeder.getAudioIOFileManager().getFileNo());
@@ -125,7 +145,7 @@ class MoveTrackControlTests extends AbstractSpringBootTest {
 
 			// Verify we moved to previous directory's last track
 			assertNotNull(audioFeeder.getAudioIOFileManager());
-			String expectedPath = "/mnt/path/FeedB/2023/2023-07_July/2023-07-20_Thursday/FEEDB_AUDIOFILE_2023-07-20_Thursday_17-15-00.mp3";
+			String expectedPath = "/mnt/path/FeedB/2023/2023-07_July/2023-07-20_Thursday/FEEDB_AUDIOFILE_2023-07-20_Thursday_14-15-00.mp3";
 			String actualPath = audioFeeder.getAudioIOFileManager().getCurrentFullPath();
 			Assertions.assertEquals(expectedPath, actualPath, "Should move to previous directory's last track");
 			Assertions.assertEquals(2, audioFeeder.getAudioIOFileManager().getFileNo());
@@ -136,7 +156,7 @@ class MoveTrackControlTests extends AbstractSpringBootTest {
 	void MoveTrackToNextDirectoryWhenAtLastTrackOfMonth() {
 		AudioFeeder audioFeeder = repository.findById(251L).orElseThrow();
 		MoveTrackControl moveTrackControl = new MoveTrackControl(PreferredRandomSettings.builder().regularlyTrackChange(false).build(), audioFeeder);
-		try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+		try (MockedConstruction<File> ignored = FileSystemMockConstruction.process(feedBMock())) {
 			// Initial state verification
 			assertNotNull(audioFeeder.getAudioIOFileManager());
 			Assertions.assertEquals(3, audioFeeder.getAudioIOFileManager().getFileNo());
@@ -169,7 +189,7 @@ class MoveTrackControlTests extends AbstractSpringBootTest {
 			audioFeeder
 		);
 
-		try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+		try (MockedConstruction<File> ignored = FileSystemMockConstruction.process(feedBMock())) {
 			// Verify initial state
 			Assertions.assertEquals(1, audioFeeder.getCurrentTrackCount());
 
@@ -189,7 +209,7 @@ class MoveTrackControlTests extends AbstractSpringBootTest {
 			audioFeeder
 		);
 
-		try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+		try (MockedConstruction<File> ignored = FileSystemMockConstruction.process(feedBMock())) {
 			// Initial state verification
 			assertNotNull(audioFeeder.getAudioIOFileManager());
 

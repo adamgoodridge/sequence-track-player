@@ -42,6 +42,8 @@ public class BookmarkedAudioService {
 
     public BookmarkedAudio add(Long feedTrackIndex) {
         AudioFeeder feeder = feedService.getAudioFeeder(feedTrackIndex).orElseThrow(() -> new JsonNotFoundError("There's no feed found loaded on the server currently"));
+        if (feeder.getAudioIOFileManager() == null)
+            throw new JsonNotFoundError("There's no feed found loaded on the server currently");
         String path = feeder.getAudioIOFileManager().getUrl().replace(ConstantText.DEFAULT_SERVER_URL,"/");
         BookmarkedAudio bookmarkedAudio = new BookmarkedAudio(path);
         bookmarkedAudioRepository.save(bookmarkedAudio);

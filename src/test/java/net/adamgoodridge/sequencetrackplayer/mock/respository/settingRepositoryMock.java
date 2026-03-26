@@ -1,12 +1,9 @@
 package net.adamgoodridge.sequencetrackplayer.mock.respository;
 
 import com.google.gson.*;
-import net.adamgoodridge.sequencetrackplayer.bookmark.*;
 import net.adamgoodridge.sequencetrackplayer.settings.Setting;
 import net.adamgoodridge.sequencetrackplayer.settings.SettingRepository;
 import org.bson.types.*;
-
-import static org.mockito.Mockito.when;
 
 public class SettingRepositoryMock  extends AbstractMockRepository<Setting, SettingRepository> {
     public SettingRepositoryMock() {

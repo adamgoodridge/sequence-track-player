@@ -75,6 +75,20 @@ class BookmarkedAudioServiceTests extends AbstractSpringBootTest {
     }
 
     @Test
+    void testAdd_FeedExistsButNoAudioIOFileManager() {
+        // Given: save a feeder with no audioInfo (AudioIOFileManager is null)
+        AudioFeeder feeder = new AudioFeeder();
+        feeder.setId(999L);
+        feeder.setFeedName("testFeed");
+        audioFeederRepository.save(feeder);
+
+        // When / Then: add() should throw because AudioIOFileManager is null
+        JsonNotFoundError exception = assertThrows(JsonNotFoundError.class,
+                () -> bookmarkedAudioService.add(999L));
+        assertEquals("There's no feed found loaded on the server currently", exception.getMessage());
+    }
+
+    @Test
     void testGetBookedMarked() {
         // Create complex DataItem objects
         DataItem file1 = new DataItem("/FEEDE/2019/2019-03/2019-03-06_Wednesday/AUDIOFILE_FEEDE_2019-03-06_Wednesday_11-34_TO_12-04_727393754008.mp3");

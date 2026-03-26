@@ -22,6 +22,7 @@ public enum SettingName {
     OVERWRITE_FEED("true"),
     REGULARLY_CHANGE_TO_RANDOM("true"),
     TRACK_CURRENT_COUNT("50");
+
     private final String defaultValue;
 
     private SettingName(String defaultValue) {

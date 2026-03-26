@@ -143,7 +143,6 @@ public class FeedService {
         String[] names = nasConnectorService.listSubFeeds("");
         names = ArrayUtils.addAll(names, nasConnectorService.listSubFiles("FEEDD"));
         names = ArrayUtils.addAll(names, nasConnectorService.listSubFiles("FEEDD/SUBFEEDA"));
-        names = ArrayUtils.addAll(names, nasConnectorService.listSubFeeds("TESTTING-OPEN-MHZ"));
         return names;
     }
 

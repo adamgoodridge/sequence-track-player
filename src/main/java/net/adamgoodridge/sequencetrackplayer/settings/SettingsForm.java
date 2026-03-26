@@ -1,9 +1,10 @@
 package net.adamgoodridge.sequencetrackplayer.settings;
 
 import lombok.*;
-
 import java.util.*;
+
 @Data
+@NoArgsConstructor
 public class SettingsForm {
 	private String silenceLength;
 	
@@ -18,9 +19,7 @@ public class SettingsForm {
 	private Boolean overwriteFeed;
 	private Boolean regularlyChangeToRandom;
 	private String trackCurrentCount;
-	public SettingsForm() {
-	}
-
+	private String considerHolidayPeriod;
 	public List<Setting> toSettingsRows() {
 		//every new setting new to be added
 		List<Setting> settings = new LinkedList<>();

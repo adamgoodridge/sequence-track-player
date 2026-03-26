@@ -115,11 +115,6 @@ public class FeedController {
 		feedService.removeAll();
 		return "redirect:/feed/list/current";
 	}
-	@RequestMapping("/repair")
-	public String repair() {
-		audioFeederService.repairDocument();
-		return "redirect:/feed/list/current";
-	}
 
 	@SuppressWarnings("unused")
 	@RequestMapping("/clear/loading")

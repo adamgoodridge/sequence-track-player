@@ -4,6 +4,7 @@ import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.getindexstrategy.*;
 import net.adamgoodridge.sequencetrackplayer.filesystem.*;
 import net.adamgoodridge.sequencetrackplayer.settings.*;
+import net.adamgoodridge.sequencetrackplayer.utils.*;
 
 // load class definition for testing purposes before using MockContractor otherwise it will throw NoClassDefFoundError whenever accessing the class within a class that called in MockContractor
 public class LoadClassDef {

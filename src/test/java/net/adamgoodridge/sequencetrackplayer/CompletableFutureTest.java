@@ -5,14 +5,14 @@ import net.adamgoodridge.sequencetrackplayer.feeder.AudioFeeder;
 import net.adamgoodridge.sequencetrackplayer.feeder.FeedRequest;
 import net.adamgoodridge.sequencetrackplayer.feeder.FeedRequestType;
 import net.adamgoodridge.sequencetrackplayer.feeder.FeedService;
-import net.adamgoodridge.sequencetrackplayer.feeder.repository.AudioFeederRepository;
-import net.adamgoodridge.sequencetrackplayer.mock.*;
-import org.junit.jupiter.api.Test;
+import net.adamgoodridge.sequencetrackplayer.feeder.repository.*;
+import net.adamgoodridge.sequencetrackplayer.filesystem.*;
+import net.adamgoodridge.sequencetrackplayer.utils.*;
+import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -25,30 +25,37 @@ public class CompletableFutureTest {
     @Mock
     private AudioFeederRepository audioFeederRepository;
 
+    @BeforeEach
+    void setUp() {
+        LoadClassDef.initializeComponents();
+        MockitoAnnotations.openMocks(this);
+    }
+
     private static CompletableFuture<String> futureMethod(boolean throwError) {
         return CompletableFuture.supplyAsync(() -> {
-                if (throwError)
-                    throw new RuntimeException("Error occurred");
-                //                 System.out.println("inside thread started");
-                await().atMost(5, TimeUnit.SECONDS);
+            if (throwError)
+                throw new RuntimeException("Error occurred");
+            await().atMost(5, TimeUnit.SECONDS);
             return "hi";
         }).orTimeout(40, TimeUnit.SECONDS);
     }
+
     @Test
     void testLoadingFeed() throws GetFeedError {
+        try (MockedStatic<FileListSubFileWrapper> mockedStatic = Mockito.mockStatic(FileListSubFileWrapper.class)) {
+            mockedStatic.when(() -> FileListSubFileWrapper.wrap("/mnt/path/FeedA"))
+                    .thenReturn(new String[]{"2022"});
+            mockedStatic.when(() -> FileListSubFileWrapper.wrap("/mnt/path/FeedA/2022"))
+                    .thenReturn(new String[]{"2022-01_January"});
+            mockedStatic.when(() -> FileListSubFileWrapper.wrap("/mnt/path/FeedA/2022/2022-01_January"))
+                    .thenReturn(new String[]{"FEEDA_AUDIOFILE_2022-01-01_Saturday_09-00-00.mp3"});
 
-        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
             FeedRequest feedRequest = new FeedRequest.Builder()
                     .name("FeedA")
                     .feedRequestType(FeedRequestType.RANDOM)
                     .build();
             long id = feedService.populateFeed(feedRequest);
-            AudioFeeder audioFeeder = new AudioFeeder(feedRequest.getName());
-            audioFeeder.setId(id);
-            while (feedService.checkAndUpdateStatus(id).getAudioIOFileManager() == null) {
-                await().atMost(1, TimeUnit.SECONDS);
-            }
-            audioFeeder = feedService.getAudioFeeder(id).get();
+            AudioFeeder audioFeeder = feedService.checkAndUpdateStatus(id);
             assert audioFeeder.getAudioIOFileManager() != null;
             assert audioFeeder.getAudioIOFileManager().getFile() != null;
         }

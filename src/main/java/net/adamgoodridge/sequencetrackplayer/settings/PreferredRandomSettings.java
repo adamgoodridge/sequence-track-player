@@ -2,12 +2,17 @@ package net.adamgoodridge.sequencetrackplayer.settings;
 
 import lombok.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
+
 @Getter
 public class PreferredRandomSettings {
-    private String day;
+    private static final String DAY = "day";
+    private static final String WILDCARD = "*";
+
+    private final String day;
     private final int time;
     private final boolean regularlyTrackChange;
     private final int trackCurrentCount;
+
 
     private PreferredRandomSettings(Builder builder) {
         this.day = builder.day;
@@ -15,31 +20,22 @@ public class PreferredRandomSettings {
         this.regularlyTrackChange = builder.regularlyTrackChange;
         this.trackCurrentCount = builder.trackCurrentCount;
     }
-    /**
-     * Marks the day as "gotten", meaning it will be reset to "*" down the directory structure.
-     */
-    public void gottenDay() {
-        day = "*";
-    }
-
     public boolean shouldFilterByDay(DataItem dataItem) {
-        if(day.equals("*")) {
+        if(day.equals("*"))
             return false;
-        }
-        return dataItem.getFileName().contains(day);
+        return dataItem.getFileName().toLowerCase().contains(DAY);
     }
     public static Builder builder() {
         return new Builder();
     }
-
-    public static class Builder {
-        private String day = "*";
+	public static class Builder {
+        private String day = WILDCARD;
         private int time = -1;
         private boolean regularlyTrackChange = false;
         private int trackCurrentCount = 0;
 
         public Builder day(String day) {
-            this.day = day != null ? day : "*";
+            this.day = day != null ? day : WILDCARD;
             return this;
         }
 

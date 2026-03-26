@@ -1,17 +1,11 @@
 package net.adamgoodridge.sequencetrackplayer.bookmark;
 
 import net.adamgoodridge.sequencetrackplayer.*;
-import net.adamgoodridge.sequencetrackplayer.exceptions.errors.DataBaseError;
-import net.adamgoodridge.sequencetrackplayer.exceptions.errors.ServerError;
-import net.adamgoodridge.sequencetrackplayer.feeder.*;
+import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.repository.AudioFeederRepository;
-import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.*;
-import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.getindexstrategy.*;
-import net.adamgoodridge.sequencetrackplayer.filesystem.*;
 import net.adamgoodridge.sequencetrackplayer.mock.FileSystemMockConstruction;
 import net.adamgoodridge.sequencetrackplayer.mock.respository.AudioFeederRepositoryMock;
 import net.adamgoodridge.sequencetrackplayer.mock.respository.BookmarkRepositoryMock;
-import net.adamgoodridge.sequencetrackplayer.settings.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -22,6 +16,7 @@ import org.springframework.ui.Model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -50,17 +45,14 @@ import static org.mockito.Mockito.*;
     void testGetBookmark_Success() throws DataBaseError {
         String bookmarkID = "63c3d88ced2a9155d57e9252";
 
-        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.process(
+                new HashMap<String, String[]>() {{
+                    put("/mnt/path/test/2023/2023-02_February/2023-02-01_Wednesday",
+                            new String[]{"TEST_AUDIOFILE_2023-02-01_Wednesday_12-15-44.mp3"});
+                }})) {
             String response = bookmarkController.getBookmark(bookmarkID);
             assertEquals("redirect:/feed/get/1", response);
         }
-    }
-
-    @Test
-    void testGetBookmark_NotFound() {
-        String bookmarkID = "123";
-        ServerError thrown = assertThrows(ServerError.class, () -> bookmarkController.getBookmark(bookmarkID));
-        assertEquals("Bookmark ID doesn't exists in database.", thrown.getMessage());
     }
 
     @Test

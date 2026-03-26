@@ -60,6 +60,4 @@ public class CustomAudioFeederRepositoryImpl implements CustomAudioFeederReposit
         AggregationResults<AudioFeeder> audioFeederAggregate = mongoOperations.aggregate(aggregation, COLLECTION_NAME, AudioFeeder.class);
         return audioFeederAggregate.getUniqueMappedResult();
     }
-
-
 }

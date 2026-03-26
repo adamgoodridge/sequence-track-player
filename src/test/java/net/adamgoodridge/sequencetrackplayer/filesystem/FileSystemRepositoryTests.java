@@ -9,6 +9,7 @@ import net.adamgoodridge.sequencetrackplayer.testData.Contants;
 import org.mockito.*;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -80,7 +81,10 @@ class FileSystemRepositoryTests extends AbstractSpringBootTest {
 
     @Test
     void findDirectoryByNameEquals_SortsFiles() {
-        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+        try (MockedConstruction<File> ignored = FileSystemMockConstruction.process(
+                new HashMap<String, String[]>() {{
+                    put(Contants.TEST_ROOT + "testDirUnsorted", new String[]{"c.txt","a.txt","b.txt"});
+                }})) {
             // Given
             String name = Contants.TEST_ROOT + "testDirUnsorted";
 

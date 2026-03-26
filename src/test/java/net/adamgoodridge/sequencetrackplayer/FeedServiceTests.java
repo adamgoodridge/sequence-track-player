@@ -1,12 +1,12 @@
 package net.adamgoodridge.sequencetrackplayer;
 
 import net.adamgoodridge.sequencetrackplayer.feeder.AudioFeeder;
+import net.adamgoodridge.sequencetrackplayer.feeder.AudioFeederService;
 import net.adamgoodridge.sequencetrackplayer.feeder.FeedService;
 import net.adamgoodridge.sequencetrackplayer.feeder.repository.*;
 import net.adamgoodridge.sequencetrackplayer.filesystem.*;
-import net.adamgoodridge.sequencetrackplayer.mock.*;
 import net.adamgoodridge.sequencetrackplayer.mock.respository.*;
-import org.junit.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +19,11 @@ class FeedServiceTests extends AbstractSpringBootTest {
     @Autowired
     private FeedService feedService;
     @Autowired
+    private AudioFeederService audioFeederService;
+    @Autowired
     private AudioFeederRepository audioFeederRepository;
-    @Before
-    public void setUp() throws IOException {
+    @BeforeEach
+    void setUp() throws IOException {
         LoadClassDef.initializeComponents();
         new AudioFeederRepositoryMock().fillWithMockData(audioFeederRepository);
     }
@@ -36,11 +38,12 @@ class FeedServiceTests extends AbstractSpringBootTest {
         assertEquals(sessionId,optionalAudioFeeder.get().getSessionId());
     }
     @Test
-    void testAllFeed() throws IOException {
-        
-        try (MockedConstruction<File> ignored = FileSystemMockConstruction.MockFromJsonFile()) {
+    void testAllFeed() {
+        try (MockedStatic<FileListSubFileWrapper> mockedStatic = Mockito.mockStatic(FileListSubFileWrapper.class)) {
+            mockedStatic.when(() -> FileListSubFileWrapper.wrap("/mnt/path"))
+                    .thenReturn(new String[]{"FeedA","FeedB","FeedC","test","testDirUnsorted","emptyDir"});
             String[] feedNames = feedService.feedNames();
-            String[] expectedFeedNames = {"FeedA", "FeedB", "FeedC", "test", "testDirUnsorted","emptyDir"};
+            String[] expectedFeedNames = {"emptyDir", "FeedA", "FeedB", "FeedC", "test", "testDirUnsorted"};
             assertArrayEquals(expectedFeedNames, feedNames);
         }
     }

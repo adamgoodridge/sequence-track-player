@@ -77,4 +77,5 @@
     "name": "track_current_count",
     "value": "50",
     "_class": "net.adamgoodridge.sequencetrackplayer.settings.Setting"
-}]
+  }
+]

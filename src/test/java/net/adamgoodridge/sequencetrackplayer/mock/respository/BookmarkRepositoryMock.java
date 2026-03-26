@@ -1,9 +1,8 @@
 package net.adamgoodridge.sequencetrackplayer.mock.respository;
 
+import com.google.gson.*;
 import net.adamgoodridge.sequencetrackplayer.bookmark.BookmarkedAudio;
 import net.adamgoodridge.sequencetrackplayer.bookmark.BookmarkedAudioRepository;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import org.bson.types.ObjectId;
 
 public class BookmarkRepositoryMock extends AbstractMockRepository<BookmarkedAudio, BookmarkedAudioRepository> {

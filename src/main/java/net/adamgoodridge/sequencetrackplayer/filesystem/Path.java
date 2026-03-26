@@ -28,7 +28,12 @@ public class Path {
 
 	private static String standardizePath(String in) {
 		in = in.replace(ConstantTextFileSystem.getInstance().getWindowsSharePath(), "");
-		in = in.replace(ConstantTextFileSystem.getInstance().getSharePath() ,"");
+		in = in.replace(ConstantTextFileSystem.getInstance().getSharePath(), "");
+		// Also strip share path without trailing slash (e.g. "/mnt/path" as well as "/mnt/path/")
+		String sharePathNoTrailing = FileUtils.removeTrailingSlash(ConstantTextFileSystem.getInstance().getSharePath());
+		if (!sharePathNoTrailing.isEmpty()) {
+			in = in.replace(sharePathNoTrailing, "");
+		}
 		in = in.replace("/", SLASH);
 		in = in.replace("\\", SLASH);
 		return in;

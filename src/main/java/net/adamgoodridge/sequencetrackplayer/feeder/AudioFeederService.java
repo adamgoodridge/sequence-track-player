@@ -1,6 +1,7 @@
 package net.adamgoodridge.sequencetrackplayer.feeder;
 
 import net.adamgoodridge.sequencetrackplayer.feeder.repository.*;
+import net.adamgoodridge.sequencetrackplayer.utils.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
@@ -66,24 +67,5 @@ public class AudioFeederService {
 
     public List<AudioFeeder> getShufflesAudioFeeders() {
         return audioFeederRepository.getAllByIsIncludeInFullScreenShuffle();
-    }
-    public void repairDocument(){
-        List<AudioFeeder> audioFeeders = audioFeederRepository.getAllByAudioIOFileManagerTitleErrors();
-        for(AudioFeeder audioFeeder: audioFeeders) {
-            String feedName = audioFeeder.getFeedName();
-            String[] split = feedName.split("/");
-            /*
-            EXAMPLES
-            
-                /FEEDD/SUBFEEDA/10326_SUBFEEDA_North-South/2022-01-05_Wednesday/FEEDD_2022-01-05_Wednesday_23-50-42_10326_SUBFEEDA_North-South.m4a
-                */
-                if(split[1].equals("FEEDD")) {
-                    feedName =  split[1] + "/" + split[2] + "/" + split[3];
-                }  else {
-                    feedName = split[1];
-                }
-                audioFeeder.setFeedName(feedName);
-                audioFeederRepository.save(audioFeeder);
-        }
     }
 }

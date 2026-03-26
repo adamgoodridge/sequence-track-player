@@ -6,6 +6,7 @@ import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.getindexstrategy.*;
 import net.adamgoodridge.sequencetrackplayer.settings.*;
+import net.adamgoodridge.sequencetrackplayer.utils.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
@@ -16,11 +17,17 @@ public class AudioIOFileManagerService {
 
 	private final SettingService settingService;
 	private final RandomNumberGenerator randomNumberGenerator;
+	private final Executor executor;
+
 	@Autowired
 	public AudioIOFileManagerService(SettingService settingService, RandomNumberGenerator randomNumberGenerator) {
-		//this.constantTextProperties = constantTextProperties;
+		this(settingService, randomNumberGenerator, ForkJoinPool.commonPool());
+	}
+
+	public AudioIOFileManagerService(SettingService settingService, RandomNumberGenerator randomNumberGenerator, Executor executor) {
 		this.settingService = settingService;
 		this.randomNumberGenerator = randomNumberGenerator;
+		this.executor = executor;
 	}
 
 
@@ -39,17 +46,11 @@ public class AudioIOFileManagerService {
     }
 
 	private CompletableFuture<AudioIOFileManager> createCompletableFuture(FeedRequest feedRequest) {
-		if(true)
-			return CompletableFuture.supplyAsync(() -> generateFeed(feedRequest)).orTimeout(40, TimeUnit.SECONDS);
-		AudioIOFileManager audioIOFileManager = generateFeed(feedRequest);
-		return CompletableFuture.completedFuture(
-			audioIOFileManager
-		);
+		return CompletableFuture.supplyAsync(() -> generateFeed(feedRequest), executor).orTimeout(40, TimeUnit.SECONDS);
 	}
 
 
 		public AudioIOFileManager generateFeed(FeedRequest feedRequest) {
-		int debug = randomNumberGenerator.getRandomNumber(2111);
 		int tires = 0;
 		String lastErrorMessage;
 		do {

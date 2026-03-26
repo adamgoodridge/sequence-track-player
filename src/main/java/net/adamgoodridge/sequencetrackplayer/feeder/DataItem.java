@@ -30,14 +30,19 @@ public class DataItem {
     }
 
     public String getFullPath() {
-        if(path == null) {
-            path = new Path(name);
-        }
+        ensurePathIsNotNull();
         return path.toString();
     }
 
     public String getFileName() {
+        ensurePathIsNotNull();
         return path.getFileName();
+    }
+
+    private void ensurePathIsNotNull() {
+        if (path == null) {
+            path = new Path(name);
+        }
     }
 
     public boolean isDirectory() {

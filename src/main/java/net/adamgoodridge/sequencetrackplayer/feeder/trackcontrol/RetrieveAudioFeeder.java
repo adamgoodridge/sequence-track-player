@@ -1,25 +1,31 @@
 package net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol;
 
-import net.adamgoodridge.sequencetrackplayer.exceptions.*;
+import lombok.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.getindexstrategy.*;
 import net.adamgoodridge.sequencetrackplayer.filesystem.*;
 import net.adamgoodridge.sequencetrackplayer.filesystem.directory.*;
-
 import java.util.*;
 
 public class RetrieveAudioFeeder {
+	@Getter
 	protected final Path searchFor;
 	protected Path currentPath;
+	@Getter
 	protected List<DataItem> subFiles;
-	private List<DataItem> folders;
+	@Getter
+	protected List<DataItem> folders;
 	private final IDirectoryRepository directoryRepository;
 	private final IGetIndexStrategy getIndexStrategy;
 	protected AudioIOFileManager audioIOFileManager;
+
 	public RetrieveAudioFeeder(String searchFor, IGetIndexStrategy getIndexStrategy) {
+		this(searchFor, getIndexStrategy, new FileSystemRepository());
+	}
+	public RetrieveAudioFeeder(String searchFor, IGetIndexStrategy getIndexStrategy, IDirectoryRepository directoryRepository) {
 		this.getIndexStrategy = getIndexStrategy;
 		this.searchFor = new Path(searchFor);
-		this.directoryRepository = new FileSystemRepository();
+		this.directoryRepository = directoryRepository;
 	}
 
 	public AudioIOFileManager compute(){
@@ -38,22 +44,10 @@ public class RetrieveAudioFeeder {
 
 	}
 
-	public List<DataItem> getSubFiles() {
-		return subFiles;
-	}
-
-	public List<DataItem> getFolders() {
-		return folders;
-	}
-
-	public Path getSearchFor() {
-		return searchFor;
-	}
-
 	protected void getFilesByDataItemInCurrentPath() {
 		subFiles = directoryRepository.findDirectoryByNameEquals(currentPath.toString()).subFilesMapToDataItems();
 		if (subFiles.isEmpty())
-			getIndexStrategy.throwExceptionMessage(this,"path was empty: " + currentPath);
+			getIndexStrategy. throwExceptionMessage(this,"path was empty: " + currentPath);
 	}
 	protected List<DataItem> filterByDirectories() {
 		return subFiles.stream().filter(DataItem::isDirectory).toList();
@@ -65,10 +59,6 @@ public class RetrieveAudioFeeder {
 		}
 		return Optional.empty();
 
-	}
-
-	public Path getCurrentPath() {
-		return currentPath;
 	}
 
 	private boolean needToGetToSearchPath() {
