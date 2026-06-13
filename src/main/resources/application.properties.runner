@@ -6,10 +6,11 @@ server.port=8443
 server.ssl.key-store=classpath:certs/radio-lan-adamgoodridge-net.p12
 server.ssl.key-store-password=<<KEYSTORE_KEY>>
 
-spring.mongodb.uri=mongodb://<<DB_USERNAME>>:<<DB_PASSWORD>>@192.168.2.55:27017/radioDB?tls=true&authSource=admin
+spring.mongodb.uri=mongodb://<<DB_USERNAME>>:<<DB_PASSWORD>>@192.168.181.55:27017/radioDB?tls=true&authSource=admin
 
 spring.thymeleaf.cache=false
 spring.thymeleaf.prefix=classpath:/views/
 spring.web.resources.static-locations=classpath:/static/
 
 other.commit.time=<<COMMIT_TIME>>
+file.server.trackplayer.url=<<TRACKPLAYER_URL>>

@@ -71,7 +71,7 @@ public class AudioFeeder {
     // FEED/2021/2021-03_March/2021-03-25_Thursday if input FEED/2021/2021-03_March it will return 2021-03-25_Thursday if input
     public String fileInFolder(String currentPath) {
         //increase the audio file
-        List<BreadCrumb> fileItems = BrowserUtils.generateFileItems(audioIOFileManager.getFile().getHref().replace(ConstantText.DEFAULT_SERVER_URL, ""));
+        List<BreadCrumb> fileItems = BrowserUtils.generateFileItems(audioIOFileManager.getFile().getHref().replace(ConstantTextFileSystem.getInstance().getTrackPlayerUrl(), ""));
 
         int childIndex = fileItems.stream().map(BreadCrumb::path).toList().indexOf(currentPath) + 1;
         return fileItems.get(childIndex).name();

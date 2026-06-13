@@ -1,0 +1,1 @@
+placement holder for app.jar if nonpod deployment is used. This file is not used in the docker build process, but is required to be present for the docker build ci jobto succeed.

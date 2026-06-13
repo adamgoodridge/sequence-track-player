@@ -6,7 +6,6 @@ import java.util.*;
 
 
 public class Path {
-	private static final String DEFAULT_SERVER_URL = ConstantText.DEFAULT_SERVER_URL;
 	private static final String SHARE_PATH = ConstantTextFileSystem.getInstance().getSharePath();
 	private static final String SLASH = ConstantTextFileSystem.getInstance().getSlash();
 	private static final String WINDOWS_SHARE_PATH = ConstantTextFileSystem.getInstance().getWindowsSharePath();
@@ -93,7 +92,8 @@ public class Path {
 	}
 
     public String getUrl() {
-        return this.toString().replace(SHARE_PATH, DEFAULT_SERVER_URL).replace(SLASH, "/");
+		String trackPlayerUrl = ConstantTextFileSystem.getInstance().getTrackPlayerUrl();
+        return this.toString().replace(SHARE_PATH, trackPlayerUrl).replace(SLASH, "/");
     }
 
     public String getWindowsPath() {

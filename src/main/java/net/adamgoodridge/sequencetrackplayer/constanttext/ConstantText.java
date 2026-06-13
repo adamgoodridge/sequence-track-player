@@ -3,7 +3,6 @@ package net.adamgoodridge.sequencetrackplayer.constanttext;
 public class ConstantText {
 
     public static final String ERROR_RANDOM_TRACK = "After multiple attempts, a random track cannot be gotten!";
-    public static final String DEFAULT_SERVER_URL = "https://radioplayer.adsmac.net/";
     public static final String LIVE_STREAM_ENDPOINT = "http://192.168.181.24:8085/api/v1/feeds";
     public static final String LIVE_STREAM_SUMMARY_ENDPOINT = "http://192.168.181.24:8085/api/v1/feeds/summary";
     //setting

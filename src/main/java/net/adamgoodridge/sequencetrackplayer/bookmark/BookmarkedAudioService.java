@@ -31,7 +31,7 @@ public class BookmarkedAudioService {
         return found.get();
     }
     public BookmarkedAudio getBookedMarked(AudioIOFileManager audioInfo) {
-        String path = audioInfo.getUrl().replace(ConstantText.DEFAULT_SERVER_URL,"/");
+        String path = audioInfo.getUrl().replace(ConstantTextFileSystem.getInstance().getTrackPlayerUrl(), "/");
         return bookmarkedAudioRepository.findByPath(path);
     }
 
@@ -44,7 +44,7 @@ public class BookmarkedAudioService {
         AudioFeeder feeder = feedService.getAudioFeeder(feedTrackIndex).orElseThrow(() -> new JsonNotFoundError("There's no feed found loaded on the server currently"));
         if (feeder.getAudioIOFileManager() == null)
             throw new JsonNotFoundError("There's no feed found loaded on the server currently");
-        String path = feeder.getAudioIOFileManager().getUrl().replace(ConstantText.DEFAULT_SERVER_URL,"/");
+        String path = feeder.getAudioIOFileManager().getUrl().replace(ConstantTextFileSystem.getInstance().getTrackPlayerUrl(), "/");
         BookmarkedAudio bookmarkedAudio = new BookmarkedAudio(path);
         bookmarkedAudioRepository.save(bookmarkedAudio);
         return bookmarkedAudio;

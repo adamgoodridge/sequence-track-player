@@ -19,6 +19,10 @@ public class ConstantTextFileSystem {
 	@Value("${file.share.root}")
 	@SuppressWarnings("unused")
 	private String sharePath;
+
+	@Value("${file.server.trackplayer.url}")
+	@SuppressWarnings("unused")
+	private String trackPlayerUrl;
 	private ConstantTextFileSystem() {
 		// private constructor to prevent instantiation
 	}
@@ -36,6 +40,9 @@ public class ConstantTextFileSystem {
 		return sharePath;
 	}
 
+	public String getTrackPlayerUrl() {
+		return trackPlayerUrl;
+	}
 
 	public String getWindowsSharePath() {
 		return windowsSharePath;

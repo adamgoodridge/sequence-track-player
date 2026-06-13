@@ -44,7 +44,7 @@ public class NasConnectorFileSystem implements NasConnectorService {
     }
 
     public List<DataItem> getFiles(String url) {
-        String path = url.replace(ConstantText.DEFAULT_SERVER_URL,"").replace("/", ConstantTextFileSystem.getInstance().getSlash() );
+        String path = url.replace(ConstantTextFileSystem.getInstance().getTrackPlayerUrl(), "").replace("/", ConstantTextFileSystem.getInstance().getSlash() );
         Directory directory = directoryRepository.findDirectoryByNameEquals(path);
         checkIfDirEmpty(directory);
         return directory.subFilesMapToDataItems();

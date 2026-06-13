@@ -21,3 +21,4 @@ public class AppConfig implements WebMvcConfigurer {
                 .setCacheControl(CacheControl.noCache());
     }
 }
+
