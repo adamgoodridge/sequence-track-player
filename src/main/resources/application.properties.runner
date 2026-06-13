@@ -1,47 +1,15 @@
-# File System Configuration
-# Defines root paths for file access and path separators
 file.share.root = /mnt/p/VOX/FULLY_PROCESSED/
 file.slash=/
-file.share.windows.root = P:\\VOX\\FULLY_PROCESSED\\
-#file.slash=\\
+file.share.windows.root = P:/VOX/FULLY_PROCESSED/
 
-# Server Configuration
-# SSL and port settings
 server.port=8443
 server.ssl.key-store=classpath:certs/radio-lan-adamgoodridge-net.p12
 server.ssl.key-store-password=<<KEYSTORE_KEY>>
 
-#C:\Users\Adam\.jdks\corretto-17.0.7\bin\keytool.exe -import -alias springbootshuffle -file .\springbootshuffle.crt -keystore .\springbootshuffle.p12 -storepass q0xT49Q90FIOAdk5U9ZdRQh711jQ7
+spring.mongodb.uri=mongodb://<<DB_USERNAME>>:<<DB_PASSWORD>>@192.168.2.55:27017/radioDB?tls=true&authSource=admin
 
-# Spring MVC View Configuration
-# Templates and view resolver settings
-spring.mvc.view.suffix=/views/
-spring.mvc.view.prefix=.htmL
-
-# JPA Configuration
-# Database dialect and package scanning
-spring.jpa.database-platform=org.hibernate.dialect.MariaDBDialect
-#security.ignored=/**
-spring.jpa.packagesToScan=net.adamgoodridge.sequencetrackplayer
-# MongoDB Configuration
-# Connection settings and database name
-spring.data.mongodb.uri=mongodb://<<DB_USERNAME>>:<<DB_PASSWORD>>@192.168.181.55:27017/?tls=true
-spring.data.mongodb.database=radioDB
-
-# Development Tools Configuration
-# Live reload and cache settings
 spring.thymeleaf.cache=false
-spring.thymeleaf.prefix=file:src/main/resoent.mongodb=DEBUG
-log4j.category.org.springframework.transaction=INFO
-
+spring.thymeleaf.prefix=classpath:/views/
+spring.web.resources.static-locations=classpath:/static/
 
 other.commit.time=<<COMMIT_TIME>>
-spring.web.resources.static-locations=file:src/main/resources/static/
-spring.web.resources.cache.period=0
-
-# Logging Configuration
-# Log levels for different components
-log4j.rootCategory=INFO, stdout;
-log4j.category.org.apache.activemq=ERROR
-log4j.category.org.springframework.batch=DEBUG
-log4j.category.org.springframework.data.docum

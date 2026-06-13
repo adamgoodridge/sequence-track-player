@@ -2,7 +2,9 @@ package net.adamgoodridge.sequencetrackplayer.bookmark;
 
 import net.adamgoodridge.sequencetrackplayer.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
+import net.adamgoodridge.sequencetrackplayer.feeder.AudioFeeder;
 import net.adamgoodridge.sequencetrackplayer.feeder.repository.AudioFeederRepository;
+import net.adamgoodridge.sequencetrackplayer.feeder.sequence.SequenceGeneratorService;
 import net.adamgoodridge.sequencetrackplayer.mock.FileSystemMockConstruction;
 import net.adamgoodridge.sequencetrackplayer.mock.respository.AudioFeederRepositoryMock;
 import net.adamgoodridge.sequencetrackplayer.mock.respository.BookmarkRepositoryMock;
@@ -29,6 +31,8 @@ import static org.mockito.Mockito.*;
     private BookmarkedAudioRepository bookmarkedAudioRepository;
     @Autowired
     private AudioFeederRepository audioFeederRepository;
+    @Autowired
+    private SequenceGeneratorService sequenceGeneratorService;
 
     @Mock
     private Model model;
@@ -36,8 +40,11 @@ import static org.mockito.Mockito.*;
     @BeforeEach
     void setUp() throws IOException {
         MockitoAnnotations.openMocks(this);
+        audioFeederRepository.deleteAll();
+        bookmarkedAudioRepository.deleteAll();
         new BookmarkRepositoryMock().fillWithMockData(bookmarkedAudioRepository);
         new AudioFeederRepositoryMock().fillWithMockData(audioFeederRepository);
+        sequenceGeneratorService.resetSequence(AudioFeeder.SEQUENCE_NAME);
         LoadClassDef.initializeComponents();
     }
 

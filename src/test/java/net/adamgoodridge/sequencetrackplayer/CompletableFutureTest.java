@@ -18,8 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 
-@SpringBootTest
-public class CompletableFutureTest {
+public class CompletableFutureTest extends AbstractSpringBootTest {
     @Autowired
     private FeedService feedService;
     @Mock

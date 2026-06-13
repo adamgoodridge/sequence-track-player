@@ -15,8 +15,7 @@ import java.util.List;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-class AudioFeederRepositoryTests {
+class AudioFeederRepositoryTests extends AbstractSpringBootTest {
     @Autowired
     private AudioFeederRepository audioFeederRepository;
 

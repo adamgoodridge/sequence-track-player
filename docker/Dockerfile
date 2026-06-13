@@ -1,5 +1,5 @@
 #https://spring.io/guides/topicals/spring-boot-docker/
-FROM amazoncorretto:17.0.7-alpine
+FROM amazoncorretto:25-alpine3.23
 USER appuser
 EXPOSE 8443
 EXPOSE 8081

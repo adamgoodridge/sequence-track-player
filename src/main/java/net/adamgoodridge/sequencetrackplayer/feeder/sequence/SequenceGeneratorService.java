@@ -30,6 +30,6 @@ public class SequenceGeneratorService {
     }
     public void resetSequence(String seqName) {
         mongoOperations.findAndModify(query(where("_id").is(seqName)),
-                new Update().set("seq", 1), options().returnNew(true).upsert(true), AudioFeederSequence.class);
+                new Update().set("seq", 0), options().returnNew(true).upsert(true), AudioFeederSequence.class);
     }
 }

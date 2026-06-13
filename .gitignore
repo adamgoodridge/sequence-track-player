@@ -49,3 +49,4 @@ src/main/resources/keystore/
 *.crt
 # Ignore Gradle build output directory
 build
+src/main/resources/mongodb-truststore.jks
