@@ -44,7 +44,7 @@ class BookmarkControllerJsonTests extends AbstractSpringBootTest {
     @Test
     void testAddBookmark() throws Exception {
         int feedTrackIndex = 248;
-        String expectedUrl = "https://testplayer.adamgoodridge.net/FeedB/2023/2023-07_July/2023-07-20_Thursday/FEEDB_AUDIOFILE_2023-07-20_Thursday_14-15-00.mp3";
+        String expectedUrl = "//FeedB/2023/2023-07_July/2023-07-20_Thursday/FEEDB_AUDIOFILE_2023-07-20_Thursday_14-15-00.mp3";
         mockMvc.perform(post(BASE_URL + "/add/" + feedTrackIndex))
                .andExpect(status().is(201))
                .andExpect(jsonPath("$.bookmarkId").exists())

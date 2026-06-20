@@ -1,6 +1,6 @@
 services:
   webShuffle: #8443
-    image: aminals-sequence-track-player:v10
+    image: animals-sequence-track-player:v10
     container_name: web_shuffle_animals_9
     volumes:
       - /smb/ssd/Animals/FULLY_PROCESSED/:/mnt/p/VOX/FULLY_PROCESSED/

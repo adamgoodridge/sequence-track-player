@@ -20,5 +20,4 @@ public class AppConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/")
                 .setCacheControl(CacheControl.noCache());
     }
-}
-
+} 

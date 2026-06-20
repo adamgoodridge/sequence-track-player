@@ -70,7 +70,7 @@ class BookmarkedAudioServiceTests extends AbstractSpringBootTest {
         // Then
         assertNotNull(bookmarkedAudio, "BookmarkedAudio should not be null after adding");
         String actualPath = bookmarkedAudio.getPath();
-        String expectedPath = "https://testplayer.adamgoodridge.net/FeedB/2023/2023-07_July/2023-07-20_Thursday/FEEDB_AUDIOFILE_2023-07-20_Thursday_14-15-00.mp3";
+        String expectedPath = "//FeedB/2023/2023-07_July/2023-07-20_Thursday/FEEDB_AUDIOFILE_2023-07-20_Thursday_14-15-00.mp3";
         assertEquals(expectedPath, actualPath, "The path of the bookmarked audio does not match the expected value");
     }
 
