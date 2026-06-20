@@ -1,6 +1,7 @@
 package net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol;
 
 import lombok.*;
+import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.getindexstrategy.*;
 import net.adamgoodridge.sequencetrackplayer.filesystem.*;
@@ -20,12 +21,15 @@ public class RetrieveAudioFeeder {
 	protected AudioIOFileManager audioIOFileManager;
 
 	public RetrieveAudioFeeder(String searchFor, IGetIndexStrategy getIndexStrategy) {
-		this(searchFor, getIndexStrategy, new FileSystemRepository());
+		this.directoryRepository = new FileSystemRepository();
+		this.searchFor = new Path(searchFor);
+		this.getIndexStrategy = getIndexStrategy;
+
 	}
 	public RetrieveAudioFeeder(String searchFor, IGetIndexStrategy getIndexStrategy, IDirectoryRepository directoryRepository) {
+		this.directoryRepository = directoryRepository;
 		this.getIndexStrategy = getIndexStrategy;
 		this.searchFor = new Path(searchFor);
-		this.directoryRepository = directoryRepository;
 	}
 
 	public AudioIOFileManager compute(){
@@ -47,7 +51,7 @@ public class RetrieveAudioFeeder {
 	protected void getFilesByDataItemInCurrentPath() {
 		subFiles = directoryRepository.findDirectoryByNameEquals(currentPath.toString()).subFilesMapToDataItems();
 		if (subFiles.isEmpty())
-			getIndexStrategy. throwExceptionMessage(this,"path was empty: " + currentPath);
+			throw new GetRandomFeedError(this,"path was empty: " + currentPath);
 	}
 	protected List<DataItem> filterByDirectories() {
 		return subFiles.stream().filter(DataItem::isDirectory).toList();

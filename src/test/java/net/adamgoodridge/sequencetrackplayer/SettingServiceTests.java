@@ -76,7 +76,7 @@ class SettingServiceTests extends AbstractSpringBootTest {
         PreferredRandomSettings result = settingService.getPreferredRandomSettings();
 
         // Then
-        assertEquals("*", result.getDay());
+        assertEquals(DayOfWeek.ALL, result.getDayOfWeek());
         assertEquals(-1, result.getTime());
         assertTrue(result.isRegularlyTrackChange());
         assertEquals(50, result.getTrackCurrentCount());

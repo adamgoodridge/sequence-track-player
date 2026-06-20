@@ -33,6 +33,7 @@ public class SettingsForm {
 		settings.add(new Setting(SettingName.OVERWRITE_FEED, overwriteFeed));
 		settings.add(new Setting(SettingName.REGULARLY_CHANGE_TO_RANDOM, regularlyChangeToRandom));
 		settings.add(new Setting(SettingName.TRACK_CURRENT_COUNT, trackCurrentCount));
+		settings.add(new Setting(SettingName.CONSIDER_HOLIDAY_PERIOD, considerHolidayPeriod));
 		return settings;
 	}
 

@@ -76,6 +76,8 @@ public class SettingController {
         settingsForm.setRegularlyChangeToRandom(regularlyChangeToRandom);
         String trackCurrentCount = settingService.getSetting(SettingName.TRACK_CURRENT_COUNT).getValue();
         settingsForm.setTrackCurrentCount(trackCurrentCount);
+        String considerHolidayPeriod = settingService.getSetting(CONSIDER_HOLIDAY_PERIOD).getValue();
+        settingsForm.setConsiderHolidayPeriod(considerHolidayPeriod);
         model.addAttribute("settingsForm", settingsForm);
         model.addAttribute("settingRestored", settingRestored);
         return "settings/settings-form";

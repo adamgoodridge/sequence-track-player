@@ -2,6 +2,7 @@ package net.adamgoodridge.sequencetrackplayer.settings;
 
 import net.adamgoodridge.sequencetrackplayer.constanttext.*;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
+import net.adamgoodridge.sequencetrackplayer.utils.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -47,7 +48,7 @@ public class SettingService {
         return settingRepository.findSettingByNameEquals(name.toLowerCase());
     }
     public Setting getSetting(SettingName settingName) {
-        return getSetting(settingName.name()).orElse(null);
+        return getSetting(settingName.name()).orElseThrow(() -> new JsonNotFoundError("Setting not found: " + settingName));
     }
 
     public void saveBoolean(SettingName name,boolean value) {
@@ -94,10 +95,11 @@ public class SettingService {
         int time = preferredDateAndTime();
         int trackCurrentCount = getInteger(SettingName.TRACK_CURRENT_COUNT);
         return new PreferredRandomSettings.Builder()
-                .day(day)
+                .dayOfWeek(day)
                 .time(time)
                 .regularlyTrackChange(getBoolean(SettingName.REGULARLY_CHANGE_TO_RANDOM))
                 .trackCurrentCount(trackCurrentCount)
+                .considerHolidayPeriod(HolidayPeriodConsideration.fromString(getSetting(SettingName.CONSIDER_HOLIDAY_PERIOD).getValue()))
                 .build();
     }
     public int preferredDateAndTime() {

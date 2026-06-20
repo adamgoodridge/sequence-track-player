@@ -1,7 +1,6 @@
 package net.adamgoodridge.sequencetrackplayer.feeder;
 
 import net.adamgoodridge.sequencetrackplayer.feeder.repository.*;
-import net.adamgoodridge.sequencetrackplayer.utils.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
@@ -37,7 +36,9 @@ public class AudioFeederService {
     public AudioFeeder getRandomBySessionId(String sessionId) {
         return audioFeederRepository.getRandomBySessionId(sessionId);
     }
-    public AudioFeeder getRandomByFeedName(String feedName) {
+    public AudioFeeder getRandomByFeedName(String feedName, boolean isHolidayPeriod) {
+        if(isHolidayPeriod)
+            return audioFeederRepository.getRandomByFeedNameInHolidayPeriod(feedName);
         return audioFeederRepository.getAudioFeederByFeedName(feedName);
     }
     public void delete(AudioFeeder feeder) {

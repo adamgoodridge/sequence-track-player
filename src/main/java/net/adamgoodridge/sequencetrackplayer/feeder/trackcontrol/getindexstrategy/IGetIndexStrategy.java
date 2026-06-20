@@ -11,7 +11,6 @@ import java.util.*;
 public interface IGetIndexStrategy {
 	int getFolderIndex(RetrieveAudioFeeder retrieveAudioFeeder) throws GetFeedError;
 	int getAudioFileIndex(RetrieveAudioFeeder retrieveAudioFeeder) throws GetFeedError;
-	void throwExceptionMessage(RetrieveAudioFeeder retrieveAudioFeeder, String reason) throws GetFeedError;
 	default int getIndexByPath(List<DataItem> folders, Path nextFolderToFind) {
 		return folders.stream()
 				.map(DataItem::getFullPath)

@@ -9,10 +9,16 @@ import net.adamgoodridge.sequencetrackplayer.feeder.repository.*;
 import net.adamgoodridge.sequencetrackplayer.filesystem.*;
 import net.adamgoodridge.sequencetrackplayer.utils.*;
 import org.junit.jupiter.api.*;
+import net.adamgoodridge.sequencetrackplayer.feeder.repository.AudioFeederRepository;
+import net.adamgoodridge.sequencetrackplayer.mock.*;
+import net.adamgoodridge.sequencetrackplayer.utils.*;
+import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.*;
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -28,13 +34,15 @@ public class CompletableFutureTest extends AbstractSpringBootTest {
     void setUp() {
         LoadClassDef.initializeComponents();
         MockitoAnnotations.openMocks(this);
+        TimeUtils.isTodayInHolidayPeriod();
     }
 
     private static CompletableFuture<String> futureMethod(boolean throwError) {
         return CompletableFuture.supplyAsync(() -> {
-            if (throwError)
-                throw new RuntimeException("Error occurred");
-            await().atMost(5, TimeUnit.SECONDS);
+                if (throwError)
+                    throw new RuntimeException("Error occurred");
+                //                 System.out.println("inside thread started");
+                await().atMost(5, TimeUnit.SECONDS);
             return "hi";
         }).orTimeout(40, TimeUnit.SECONDS);
     }

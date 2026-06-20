@@ -10,6 +10,8 @@ import net.adamgoodridge.sequencetrackplayer.utils.*;
 import java.util.*;
 
 public class GetIndexByRandomStrategy implements IGetIndexStrategy {
+	private static final String CONTAINING_HOLIDAY_MONTH_REGEX =  ".*(Dec).*";
+	private static final String HOLIDAY_DATE_REGEX = TimeUtils.getRegexWithHolidayDate();
 	private static final int NOT_FOUND = -1;
 
 	private final PreferredRandomSettings preferredRandomSettings;
@@ -29,10 +31,16 @@ public class GetIndexByRandomStrategy implements IGetIndexStrategy {
 			int index = getIndexByPath(folders, nextFolderToFind.get());
 			if (index != NOT_FOUND)
 				return index;
-			throwExceptionMessage("Cannot find next folder: " + nextFolderToFind.get());
+			throw new GetRandomFeedError(retrieveAudioFeeder, "Cannot find next folder: " + nextFolderToFind.get());
 		}
-		if (preferredRandomSettings.shouldFilterByDay(folders.get(0)))
-				return findIndexPreferDay();
+		if (folders.isEmpty())
+			throw new GetRandomFeedError(retrieveAudioFeeder,"No folders found in path: " + retrieveAudioFeeder.getSearchFor());
+		if (preferredRandomSettings.shouldFilterByDayOfWeek(folders.getFirst()))
+			return findIndexPreferDay();
+		if (preferredRandomSettings.shouldFilterByMonth(folders.getFirst()))
+			return findIndexByDecember();
+		if (preferredRandomSettings.isHolidayPeriod() && folders.getFirst().getFileName().matches(TimeUtils.getRegexWithDayDirectory()))
+			return findIndexByHolidayPeriodDate();
 		return rnd.getRandomNumber(folders.size());
 	}
 
@@ -40,7 +48,7 @@ public class GetIndexByRandomStrategy implements IGetIndexStrategy {
 	public int getAudioFileIndex(RetrieveAudioFeeder retrieveAudioFeeder) {
 		this.retrieveAudioFeeder = retrieveAudioFeeder;
 		List<DataItem> subFiles = retrieveAudioFeeder.getSubFiles();
-		if (preferredRandomSettings.getTime() != NOT_FOUND && !subFiles.get(0).getFullPath().contains(" ")) {
+		if (preferredRandomSettings.getTime() != NOT_FOUND && !subFiles.getFirst().getFullPath().contains(" ")) {
 			//find a specific time
 			return findIndexByTime();
 		}
@@ -48,22 +56,13 @@ public class GetIndexByRandomStrategy implements IGetIndexStrategy {
 		return rnd.getRandomNumber(maxRandomNumber);
 	}
 
-	@Override
-	public void throwExceptionMessage(RetrieveAudioFeeder retrieveAudioFeeder, String reason) throws GetFeedError {
-		this.retrieveAudioFeeder = retrieveAudioFeeder;
-		throwExceptionMessage(reason);
-	}
 
-
-	private void throwExceptionMessage(String reason) throws GetFeedError {
-		throw  new GetFeedError("Cannot find random track for " + retrieveAudioFeeder.getSearchFor() + ", Reason: " + reason);
-	}
 	private int findIndexByTime() {
 		int time = preferredRandomSettings.getTime();
 		//in case if there is no track for that exact hour
 		do {
 			String startTime = String.format("%02d",time);
-			DataItem sampleFile = retrieveAudioFeeder.getSubFiles().get(0);
+			DataItem sampleFile = retrieveAudioFeeder.getSubFiles().getFirst();
 			String regex = ".*_" + startTime + (sampleFile.getFileName().contains("_TO_") ? ".*": "-[0-5].*");
 			int matchingIndex = pickRandomItemPerRegex(regex, retrieveAudioFeeder.getSubFiles());
 
@@ -90,11 +89,26 @@ public class GetIndexByRandomStrategy implements IGetIndexStrategy {
 
 
 	private int findIndexPreferDay() {
-		String regex = ".*"+preferredRandomSettings.getDay()+".*";
-		int randomIndex = pickRandomItemPerRegex(regex, this.retrieveAudioFeeder.getSubFiles());
-		if (randomIndex != NOT_FOUND)
-			return randomIndex;
-		throwExceptionMessage("Cannot find folder for day: " + preferredRandomSettings.getDay());
-		return NOT_FOUND; // Unreachable, but required to satisfy the compiler
+		String regex = ".*(?i)"+preferredRandomSettings.getDayOfWeek()+".*";
+		int index = pickRandomItemPerRegex(regex,this.retrieveAudioFeeder.getSubFiles());
+		if (index == -1)
+			throw new GetRandomFeedError(retrieveAudioFeeder,"Cannot find folder for day: " + preferredRandomSettings.getDayOfWeek());
+		if(preferredRandomSettings.isHolidayPeriod())
+			return findIndexByHolidayPeriodDate();
+		return index;
+	}
+
+	private int findIndexByHolidayPeriodDate() {
+		int index = pickRandomItemPerRegex(HOLIDAY_DATE_REGEX,this.retrieveAudioFeeder.getSubFiles());
+		if (index == -1)
+			throw new GetRandomFeedError(retrieveAudioFeeder,"Cannot find folder for date in holiday period:");
+		return index;
+	}
+
+	private int findIndexByDecember() {
+		int index = pickRandomItemPerRegex(CONTAINING_HOLIDAY_MONTH_REGEX,this.retrieveAudioFeeder.getSubFiles());
+		if (index == -1)
+			throw new GetRandomFeedError(retrieveAudioFeeder,"There is no folder for month in holiday period for the year.");
+		return index;
 	}
 }

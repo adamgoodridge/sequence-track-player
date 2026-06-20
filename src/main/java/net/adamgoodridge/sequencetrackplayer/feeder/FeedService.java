@@ -44,7 +44,7 @@ public class FeedService {
             feedRequest.setFeedId(sequenceGeneratorService.generateSequence(AudioFeeder.SEQUENCE_NAME));
 
         AudioFeeder audioFeeder = feedRequest.isRequestType(FeedRequestType.RANDOM) ?
-                audioFeederService.getRandomByFeedName(feedRequest.getName()) :
+                audioFeederService.getRandomByFeedName(feedRequest.getName(), settingService.getPreferredRandomSettings().isHolidayPeriod()) :
                 null;
 
         if (audioFeeder != null)

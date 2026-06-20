@@ -1,9 +1,9 @@
 package net.adamgoodridge.sequencetrackplayer.bookmark;
 
 import net.adamgoodridge.sequencetrackplayer.AbstractSpringBootTest;
+import net.adamgoodridge.sequencetrackplayer.feeder.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.repository.AudioFeederRepository;
-import net.adamgoodridge.sequencetrackplayer.mock.respository.AudioFeederRepositoryMock;
-import net.adamgoodridge.sequencetrackplayer.mock.respository.BookmarkRepositoryMock;
+import net.adamgoodridge.sequencetrackplayer.mock.respository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -29,6 +29,9 @@ class BookmarkControllerJsonTests extends AbstractSpringBootTest {
 
     @Autowired
     private AudioFeederRepository audioFeederRepository;
+
+    @Autowired
+    private FeedService feedService;
 
     @BeforeEach
     void setUp() throws IOException {
@@ -64,7 +67,7 @@ class BookmarkControllerJsonTests extends AbstractSpringBootTest {
     void testDeleteBookmark_NotFound() throws Exception {
         String bookmarkId = "123";
         String expectedMessage = "Bookmark not found with id: 123";
-        
+
         mockMvc.perform(delete(BASE_URL + "/delete/" + bookmarkId))
                .andExpect(status().is(404))
                .andExpect(jsonPath("$.error").value(expectedMessage));
@@ -74,7 +77,7 @@ class BookmarkControllerJsonTests extends AbstractSpringBootTest {
     void testAddBookmark_NoFeedLoaded() throws Exception {
         int feedTrackIndex = 0;
         String expectedMessage = "There's no feed found loaded on the server currently";
-        
+
         mockMvc.perform(post(BASE_URL + "/add/" + feedTrackIndex))
                .andExpect(status().is(404))
                .andExpect(jsonPath("$.error").value(expectedMessage));

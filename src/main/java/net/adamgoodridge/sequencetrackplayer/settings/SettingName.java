@@ -21,8 +21,8 @@ public enum SettingName {
     //when browser from feed, it will override that feed id
     OVERWRITE_FEED("true"),
     REGULARLY_CHANGE_TO_RANDOM("true"),
-    TRACK_CURRENT_COUNT("50");
-
+    TRACK_CURRENT_COUNT("50"),
+    CONSIDER_HOLIDAY_PERIOD("yes");
     private final String defaultValue;
 
     private SettingName(String defaultValue) {

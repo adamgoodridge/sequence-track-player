@@ -37,7 +37,7 @@ public class NasConnectorFileSystem implements NasConnectorService {
         return subFiles;
     }
     private void checkIfDirEmpty(Directory directory) {
-        if(directory.getSubFiles().length == 0) {
+        if(directory.getSubFiles() == null || directory.getSubFiles().length == 0) {
             logger.error("no feeds cannot be found when trying to listing their names.");
             throw new NotFoundError("No feeds cannot be found.");
         }

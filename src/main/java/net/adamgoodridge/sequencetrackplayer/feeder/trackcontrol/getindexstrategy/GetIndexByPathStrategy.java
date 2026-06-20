@@ -36,11 +36,6 @@ public class GetIndexByPathStrategy implements IGetIndexStrategy {
 		return   retrieveAudioFeeder.getSubFiles().indexOf(found);
 	}
 
-	@Override
-	public void throwExceptionMessage(RetrieveAudioFeeder retrieveAudioFeeder, String reason) throws GetFeedError {
-		this. retrieveAudioFeeder =   retrieveAudioFeeder;
-		throwExceptionMessage(reason);
-	}
 	private void throwExceptionMessage(String reason) throws GetFeedError {
 		throw new GetFeedError("Cannot find track for " + this. retrieveAudioFeeder.getSearchFor() + ", Reason: " + reason);
 	}

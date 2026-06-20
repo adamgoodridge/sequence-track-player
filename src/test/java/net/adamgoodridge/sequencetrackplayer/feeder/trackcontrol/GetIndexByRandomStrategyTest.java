@@ -1,7 +1,7 @@
 package net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol;
 
 import net.adamgoodridge.sequencetrackplayer.*;
-import net.adamgoodridge.sequencetrackplayer.exceptions.errors.GetFeedError;
+import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.DataItem;
 import net.adamgoodridge.sequencetrackplayer.feeder.trackcontrol.getindexstrategy.GetIndexByRandomStrategy;
 import net.adamgoodridge.sequencetrackplayer.filesystem.Path;
@@ -48,7 +48,7 @@ class GetIndexByRandomStrategyTest extends AbstractSpringBootTest {
 	}
 
 	private PreferredRandomSettings withDay(String day) {
-		return PreferredRandomSettings.builder().day(day).build();
+		return PreferredRandomSettings.builder().dayOfWeek(day).build();
 	}
 
 	private PreferredRandomSettings withTime(int hour) {
@@ -120,7 +120,10 @@ class GetIndexByRandomStrategyTest extends AbstractSpringBootTest {
 		RetrieveAudioFeeder f = feeder("feeds/Tuesday_FeedB", s);
 
 
-		assertThrows(GetFeedError.class, () -> s.getFolderIndex(f));
+		GetRandomFeedError error = assertThrows(GetRandomFeedError.class, () -> s.getFolderIndex(f));
+
+		String exceptedMessage = "Cannot find random track for /mnt/path/feeds/Tuesday_FeedB, Reason: Cannot find folder for day: MONDAY";
+		assertEquals(exceptedMessage, error.getMessage());
 	}
 
 	// ── getAudioFileIndex ─────────────────────────────────────────────────────
@@ -185,19 +188,6 @@ class GetIndexByRandomStrategyTest extends AbstractSpringBootTest {
 		assertEquals(0, result);
 	}
 
-	// ── throwExceptionMessage ─────────────────────────────────────────────────
-
-	@Test
-	void throwExceptionMessage_ThrowsGetFeedErrorContainingReason() {
-		givenDirectory("feeds/FeedA", "FeedA");
-		GetIndexByRandomStrategy s = strategy(anyDay());
-		RetrieveAudioFeeder f = feeder("feeds/FeedA", s);
-
-		GetFeedError error = assertThrows(GetFeedError.class,
-				() -> s.throwExceptionMessage(f, "test reason"));
-
-		assertTrue(error.getMessage().contains("test reason"));
-	}
 
 	// ── pickRandomItemPerRegex ────────────────────────────────────────────────
 

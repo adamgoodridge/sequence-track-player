@@ -8,8 +8,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class CommitTimeControllerTest extends AbstractSpringBootTest {
-	@Autowired
-    private MockMvc mockMvc;
+
+    @Autowired
+	private MockMvc mockMvc;
 
 	@Test
     void commitTimeEndpointReturnsJson() throws Exception {

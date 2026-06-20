@@ -52,6 +52,12 @@ public class Path {
 		return in.replaceAll(SLASH + "+", SLASH);
 	}
 
+	public String getMonthFolderName() {
+		if (tree.size() < 2) {
+			return "";
+		}
+		return tree.get(1);
+	}
 	@Override
 	public String toString() {
 		String fulPath = ConstantTextFileSystem.getInstance().getSharePath() + tree.stream()
