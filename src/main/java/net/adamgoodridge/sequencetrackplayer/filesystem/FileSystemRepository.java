@@ -17,6 +17,8 @@ public class FileSystemRepository implements IDirectoryRepository {
         if(files == null ||files.length == 0)
             return new Directory(directoryName, new String[0]);
         Arrays.sort(files, String.CASE_INSENSITIVE_ORDER);
+        //remove any hidden files from the list
+        files = Arrays.stream(files).filter(file -> !file.startsWith(".")).toArray(String[]::new);
         return new Directory(name, files);
     }
 }

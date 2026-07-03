@@ -49,4 +49,6 @@ src/main/resources/keystore/
 *.crt
 # Ignore Gradle build output directory
 build
-src/main/resources/mongodb-truststore.jks
+/src/main/resources/application.old.properties
+/src/main/resources/mongodb-truststore.jks
+/src/main/resources/mongodb-chain.pem

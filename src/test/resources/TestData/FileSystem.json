@@ -2,49 +2,50 @@
   "data": [
     {
       "name": "/mnt/path",
-      "items": ["FeedA", "FeedB", "FeedC", "test", "testDirUnsorted","emptyDir","exclude"]
+      "items": [".DS_STORE","FeedA", "FeedB", "FeedC", "test", "testDirUnsorted","emptyDir","exclude"]
     },
     {
       "name": "/mnt/path/test",
-      "items": ["2019","2023", "2024"]
+      "items": [".DS_STORE","2019","2023", "2024"]
     },
     {
       "name": "/mnt/path/test/2019",
-      "items": ["2024-01_January.mp3"]
+      "items": [".DS_STORE","2024-01_January.mp3"]
     },
     {
       "name": "/mnt/path/test/2023",
-      "items": ["2023-02_February", "2023-11_November"]
+      "items": [".DS_STORE","2023-02_February", "2023-11_November"]
     },
     {
       "name": "/mnt/path/test/2024",
-      "items": ["2024-01_January"]
+      "items": [".DS_STORE","2024-01_January"]
     },
     {
       "name": "/mnt/path/test/2023/2023-02_February",
-      "items": ["2023-02-01_Wednesday", "2023-02-02_Thursday", "2023-02-03_Friday"]
+      "items": [".DS_STORE","2023-02-01_Wednesday", "2023-02-02_Thursday", "2023-02-03_Friday"]
     },
     {
       "name": "/mnt/path/test/2023/2023-11_November",
-      "items": ["2023-11-04_Saturday", "2023-11-05_Sunday", "2023-11-19_Sunday", "2023-11-20_Monday"]
+      "items": [".DS_STORE","2023-11-04_Saturday", "2023-11-05_Sunday", "2023-11-19_Sunday", "2023-11-20_Monday"]
     },
     {
       "name": "/mnt/path/test/2024/2024-01_January",
-      "items": ["2024-01-15_Monday"]
+      "items": [".DS_STORE","2024-01-15_Monday"]
     },
     {
       "name": "/mnt/path/test/2024/2024-02_February",
-      "items": ["2024-02-01_Thursday", "2024-02-02_Friday", "2024-02-03_Saturday"]
+      "items": [".DS_STORE","2024-02-01_Thursday", "2024-02-02_Friday", "2024-02-03_Saturday"]
     },
     {
       "name": "/mnt/path/test/2023/2023-02_February/2023-02-01_Wednesday",
-      "items": [
+      "items": [".DS_STORE",
         "TEST_AUDIOFILE_2023-02-01_Wednesday_12-15-44.mp3"
       ]
     },
     {
       "name": "/mnt/path/test/2023/2023-02_February/2023-02-02_Thursday",
       "items": [
+        ".DS_STORE",
         "TEST_AUDIOFILE_2023-02-02_Thursday_09-15-44.mp3",
         "TEST_AUDIOFILE_2023-02-02_Thursday_12-30-22.m4a",
         "TEST_AUDIOFILE_2023-02-02_Thursday_15-45-33.mp3",
@@ -54,6 +55,7 @@
     {
       "name": "/mnt/path/test/2023/2023-02_February/2023-02-03_Friday",
       "items": [
+        ".DS_STORE",
         "TEST_AUDIOFILE_2023-02-03_Friday_08-45-12.mp3",
         "TEST_AUDIOFILE_2023-02-03_Friday_12-22-55.m4a",
         "TEST_AUDIOFILE_2023-02-03_Friday_14-15-33.mp3",
@@ -63,6 +65,7 @@
     {
       "name": "/mnt/path/test/2023/2023-11_November/2023-11-04_Saturday",
       "items": [
+        ".DS_STORE",
         "TEST_AUDIOFILE_2023-11-04_Saturday_08-15-22.mp3",
         "TEST_AUDIOFILE_2023-11-04_Saturday_12-30-45.m4a",
         "TEST_AUDIOFILE_2023-11-04_Saturday_15-20-33.mp3",
@@ -72,6 +75,7 @@
     {
       "name": "/mnt/path/test/2023/2023-11_November/2023-11-05_Sunday",
       "items": [
+        ".DS_STORE",
         "TEST_AUDIOFILE_2023-11-05_Sunday_07-45-18.mp3",
         "TEST_AUDIOFILE_2023-11-05_Sunday_12-20-55.m4a",
         "TEST_AUDIOFILE_2023-11-05_Sunday_14-30-42.mp3",
@@ -81,6 +85,7 @@
     {
       "name": "/mnt/path/test/2023/2023-11_November/2023-11-19_Sunday",
       "items": [
+        ".DS_STORE",
         "TEST_AUDIOFILE_2023-11-19_Sunday_12-44-14.mp3",
         "TEST_AUDIOFILE_2023-11-19_Sunday_13-45-00.m4a",
         "TEST_AUDIOFILE_2023-11-19_Sunday_14-44-14.mp3"
@@ -88,7 +93,7 @@
     },
     {
       "name": "/mnt/path/test/2023/2023-11_November/2023-11-20_Monday",
-      "items": [
+      "items": [".DS_STORE",
         "TEST_AUDIOFILE_2023-11-20_Monday_03-44-14.mp3",
         "TEST_AUDIOFILE_2023-11-20_Monday_12-45-00.m4a",
         "TEST_AUDIOFILE_2023-11-20_Monday_14-44-14.mp3"
@@ -97,6 +102,7 @@
     {
       "name": "/mnt/path/test/2024/2024-01_January/2024-01-15_Monday",
       "items": [
+        ".DS_STORE",
         "TEST_AUDIOFILE_2024-01-15_Monday_08-30-44.mp3",
         "TEST_AUDIOFILE_2024-01-15_Monday_11-45-22.m4a",
         "TEST_AUDIOFILE_2024-01-15_Monday_12-20-21.mp3",
@@ -106,23 +112,23 @@
     },
     {
       "name": "/mnt/path/FeedB",
-      "items": ["2022", "2023"]
+      "items": [".DS_STORE","2022", "2023"]
     },
     {
       "name": "/mnt/path/FeedB/2023",
-      "items": ["2023-07_July"]
+      "items": [".DS_STORE","2023-07_July"]
     },
     {
       "name": "/mnt/path/FeedB/2022",
-      "items": ["2022-06_June"]
+      "items": [".DS_STORE","2022-06_June"]
     },
     {
       "name": "/mnt/path/FeedB/2022/2022-06_June",
-      "items": ["2022-06-05_Sunday", "2022-06-06_Monday", "2022-06-12_Sunday", "2022-06-21_Tuesday", "2022-06-22_Wednesday", "2022-06-23_Thursday"]
+      "items": [".DS_STORE","2022-06-05_Sunday", "2022-06-06_Monday", "2022-06-12_Sunday", "2022-06-21_Tuesday", "2022-06-22_Wednesday", "2022-06-23_Thursday"]
     },
     {
       "name": "/mnt/path/FeedB/2022/2022-06_June/2022-06-05_Sunday",
-      "items": [
+      "items": [".DS_STORE",
         "FEEDB_AUDIOFILE_2022-06-05_Sunday_09-00-00.mp3",
         "FEEDB_AUDIOFILE_2022-06-05_Sunday_12-30-00.mp3",
         "FEEDB_AUDIOFILE_2022-06-05_Sunday_14-45-00.mp3"
@@ -131,6 +137,7 @@
     {
       "name": "/mnt/path/FeedB/2022/2022-06_June/2022-06-06_Monday",
       "items": [
+        ".DS_STORE",
         "FEEDB_AUDIOFILE_2022-06-06_Monday_09-15-00.mp3",
         "FEEDB_AUDIOFILE_2022-06-06_Monday_12-30-00.mp3",
         "FEEDB_AUDIOFILE_2022-06-06_Monday_14-45-00.mp3",
@@ -140,6 +147,7 @@
     {
       "name": "/mnt/path/FeedB/2022/2022-06_June/2022-06-12_Sunday",
       "items": [
+        ".DS_STORE",
         "FEEDB_AUDIOFILE_2022-06-12_Sunday_09-00-00.mp3",
         "FEEDB_AUDIOFILE_2022-06-12_Sunday_12-30-00.mp3",
         "FEEDB_AUDIOFILE_2022-06-12_Sunday_14-44-14.mp3",
@@ -149,6 +157,7 @@
     {
       "name": "/mnt/path/FeedB/2022/2022-06_June/2022-06-21_Tuesday",
       "items": [
+        ".DS_STORE",
         "FEEDB_AUDIOFILE_2022-06-21_Tuesday_09-15-00.mp3",
         "FEEDB_AUDIOFILE_2022-06-21_Tuesday_12-15-00.mp3",
         "FEEDB_AUDIOFILE_2022-06-21_Tuesday_14-30-00.mp3",
@@ -158,6 +167,7 @@
     {
       "name": "/mnt/path/FeedB/2022/2022-06_June/2022-06-22_Wednesday",
       "items": [
+        ".DS_STORE",
         "FEEDB_AUDIOFILE_2022-06-22_Wednesday_10-00-00.mp3",
         "FEEDB_AUDIOFILE_2022-06-22_Wednesday_12-30-00.mp3",
         "FEEDB_AUDIOFILE_2022-06-22_Wednesday_14-30-00.mp3",
@@ -167,6 +177,7 @@
     {
       "name": "/mnt/path/FeedB/2022/2022-06_June/2022-06-23_Thursday",
       "items": [
+        ".DS_STORE",
         "FEEDB_AUDIOFILE_2022-06-23_Thursday_09-45-00.mp3",
         "FEEDB_AUDIOFILE_2022-06-23_Thursday_12-45-02.mp3",
         "FEEDB_AUDIOFILE_2022-06-23_Thursday_14-15-00.mp3",
@@ -175,11 +186,11 @@
     },
     {
       "name": "/mnt/path/FeedB/2023/2023-07_July",
-      "items": ["2023-07-03_Monday", "2023-07-19_Wednesday", "2023-07-20_Thursday", "2023-07-21_Friday"]
+      "items": [".DS_STORE","2023-07-03_Monday", "2023-07-19_Wednesday", "2023-07-20_Thursday", "2023-07-21_Friday"]
     },
     {
       "name": "/mnt/path/FeedB/2023/2023-07_July/2023-07-03_Monday",
-      "items": [
+      "items": [".DS_STORE",
         "FEEDB_AUDIOFILE_2023-07-03_Monday_09-00-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-03_Monday_12-30-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-03_Monday_17-45-00.mp3"
@@ -187,7 +198,7 @@
     },
     {
       "name": "/mnt/path/FeedB/2023/2023-07_July/2023-07-19_Wednesday",
-      "items": [
+      "items": [".DS_STORE",
         "FEEDB_AUDIOFILE_2023-07-19_Wednesday_09-15-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-19_Wednesday_12-22-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-19_Wednesday_17-45-00.mp3"
@@ -195,7 +206,7 @@
     },
     {
       "name": "/mnt/path/FeedB/2023/2023-07_July/2023-07-20_Thursday",
-      "items": [
+      "items": [".DS_STORE",
         "FEEDB_AUDIOFILE_2023-07-20_Thursday_10-30-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-20_Thursday_12-45-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-20_Thursday_17-15-00.mp3"
@@ -203,7 +214,7 @@
     },
     {
       "name": "/mnt/path/FeedB/2023/2023-07_July/2023-07-21_Friday",
-      "items": [
+      "items": [".DS_STORE",
         "FEEDB_AUDIOFILE_2023-07-21_Friday_09-30-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-21_Friday_12-15-00.mp3",
         "FEEDB_AUDIOFILE_2023-07-21_Friday_17-00-00.mp3"
@@ -211,16 +222,16 @@
     },
     {
       "name": "/mnt/path/testDirUnsorted",
-      "items": ["c.txt", "a.txt", "b.txt"
+      "items": [".DS_STORE","c.txt", "a.txt", "b.txt"
       ]
     },
     {
       "name": "/mnt/path/emptyDir",
-      "items": []
+      "items": [".DS_STORE"]
     },
     {
       "name": "/mnt/path/exclude",
-      "items": ["logos"]
+      "items": [".DS_STORE","logos"]
     },
     {
       "name": "/mnt/path/exclude/logos",
