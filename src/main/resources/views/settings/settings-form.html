@@ -47,7 +47,7 @@
 				<input class="form-check-input" type="radio" name="dayOfWeekRadios" id="dayAny" value="*" th:field="*{dayOfWeek}" th:checked="${settingsForm.getDayOfWeek() == '*'} ? 'checked' : ''">
 				<label class="form-check-label" for="dayAny">Any day of week</label>
 			</div>
-			<th:block th:each="day : ${T(net.adamgoodridge.sequencetrackplayer.constanttext.ConstantText).SETTINGS_CHOICES_DAYS_OF_WEEK}">
+			<th:block th:each="day : ${T(net.adamgoodridge.sequencetrackplayer.constanttext.ConstantText).DAYS_OF_WEEK}">
 				<div class="form-check">
 					<input class="form-check-input" type="radio" name="dayOfWeekRadios" th:id="${'day' + dayOfWeek}" th:value="${day}" th:field="${settingsForm.dayOfWeek}" th:checked="${settingsForm.getDayOfWeek() == day} ? 'checked' : ''">
 					<label class="form-check-label" th:for="${'day' + day}" th:text="${day}"></label>

@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.*;
 @SpringBootApplication
 public class SequenceTrackPlayerApplication {
 
-	public static void main(String[] args) {
+	static void main(String[] args) {
 		SpringApplication.run(SequenceTrackPlayerApplication.class, args);
 	}
 

@@ -114,5 +114,10 @@ public class AudioFeeder {
         if(errorMessage != null && !errorMessage.isBlank())
             throw new GetFeedError(errorMessage);
     }
+
+    public void verifySessionId(String receivedSessionId) {
+        if (!sessionId.equals(receivedSessionId))
+            throw new InvalidSessionIdError();
+    }
 }
 

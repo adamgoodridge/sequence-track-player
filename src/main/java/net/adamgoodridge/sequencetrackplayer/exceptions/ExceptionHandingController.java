@@ -59,6 +59,15 @@ public class ExceptionHandingController {
         }
         return gson.toJson(output);
     }
+
+    @ExceptionHandler(BadRequestError.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public @ResponseBody String jsonReturnError(BadRequestError error) {
+        Map<String, String> output = new HashMap<>();
+        Gson gson = new Gson();
+        output.put("error", error.getMessage());
+        return gson.toJson(output);
+    }
     @ExceptionHandler(JsonNotFoundError.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public @ResponseBody String jsonNotFoundError(JsonNotFoundError error) {

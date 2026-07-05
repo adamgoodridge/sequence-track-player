@@ -12,9 +12,13 @@ public class ConstantText {
 
     public static final int[] SETTINGS_CHOICES_SILENCE_NUMBERS = {0,1,5,10,15,20,40};
 
-    public static final String[] SETTINGS_CHOICES_DAYS_OF_WEEK = {"Saturday","Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+    public static final String[] DAYS_OF_WEEK = {"Saturday","Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+    public static final String[] SETTINGS_CHOICES_DAYS_OF_WEEK = DAYS_OF_WEEK;
 
     public static final int[] SETTINGS_CHOICES_TIMES_OF_DAY = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
+
+    public static final String REGEX_HOLIDAY_DATE = ".*20\\d{2}-(12-(2[0-9]|3[0-1])|01-0[1-2]).*";
+    public static final String REGEX_DAY_DIRECTORY = ".*20\\d{2}-[0-1][0-9]-[0-3][0-9].*";
 
 
     public static final String ERROR_PAGE_ATTRIBUTE_HEADING = "heading";
@@ -34,6 +38,9 @@ public class ConstantText {
 
     public static final String URL_ENDING_FEED = "/browser/feed/";
     public static final String URL_ENDING_NO_FEED = "/browser/path/";
+    public static final String[] MONTH_NAMES = {"January", "February", "March", "April", "May",
+            "June", "July", "August", "September", "October", "November", "December"};
+
     private ConstantText() throws IllegalAccessException {
         throw new IllegalAccessException("ConstantText");
     }

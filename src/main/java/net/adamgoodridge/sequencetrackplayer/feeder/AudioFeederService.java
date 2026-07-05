@@ -1,6 +1,8 @@
 package net.adamgoodridge.sequencetrackplayer.feeder;
 
+import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.repository.*;
+import net.adamgoodridge.sequencetrackplayer.statistic.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
@@ -9,10 +11,12 @@ import java.util.*;
 @Service
 public class AudioFeederService {
     private final AudioFeederRepository audioFeederRepository;
+    private final StatisticService statisticService;
 
     @Autowired
-    public AudioFeederService(AudioFeederRepository audioFeederRepository) {
+    public AudioFeederService(AudioFeederRepository audioFeederRepository, StatisticService statisticService) {
         this.audioFeederRepository = audioFeederRepository;
+        this.statisticService = statisticService;
     }
 
     public Optional<AudioFeeder> get(Long id){
@@ -68,5 +72,48 @@ public class AudioFeederService {
 
     public List<AudioFeeder> getShufflesAudioFeeders() {
         return audioFeederRepository.getAllByIsIncludeInFullScreenShuffle();
+    }
+    public void repairDocument(){
+        List<AudioFeeder> audioFeeders = audioFeederRepository.getAllByAudioIOFileManagerTitleErrors();
+        for(AudioFeeder audioFeeder: audioFeeders) {
+            String feedName = audioFeeder.getFeedName();
+            String[] split = feedName.split("/");
+            /*
+            EXAMPLES
+            
+                /FEEDD/SUBFEEDA/10326_SUBFEEDA_North-South/2022-01-05_Wednesday/FEEDD_2022-01-05_Wednesday_23-50-42_10326_SUBFEEDA_North-South.m4a
+                */
+                if(split[1].equals("FEEDD")) {
+                    feedName =  split[1] + "/" + split[2] + "/" + split[3];
+                }  else {
+                    feedName = split[1];
+                }
+                audioFeeder.setFeedName(feedName);
+                audioFeederRepository.save(audioFeeder);
+        }
+    }
+
+    public AudioFeeder updateLength(long feedTrackListIndex, int length, String sessionId) {
+
+        AudioFeeder audioFeeder = getAudioFeederAndValidate(feedTrackListIndex,sessionId);
+
+        if(audioFeeder.getAudioIOFileManager().getCurrentPosition() < length) {
+            int dìff = length - audioFeeder.getAudioIOFileManager().getCurrentPosition();
+            statisticService.addSecondsPlayed(dìff);
+        }
+        audioFeeder.getAudioIOFileManager().setCurrentPosition(length);
+        audioFeederRepository.save(audioFeeder);
+        return audioFeeder;
+    }
+
+    AudioFeeder getAudioFeederAndValidate(Long feedTrackListIndex, String sessionId) {
+        Optional<AudioFeeder> optionalAudioFeeder = audioFeederRepository.findById(feedTrackListIndex);
+        if (optionalAudioFeeder.isEmpty())
+            throw new JsonReturnError("There's no feed found loaded on the server currently");
+        AudioFeeder audioFeeder = optionalAudioFeeder.get();
+        if (audioFeeder.getAudioIOFileManager() == null)
+            throw new JsonReturnError("Feed found but uncompleted There's no file manager found for the feed");
+        audioFeeder.verifySessionId(sessionId);
+        return optionalAudioFeeder.get();
     }
 }

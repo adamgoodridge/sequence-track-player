@@ -62,7 +62,7 @@ public class FeedJsonController {
     @ResponseBody
     public String getNextTextOnly(@PathVariable Long feedTrackListIndex, @PathVariable String action, @RequestParam("sessionId") String sessionId,
                                                 @RequestParam(value = "isShufflerPage", required = false, defaultValue = "false") boolean isShufflerPage) {
-        AudioFeeder audioFeeder = getAudioFeederAndValidate(feedTrackListIndex, sessionId);
+        AudioFeeder audioFeeder = audioFeederService.getAudioFeederAndValidate(feedTrackListIndex, sessionId);
 
         /*
             move the track after the track is played OR prev/next is clicked before shuffler mode will move the next feed
@@ -104,23 +104,11 @@ public class FeedJsonController {
         return status;
     }
 
-    private AudioFeeder getAudioFeederAndValidate(Long feedTrackListIndex, String sessionId) {
-        Optional<AudioFeeder> optionalAudioFeeder = feedService.getAudioFeeder(feedTrackListIndex);
-        if (optionalAudioFeeder.isEmpty())
-            throw new JsonReturnError("There's no feed found loaded on the server currently");
-        AudioFeeder audioFeeder = optionalAudioFeeder.get();
-        if (audioFeeder.getAudioIOFileManager() == null)
-            throw new JsonReturnError("Feed found but uncompleted There's no file manager found for the feed");
-        checkSessionId(audioFeeder, sessionId);
-        return optionalAudioFeeder.get();
-    }
 
     @PatchMapping("/update/length/{feedTrackListIndex}/{length}")
     @ResponseBody
     public String updateLength(@PathVariable long feedTrackListIndex, @PathVariable int length, @RequestParam("sessionId") String sessionId) {
-        AudioFeeder audioFeeder = getAudioFeederAndValidate(feedTrackListIndex,sessionId);
-        audioFeeder.getAudioIOFileManager().setCurrentPosition(length);
-        audioFeederService.save(audioFeeder);
+        AudioFeeder  audioFeeder = audioFeederService.updateLength(feedTrackListIndex, length, sessionId);
         BookmarkedAudio bookmarkedAudio = bookmarkedAudioService.getBookedMarked(audioFeeder.getAudioIOFileManager());
         FeedCurrentPlayingInfoDTO playing = new FeedCurrentPlayingInfoDTO(audioFeeder, feedTrackListIndex, bookmarkedAudio);
         return new Gson().toJson(playing);
@@ -152,10 +140,5 @@ public class FeedJsonController {
         Map<String, String> map = new HashMap<>();
         map.put("message", message);
         return gson.toJson(map);
-    }
-
-    private void checkSessionId(AudioFeeder audioFeeder, String sessionId) {
-        if (!audioFeeder.getSessionId().equals(sessionId))
-            throw new JsonReturnError("Invalid Session ID, there is another tab that control over this control" + audioFeeder.getFeedName());
     }
 }
