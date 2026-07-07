@@ -37,7 +37,7 @@ class StatisticServiceTests extends AbstractSpringBootTest {
             mockedStatic.when(TimeUtils::getInstance).thenReturn(mockTimeUtils);
             when(mockTimeUtils.getCurrentDate()).thenReturn(FIXED_DATE);
 
-            statisticService.addSecondsPlayed(120L);
+            statisticService.addSecondsPlayed(120L, "");
 
             Statistic saved = statisticRepository.findByDate(FIXED_DATE);
             assertNotNull(saved);
@@ -53,8 +53,8 @@ class StatisticServiceTests extends AbstractSpringBootTest {
             mockedStatic.when(TimeUtils::getInstance).thenReturn(mockTimeUtils);
             when(mockTimeUtils.getCurrentDate()).thenReturn(FIXED_DATE);
 
-            statisticService.addSecondsPlayed(60L);
-            statisticService.addSecondsPlayed(40L);
+            statisticService.addSecondsPlayed(60L, "");
+            statisticService.addSecondsPlayed(40L, "");
 
             Statistic saved = statisticRepository.findByDate(FIXED_DATE);
             assertNotNull(saved);
@@ -69,7 +69,7 @@ class StatisticServiceTests extends AbstractSpringBootTest {
             mockedStatic.when(TimeUtils::getInstance).thenReturn(mockTimeUtils);
             when(mockTimeUtils.getCurrentDate()).thenReturn(FIXED_DATE);
 
-            statisticService.addSecondsPlayed(0L);
+            statisticService.addSecondsPlayed(0L, "");
 
             Statistic saved = statisticRepository.findByDate(FIXED_DATE);
             assertNotNull(saved);
@@ -84,7 +84,7 @@ class StatisticServiceTests extends AbstractSpringBootTest {
             mockedStatic.when(TimeUtils::getInstance).thenReturn(mockTimeUtils);
             when(mockTimeUtils.getCurrentDate()).thenReturn(FIXED_DATE);
 
-            statisticService.addSecondsPlayed(300L);
+            statisticService.addSecondsPlayed(300L, "");
 
             Statistic result = statisticService.getTodayStatistic();
 
@@ -102,6 +102,76 @@ class StatisticServiceTests extends AbstractSpringBootTest {
             when(mockTimeUtils.getCurrentDate()).thenReturn(FIXED_DATE);
 
             assertThrows(TodayStatisticNotFoundError.class, () -> statisticService.getTodayStatistic());
+        }
+    }
+
+    // ── feedStats ────────────────────────────────────────────────────────────
+
+    @Test
+    void testAddSecondsPlayedStoresFeedStats() {
+        try (MockedStatic<TimeUtils> mockedStatic = mockStatic(TimeUtils.class)) {
+            TimeUtils mockTimeUtils = mock(TimeUtils.class);
+            mockedStatic.when(TimeUtils::getInstance).thenReturn(mockTimeUtils);
+            when(mockTimeUtils.getCurrentDate()).thenReturn(FIXED_DATE);
+
+            statisticService.addSecondsPlayed(120L, "FeedA");
+
+            Statistic saved = statisticRepository.findByDate(FIXED_DATE);
+            assertNotNull(saved);
+            assertTrue(saved.getFeedStats().stream().anyMatch(f -> f.getFeedName().equals("FeedA") && f.getSecondsPlayed() == 120L));
+        }
+    }
+
+    @Test
+    void testAddSecondsPlayedAccumulatesFeedStatsAcrossMultipleCalls() {
+        try (MockedStatic<TimeUtils> mockedStatic = mockStatic(TimeUtils.class)) {
+            TimeUtils mockTimeUtils = mock(TimeUtils.class);
+            mockedStatic.when(TimeUtils::getInstance).thenReturn(mockTimeUtils);
+            when(mockTimeUtils.getCurrentDate()).thenReturn(FIXED_DATE);
+
+            statisticService.addSecondsPlayed(60L, "FeedA");
+            statisticService.addSecondsPlayed(40L, "FeedA");
+            statisticService.addSecondsPlayed(30L, "FeedB");
+
+            Statistic saved = statisticRepository.findByDate(FIXED_DATE);
+            assertNotNull(saved);
+            assertTrue(saved.getFeedStats().stream().anyMatch(f -> f.getFeedName().equals("FeedA") && f.getSecondsPlayed() == 100L));
+            assertTrue(saved.getFeedStats().stream().anyMatch(f -> f.getFeedName().equals("FeedB") && f.getSecondsPlayed() == 30L));
+        }
+    }
+
+    @Test
+    void testAddSecondsPlayedSkipsFeedEntryWhenFeedNameIsBlank() {
+        try (MockedStatic<TimeUtils> mockedStatic = mockStatic(TimeUtils.class)) {
+            TimeUtils mockTimeUtils = mock(TimeUtils.class);
+            mockedStatic.when(TimeUtils::getInstance).thenReturn(mockTimeUtils);
+            when(mockTimeUtils.getCurrentDate()).thenReturn(FIXED_DATE);
+
+            statisticService.addSecondsPlayed(60L, "");
+
+            Statistic saved = statisticRepository.findByDate(FIXED_DATE);
+            assertNotNull(saved);
+            assertTrue(saved.getFeedStats() == null || saved.getFeedStats().isEmpty());
+        }
+    }
+
+    @Test
+    void testGetSummaryWeekDay_IncludesFeedStatSummaryForFeedA() {
+        try (MockedStatic<TimeUtils> mockedStatic = mockStatic(TimeUtils.class)) {
+            TimeUtils spyUtils = spy(new TimeUtils());
+            mockedStatic.when(TimeUtils::getInstance).thenReturn(spyUtils);
+            doReturn(FIXED_DATE).when(spyUtils).getCurrentDate();
+            doReturn(new Date(0)).when(spyUtils).getStartOfWeek();
+
+            statisticService.addSecondsPlayed(1800L, "FeedA");
+
+            List<WeekDaySummary> result = statisticService.getSummaryWeekDay();
+
+            WeekDaySummary wednesday = result.stream()
+                    .filter(s -> s.name().equals("Wednesday"))
+                    .findFirst().orElseThrow();
+            assertTrue(wednesday.feedStats().stream()
+                    .anyMatch(f -> f.getFeedName().equals("FeedA") && f.getSecondsPlayed() == 1800L));
         }
     }
 
@@ -161,7 +231,7 @@ class StatisticServiceTests extends AbstractSpringBootTest {
                 Statistic stat = new Statistic();
                 stat.setId(FIXED_DATE.getTime() + offset);
                 stat.setDate(date);
-                stat.addSecondsPlayed(200L);
+                stat.addSecondsPlayed(200L, "");
                 statisticRepository.save(stat);
             }
 
@@ -192,7 +262,7 @@ class StatisticServiceTests extends AbstractSpringBootTest {
             Statistic thursdayStat = new Statistic();
             thursdayStat.setId(thursday.getTime());
             thursdayStat.setDate(thursday);
-            thursdayStat.addSecondsPlayed(400L);                    // Thursday:  400s → 40%
+            thursdayStat.addSecondsPlayed(400L, "");                    // Thursday:  400s → 40%
             statisticRepository.save(thursdayStat);
 
             List<WeekDaySummary> result = statisticService.getSummaryWeekDay();
@@ -300,7 +370,7 @@ class StatisticServiceTests extends AbstractSpringBootTest {
         Statistic thursdayStat = new Statistic();
         thursdayStat.setId(thursday.getTime());
         thursdayStat.setDate(thursday);
-        thursdayStat.addSecondsPlayed(400L);
+        thursdayStat.addSecondsPlayed(400L, "");
         statisticRepository.save(thursdayStat);
 
         String expectedMonth = TimeUtils.getInstance().dateToMonth(FIXED_DATE);
@@ -327,7 +397,7 @@ class StatisticServiceTests extends AbstractSpringBootTest {
         Statistic aprilStat = new Statistic();
         aprilStat.setId(aprilDate.getTime());
         aprilStat.setDate(aprilDate);
-        aprilStat.addSecondsPlayed(3600L);                      // April
+        aprilStat.addSecondsPlayed(3600L, "");                      // April
         statisticRepository.save(aprilStat);
 
         String marchName = TimeUtils.getInstance().dateToMonth(FIXED_DATE);
@@ -377,7 +447,7 @@ class StatisticServiceTests extends AbstractSpringBootTest {
         Statistic statistic = new Statistic();
         statistic.setId(FIXED_DATE.getTime());
         statistic.setDate(FIXED_DATE);
-        statistic.addSecondsPlayed(secondsPlayed);
+        statistic.addSecondsPlayed(secondsPlayed, "");
         return statistic;
     }
 

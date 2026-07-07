@@ -18,9 +18,30 @@ public class Statistic {
 	private Date date;
 	@Field
 	private long secondsPlayed;
-	public void addSecondsPlayed(long seconds) {
+	@Field
+	private List<FeedStatSummary> feedStats = new ArrayList<>();
+
+	public void addSecondsPlayed(long seconds, String feedName) {
 		this.secondsPlayed += seconds;
+		if (feedName != null && !feedName.isBlank()) {
+			if (feedStats == null) feedStats = new ArrayList<>();
+			populateFeedStat(seconds, feedName);
+		}
 	}
+
+	private void populateFeedStat(long seconds, String feedName) {
+		Optional<FeedStatSummary> feedStat = feedStats.stream()
+				.filter(f -> f.getFeedName().equals(feedName))
+				.findFirst();
+		if (feedStat.isPresent()) {
+			FeedStatSummary existing = feedStat.get();
+			feedStats.remove(existing);
+			feedStats.add(new FeedStatSummary(feedName, existing.getSecondsPlayed() + seconds));
+		} else {
+			feedStats.add(new FeedStatSummary(feedName, seconds));
+		}
+	}
+
 	public StatisticDto toDto() {
 		return new StatisticDto(this);
 	}

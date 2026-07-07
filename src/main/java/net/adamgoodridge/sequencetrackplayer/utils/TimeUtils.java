@@ -14,15 +14,16 @@ public class TimeUtils {
     private static TimeUtils instance;
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String MONTH_FORMAT = "MMMM";
-    private static final long DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
+    private static final long DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000L;
     private static final String DAY_FORMAT = "EEEE";
+    private static final ZoneId MELBOURNE_ZONE = ZoneId.of("Australia/Melbourne");
     public static String getDay(String inputDate) {
         //gives a day of the day when given a date
         SimpleDateFormat format1 = new SimpleDateFormat(DATE_FORMAT);
         Date dt1;
         try {
             dt1 = format1.parse(inputDate);
-        } catch (ParseException e) {
+        } catch (ParseException _) {
             throw new ServerError("The date of" + inputDate + "cannot be parse to a day of week, please try again");
         }
         // use DAY_FORMAT so we return the day of week (e.g., "Monday")
@@ -111,10 +112,9 @@ public class TimeUtils {
     }
     //Get the current date in the format of "yyyy-MM-dd_DayOfWeek"
     public Date getCurrentDate() {
-        long epoch = Instant.now().toEpochMilli();
-        return new Date(epoch - (epoch % DAY_IN_MILLISECONDS)); // Return the date with time set to 00:00:00
+        LocalDate melbourneToday = LocalDate.now(MELBOURNE_ZONE);
+        return Date.from(melbourneToday.atStartOfDay(MELBOURNE_ZONE).toInstant());
     }
-
 
     public Date subtractDays(int days) {
         return new Date(getCurrentDate().getTime() - days * DAY_IN_MILLISECONDS);

@@ -9,12 +9,15 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TimeUtilsTests {
+    private static final ZoneId MELBOURNE = ZoneId.of("Australia/Melbourne");
 
     // --- getDay ---
 
@@ -122,7 +125,7 @@ class TimeUtilsTests {
     private static final long DAY_MS    = 24 * 60 * 60 * 1000L;
 
     private static WeekDaySummary summary(String name) {
-        return new WeekDaySummary(name, 0L, 0.0);
+        return new WeekDaySummary(name, 0L, 0.0, List.of());
     }
 
     @Test
@@ -186,5 +189,26 @@ class TimeUtilsTests {
         List<WeekDaySummary> result = TimeUtils.removeNotRequiredWeekDay(range, all);
 
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getCurrentDate_IsMelbourneMidnightRegardlessOfDefaultTimezone() {
+        TimeUtils timeUtils = new TimeUtils();
+        TimeZone original = TimeZone.getDefault();
+
+        try {
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+            assertMelbourneMidnight(timeUtils.getCurrentDate());
+
+            TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
+            assertMelbourneMidnight(timeUtils.getCurrentDate());
+        } finally {
+            TimeZone.setDefault(original);
+        }
+    }
+
+    private static void assertMelbourneMidnight(Date date) {
+        ZonedDateTime melbourneDateTime = date.toInstant().atZone(MELBOURNE);
+        assertEquals(LocalTime.MIDNIGHT, melbourneDateTime.toLocalTime());
     }
 }

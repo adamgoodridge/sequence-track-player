@@ -3,6 +3,7 @@ package net.adamgoodridge.sequencetrackplayer.feeder;
 import net.adamgoodridge.sequencetrackplayer.exceptions.errors.*;
 import net.adamgoodridge.sequencetrackplayer.feeder.repository.*;
 import net.adamgoodridge.sequencetrackplayer.statistic.*;
+import net.adamgoodridge.sequencetrackplayer.utils.FeedNameUtils;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
@@ -99,7 +100,8 @@ public class AudioFeederService {
 
         if(audioFeeder.getAudioIOFileManager().getCurrentPosition() < length) {
             int dìff = length - audioFeeder.getAudioIOFileManager().getCurrentPosition();
-            statisticService.addSecondsPlayed(dìff);
+            String feedName = FeedNameUtils.getFeedName(audioFeeder.getAudioIOFileManager().getCurrentFullPath());
+            statisticService.addSecondsPlayed(dìff, feedName);
         }
         audioFeeder.getAudioIOFileManager().setCurrentPosition(length);
         audioFeederRepository.save(audioFeeder);

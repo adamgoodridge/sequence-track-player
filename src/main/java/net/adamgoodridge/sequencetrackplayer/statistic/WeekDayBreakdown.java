@@ -1,27 +1,14 @@
 package net.adamgoodridge.sequencetrackplayer.statistic;
 
-public record WeekDayBreakdown(long totalSeconds, double percentage) {
+import java.util.List;
 
-	public static class WeekDayBreakdownBuilder {
-		private long totalSeconds;
-		private long weekTotal;
+public record WeekDayBreakdown(long totalSeconds, double percentage, List<FeedStatSummary> feedStats) {
 
-
-		public WeekDayBreakdownBuilder setTotalSeconds(long totalSeconds) {
-			this.totalSeconds = totalSeconds;
-			return this;
-		}
-
-		public WeekDayBreakdownBuilder setWeekTotal(long weekTotal) {
-			this.weekTotal = weekTotal;
-			return this;
-		}
-
-		public WeekDayBreakdown build() {
-			double percentage = calculatePercentage(weekTotal, totalSeconds);
-			return new WeekDayBreakdown(totalSeconds, percentage);
-		}
+	public static WeekDayBreakdown create(long weekTotal, long totalSeconds, List<FeedStatSummary> feedStats) {
+		double percentage = calculatePercentage(weekTotal, totalSeconds);
+		return new WeekDayBreakdown(totalSeconds, percentage, feedStats);
 	}
+
 	private static double calculatePercentage(long weekTotal, long totals) {
 		return weekTotal > 0 ? round2dp(totals * 100.0 / weekTotal) : 0.0;
 	}

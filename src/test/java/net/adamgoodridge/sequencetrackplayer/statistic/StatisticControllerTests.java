@@ -6,7 +6,7 @@ import net.adamgoodridge.sequencetrackplayer.utils.TimeUtils;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.*;
 
 import java.util.Date;
 
@@ -118,8 +118,81 @@ class StatisticControllerTests extends AbstractSpringBootTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].date").value("2025-03-12"))
                 .andExpect(jsonPath("$[0].dayOfWeek").value(expectedDay))
-                .andExpect(jsonPath("$[0].secondsPlayed").value(3600));
+                .andExpect(jsonPath("$[0].secondsPlayed").value(3600))
+                .andExpect(jsonPath("$[0].feedStats").isArray());
     }
+
+    @Test
+    void getStatistics_ResponseContainsFeedStatsForEachFeed() throws Exception {
+        Statistic s = new Statistic();
+        s.setId(FIXED_DATE.getTime());
+        s.setDate(FIXED_DATE);
+        s.addSecondsPlayed(1800L, "FeedA");
+        s.addSecondsPlayed(1800L, "FeedB");
+        statisticRepository.save(s);
+
+        mockMvc.perform(get(BASE_URL + "/")
+                        .param("fromDate", "2025-03-11")
+                        .param("toDate",   "2025-03-13"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].feedStats", hasSize(2)))
+                .andExpect(jsonPath("$[0].feedStats[0].feedName").exists())
+                .andExpect(jsonPath("$[0].feedStats[0].secondsPlayed").exists());
+    }
+
+    @Test
+    void getWeekSummary_ResponseContainsFeedStatsField() throws Exception {
+        mockMvc.perform(get(WEEK_SUMMARY_URL))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].feedStats").exists());
+    }
+
+    @Test
+    void getWeekSummary_ResponseContainsFeedStatsArrayEntries() throws Exception {
+        Statistic s = new Statistic();
+        s.setId(FIXED_DATE.getTime());
+        s.setDate(FIXED_DATE);
+        s.addSecondsPlayed(1800L, "FeedA");
+        s.addSecondsPlayed(600L, "FeedB");
+        statisticRepository.save(s);
+
+        String expectedDay = TimeUtils.getInstance().dateToWeekDay(FIXED_DATE);
+        mockMvc.perform(get(WEEK_SUMMARY_URL)
+                        .param("fromDate", "2025-03-11")
+                        .param("toDate",   "2025-03-13"))
+                .andExpect(status().isOk())
+            .andExpect(jsonPath("$[?(@.name == '" + expectedDay + "')].feedStats").exists())
+            .andExpect(content().string(containsString("\"feedName\":\"FeedA\",\"secondsPlayed\":1800")))
+            .andExpect(content().string(containsString("\"feedName\":\"FeedB\",\"secondsPlayed\":600")));
+    }
+
+    @Test
+    void getMonthSummary_ResponseContainsFeedStatsField() throws Exception {
+        mockMvc.perform(get(MONTH_SUMMARY_URL))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].feedStats").exists());
+    }
+
+        @Test
+        void getMonthSummary_WeekDayBreakdownContainsFeedStatsArrayEntries() throws Exception {
+        Statistic s = new Statistic();
+        s.setId(FIXED_DATE.getTime());
+        s.setDate(FIXED_DATE);
+        s.addSecondsPlayed(1200L, "FeedA");
+        s.addSecondsPlayed(300L, "FeedB");
+        statisticRepository.save(s);
+
+        String expectedMonth = TimeUtils.getInstance().dateToMonth(FIXED_DATE);
+        String expectedDay = TimeUtils.getInstance().dateToWeekDay(FIXED_DATE);
+
+        mockMvc.perform(get(MONTH_SUMMARY_URL))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[?(@.name == '" + expectedMonth + "')].weekDayBreakdown."
+                + expectedDay + ".feedStats").exists())
+            .andExpect(content().string(containsString("\"weekDayBreakdown\"")))
+            .andExpect(content().string(containsString("\"feedName\":\"FeedA\",\"secondsPlayed\":1200")))
+            .andExpect(content().string(containsString("\"feedName\":\"FeedB\",\"secondsPlayed\":300")));
+        }
 
     // ]GET /api/v1/statistic/today
 
@@ -166,6 +239,11 @@ class StatisticControllerTests extends AbstractSpringBootTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$[?(@.name == '" + expectedDay + "')].totalSeconds",
                             contains(1800)))
+                    .andExpect(jsonPath("$[?(@.name == '" + expectedDay + "')].feedStats[0].secondsPlayed",
+                            contains(1800)))
+                    .andExpect(jsonPath("$[?(@.name == '" + expectedDay + "')].feedStats[0].feedName",
+                            hasItem("test")))
+
                     .andExpect(jsonPath("$[?(@.name == '" + expectedDay + "')].percentage",
                             contains(100.0)));
         }
@@ -183,6 +261,12 @@ class StatisticControllerTests extends AbstractSpringBootTest {
                 .andExpect(jsonPath("$[?(@.name == '" + expectedDay + "')].totalSeconds",
                         contains(1800)))
                 .andExpect(jsonPath("$", hasSize(3) ))
+                .andExpect(jsonPath("$[?(@.name == '" + expectedDay + "')].feedStats",
+                        hasSize(1)))
+                .andExpect(jsonPath("$[?(@.name == '" + expectedDay + "')].feedStats[0].secondsPlayed",
+                        contains(1800)))
+                .andExpect(jsonPath("$[?(@.name == '" + expectedDay + "')].feedStats[0].feedName",
+                        hasItem("test")))
                 .andExpect(jsonPath("$[?(@.name == '" + expectedDay + "')].percentage",
                         contains(100.0)));
     }
@@ -257,7 +341,7 @@ class StatisticControllerTests extends AbstractSpringBootTest {
         Statistic s = new Statistic();
         s.setId(date.getTime());
         s.setDate(date);
-        s.addSecondsPlayed(seconds);
+        s.addSecondsPlayed(seconds, "test");
         statisticRepository.save(s);
     }
 }
